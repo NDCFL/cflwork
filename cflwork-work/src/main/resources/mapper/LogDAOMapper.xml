@@ -1,0 +1,158 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="top.cflwork.dao.LogDAO">
+    <resultMap id="logMap" type="top.cflwork.vo.LogVo"></resultMap>
+    <sql id="search">
+        <if test="#{searchVal!=null} and #{searchVal!=''}">
+            and (
+              t.id like concat('%${searchVal}%') or
+              t.user_id like concat('%${searchVal}%') or
+              t.username like concat('%${searchVal}%') or
+              t.operation like concat('%${searchVal}%') or
+              t.time like concat('%${searchVal}%') or
+              t.method like concat('%${searchVal}%') or
+              t.params like concat('%${searchVal}%') or
+              t.ip like concat('%${searchVal}%')
+            )
+        </if>
+    </sql>
+    <select id="getById" resultMap="logMap" parameterType="long">
+        select t.id,t.user_id,t.username,t.operation,t.time,t.method,t.params,t.ip,t.gmt_create from t_log t where t.id = #{value}
+    </select>
+    <select id="listPage" resultMap="logMap">
+        select t.id,t.user_id,t.username,t.operation,t.time,t.method,t.params,t.ip,t.gmt_create from t_log t where 1=1 <include refid="search"></include> order by t.gmt_create desc limit #{pageNo}, #{pageSize}
+    </select>
+    <select id="count" resultType="long">
+        select count(t.id) from t_log t where 1=1  <include refid="search"></include> order by t.gmt_create desc
+    </select>
+
+    <select id="listPages" resultMap="logMap">
+        select t.id,t.user_id,t.username,t.operation,t.time,t.method,t.params,t.ip,t.gmt_create  from t_log t
+        <where>
+            <if test="logVo.id != null and logVo.id != ''">
+                and t.id = #{logVo.id}
+            </if>
+            <if test="logVo.userId != null and logVo.userId != ''">
+                and t.user_id = #{logVo.userId}
+            </if>
+            <if test="logVo.username != null and logVo.username != ''">
+                and t.username = #{logVo.username}
+            </if>
+            <if test="logVo.operation != null and logVo.operation != ''">
+                and t.operation = #{logVo.operation}
+            </if>
+            <if test="logVo.time != null and logVo.time != ''">
+                and t.time = #{logVo.time}
+            </if>
+            <if test="logVo.method != null and logVo.method != ''">
+                and t.method = #{logVo.method}
+            </if>
+            <if test="logVo.params != null and logVo.params != ''">
+                and t.params = #{logVo.params}
+            </if>
+            <if test="logVo.ip != null and logVo.ip != ''">
+                and t.ip = #{logVo.ip}
+            </if>
+            <if test="logVo.gmtCreate != null and logVo.gmtCreate != ''">
+                and t.gmt_create = #{logVo.gmtCreate}
+            </if>
+            <include refid="search"></include>
+        </where>
+        <choose>
+            <when test="logVo.sort != null and logVo.sort.trim() != ''">
+                order by t.${logVo.sort} t.${logVo.order}
+            </when>
+            <otherwise>
+                order by t.id desc
+            </otherwise>
+        </choose>
+        <if test="pageQuery.pageNo != null and pageQuery.pageSize != null">
+            limit #{pageQuery.pageNo}, #{pageQuery.pageSize}
+        </if>
+    </select>
+    <select id="listAll" resultMap="logMap">
+        select * from t_log 
+    </select>
+    <select id="counts" resultType="long">
+        select count(t.id) from t_log t
+        <where>
+            <if test="logVo.id != null and logVo.id != ''">
+                and t.id = #{logVo.id}
+            </if>
+            <if test="logVo.userId != null and logVo.userId != ''">
+                and t.user_id = #{logVo.userId}
+            </if>
+            <if test="logVo.username != null and logVo.username != ''">
+                and t.username = #{logVo.username}
+            </if>
+            <if test="logVo.operation != null and logVo.operation != ''">
+                and t.operation = #{logVo.operation}
+            </if>
+            <if test="logVo.time != null and logVo.time != ''">
+                and t.time = #{logVo.time}
+            </if>
+            <if test="logVo.method != null and logVo.method != ''">
+                and t.method = #{logVo.method}
+            </if>
+            <if test="logVo.params != null and logVo.params != ''">
+                and t.params = #{logVo.params}
+            </if>
+            <if test="logVo.ip != null and logVo.ip != ''">
+                and t.ip = #{logVo.ip}
+            </if>
+            <if test="logVo.gmtCreate != null and logVo.gmtCreate != ''">
+                and t.gmt_create = #{logVo.gmtCreate}
+            </if>
+            <include refid="search"></include>
+        </where>
+        <choose>
+            <when test="logVo.sort != null and logVo.sort.trim() != ''">
+                order by t.${logVo.sort} ${logVo.order}
+            </when>
+            <otherwise>
+                order by t.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="save" parameterType="top.cflwork.vo.LogVo" useGeneratedKeys="true" keyProperty="id">
+        insert into t_log (user_id,username,operation,time,method,params,ip,gmt_create) values (#{userId},#{username}, #{operation}, #{time}, #{method}, #{params}, #{ip}, #{gmtCreate})
+    </insert>
+
+    <update id="update" parameterType="top.cflwork.vo.LogVo">
+        update t_log
+        <set>
+            <if test="userId != null">user_id = #{userId
+                    }, </if>
+            <if test="username != null">username = #{username
+                    }, </if>
+            <if test="operation != null">operation = #{operation
+                    }, </if>
+            <if test="time != null">time = #{time
+                    }, </if>
+            <if test="method != null">method = #{method
+                    }, </if>
+            <if test="params != null">params = #{params
+                    }, </if>
+            <if test="ip != null">ip = #{ip
+                    }, </if>
+            <if test="gmtCreate != null">gmt_create = #{gmtCreate
+                    }</if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateStatus">
+        update t_log set is_active=#{status} where id=#{id}
+    </update>
+    <delete id="removeById" parameterType="long">
+        delete from t_log where id = #{value}
+    </delete>
+    <delete id="removeMany">
+        delete from t_log where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

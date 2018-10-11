@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.cflwork.dao.CooperationAccountsDAO">
+    <resultMap id="cooperationAccountsMap" type="top.cflwork.vo.CooperationAccountsVo">
+        <id column="id" property="id"></id>
+        <result column="account_type" property="accountType"></result>
+        <result column="account_time" property="accountTime"></result>
+        <result column="total_pay" property="totalPay"></result>
+        <result column="subject_id" property="subjectId"></result>
+        <result column="description" property="description"></result>
+        <result column="remark" property="remark"></result>
+        <result column="is_active" property="isActive"></result>
+        <result column="is_cash" property="isCash"></result>
+        <result column="cash_status" property="cashStatus"></result>
+        <result column="reason" property="reason"></result>
+        <result column="hand" property="hand"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="cooperation_company_id" property="cooperationCompanyId"></result>
+        <result column="hotel_id" property="hotelId"></result>
+        <result column="hander" property="hander"></result>
+        <association property="companyVo" javaType="top.cflwork.vo.CompanyVo">
+            <id column="cid" property="id"></id>
+            <result column="name" property="name"></result>
+        </association>
+        <association property="hotelVo" javaType="top.cflwork.vo.HotelVo">
+            <id column="hid" property="id"></id>
+            <result column="title" property="title"></result>
+        </association>
+        <association property="userVo" javaType="top.cflwork.vo.UserVo">
+            <id column="uid" property="id"></id>
+            <result column="realname" property="realname"></result>
+        </association>
+        <association property="cooperationSubjectVo" javaType="top.cflwork.vo.CooperationSubjectVo">
+            <id column="csid" property="id"></id>
+            <result column="ctitle" property="title"></result>
+        </association>
+        <association property="cooperationCompanyVo" javaType="top.cflwork.vo.CooperationCompanyVo">
+            <id column="ccid" property="id"></id>
+            <result column="ccname" property="name"></result>
+        </association>
+    </resultMap>
+    <resultMap id="select2VoMap" type="select2Vo"></resultMap>
+    <resultMap id="sumCashVoMap" type="top.cflwork.vo.SumCashVo"></resultMap>
+    <sql id="search">
+        <if test="#{searchVal!=null} and #{searchVal!=''}">
+            and (t.account_type like concat('%${searchVal}%')
+            or t.account_time like concat ('%${searchVal}%')
+            or t.total_pay like concat ('%${searchVal}%')
+            or t.subject_id like concat ('%${searchVal}%')
+            or t.description like concat ('%${searchVal}%')
+            or t.remark like concat ('%${searchVal}%')
+            or t.is_active like concat ('%${searchVal}%')
+            or t.is_cash like concat ('%${searchVal}%')
+            or t.cash_status like concat ('%${searchVal}%')
+            or t.reason like concat ('%${searchVal}%')
+            )
+        </if>
+    </sql>
+    <select id="getSubject" resultMap="select2VoMap" parameterType="long">
+        select id,title as text from t_cooperation_subject where company_id=#{companyId} and is_active=0
+    </select>
+    <select id="getCooperationCompany" resultMap="select2VoMap">
+        select id,name as text from t_cooperation_company where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> and is_active=0
+    </select>
+    <select id="getById" resultMap="cooperationAccountsMap" parameterType="long">
+        select * from t_cooperation_accounts where id = #{id} and is_active=0
+    </select>
+    <delete id="removeById" parameterType="long">
+        delete from t_cooperation_accounts where id = #{id}
+    </delete>
+    <select id="listPages" resultMap="cooperationAccountsMap">
+        select t.*,(select realname from t_user where t.hander=t_user.id) as hand,h.title,c.name,s.title as ctitle,cc.name as ccname  from t_cooperation_accounts t,t_company c,t_hotel h,t_cooperation_subject s,t_cooperation_company cc where t.hotel_id=h.id and t.company_id=c.id  and t.subject_id=s.id and t.cooperation_company_id=cc.id and t.company_id=#{companyId} <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if> <include refid="search"/> order by create_time desc limit #{pageNo},#{pageSize}
+    </select>
+    <select id="counts" resultType="java.lang.Long">
+        select count(*) from  t_cooperation_accounts t,t_company c,t_hotel h,t_cooperation_subject s,t_cooperation_company cc where t.hotel_id=h.id and t.company_id=c.id and t.cooperation_company_id=cc.id  and t.subject_id=s.id and t.company_id=#{companyId} <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if> <include refid="search"/>
+    </select>
+    <select id="listAll" resultMap="cooperationAccountsMap">
+        select * from t_cooperation_accounts where company_id=#{companyId} and hotel_id=#{hotelId}
+    </select>
+    <select id="listPage" resultMap="cooperationAccountsMap">
+        select t.*,(select realname from t_user where t.hander=t_user.id) as hand,c.name,s.title as ctitle,cc.name as ccname  from t_cooperation_accounts t,t_company c,t_cooperation_subject s,t_cooperation_company cc where cc.id = t.cooperation_company_id and  t.company_id=c.id  and t.subject_id=s.id and t.cooperation_company_id=cc.id and t.company_id=#{companyId} <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if> <include refid="search"/> order by create_time desc limit #{pageNo},#{pageSize}
+    </select>
+    <select id="count" resultType="java.lang.Long">
+        select count(*) from  t_cooperation_accounts t,t_company c,t_cooperation_subject s,t_cooperation_company cc where  t.company_id=c.id and t.cooperation_company_id=cc.id  and t.subject_id=s.id and t.company_id=#{companyId} <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if> <include refid="search"/>
+    </select>
+    <insert id="save" parameterType="cooperationAccountsVo">
+        insert into t_cooperation_accounts  ( company_id, hotel_id,  account_type, account_time, total_pay, subject_id, description, remark,cooperation_company_id, is_active, is_cash, cash_status, reason) values ( #{companyId}, #{hotelId}, #{accountType}, #{accountTime}, #{totalPay}, #{subjectId}, #{description}, #{remark},#{cooperationCompanyId}, #{isActive}, #{isCash}, #{cashStatus}, #{reason})
+    </insert>
+    <update id="updateStatus">
+        update t_cooperation_accounts set is_cash=#{status} where id=#{id}
+    </update>
+    <update id="updateRemark">
+        update t_cooperation_accounts set remark=#{remark} where id=#{id}
+    </update>
+    <update id="updateCashStatus" parameterType="cooperationAccountsVo">
+        update t_cooperation_accounts set is_cash=#{isCash},cash_status=#{cashStatus},reason=#{reason},hander=#{hander} where id=#{id}
+    </update>
+    <update id="update" parameterType="cooperationAccountsVo">
+        update t_cooperation_accounts set account_type=#{accountType},total_pay=#{totalPay},subject_id=#{subjectId},description=#{description},cooperation_company_id=#{cooperationCompanyId},hotel_id=#{hotelId},remark=#{remark},account_time=#{accountTime},is_cash=#{isCash} where id = #{id}
+    </update>
+    <update id="checkerManyCashAccount" parameterType="java.util.List" >
+        <foreach collection="list" item="item" index="index" separator=";" >
+            update t_cooperation_accounts set is_cash=#{item.isCash},cash_status=#{item.cashStatus},reason=#{item.reason},hander=#{item.hander} where id=#{item.id}
+        </foreach>
+    </update>
+    <select id="sumCash" resultMap="sumCashVoMap">
+        <if test="hotelId==-1">
+            select
+            (select ifnull(sum(c.total_pay),0.0) from t_cooperation_accounts c where  c.account_type=0  and c.is_cash=0 and c.company_id=#{companyId}  <if test="hotelId!=null">and c.hotel_id=#{hotelId}</if>) as sumMoneyIn,
+            (select ifnull(sum(c.total_pay),0.0) from t_cooperation_accounts c where  c.account_type=1  and c.is_cash=0 and c.company_id=#{companyId} <if test="hotelId!=null">and c.hotel_id=#{hotelId}</if>) as sumMoneyOut
+            from t_cooperation_accounts where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> GROUP BY  company_id;
+        </if>
+        <if test="hotelId!=-1">
+            select
+            (select ifnull(sum(c.total_pay),0.0) from t_cooperation_accounts c where c.account_type=0  and c.is_cash=0 and c.hotel_id!=-1 and c.company_id=#{companyId}  <if test="hotelId!=null">and c.hotel_id=#{hotelId}</if>) as sumMoneyIn,
+            (select ifnull(sum(c.total_pay),0.0) from t_cooperation_accounts c where c.account_type=1  and c.is_cash=0 and c.hotel_id!=-1 and c.company_id=#{companyId} <if test="hotelId!=null">and c.hotel_id=#{hotelId}</if>) as sumMoneyOut
+            from t_cooperation_accounts where company_id=#{companyId} and hotel_id!=-1 GROUP BY  company_id;
+        </if>
+    </select>
+    <sql id="find">
+        <if test="createTime!=null"> and t.create_time BETWEEN #{createTime} AND #{endTime}</if>
+        <if test="description!=null and description!=''"> and t.description like concat('%${description}%')</if>
+        <if test="subjectId!=null"> and t.subject_id=#{subjectId}</if>
+        <if test="cashStatus!=null"> and t.cash_status=#{cashStatus}</if>
+        <if test="totalPay!=null"> and t.total_pay=#{totalPay}</if>
+        <if test="hander!=null"> and t.hander=#{hander}</if>
+        <if test="title!=null"> and t.cooperation_company_id=#{title}</if>
+        <if test="hotelId!=null"> and t.hotel_id=#{hotelId}</if>
+        <if test="isCash!=null"> and t.is_cash=#{isCash}</if>
+    </sql>
+    <sql id="finds">
+        <if test="cooperationAccountsVo.createTime!=null"> and t.create_time BETWEEN #{cooperationAccountsVo.createTime} AND #{cooperationAccountsVo.endTime}</if>
+        <if test="cooperationAccountsVo.description!=null and cooperationAccountsVo.description!='' "> and t.description like concat('%${cooperationAccountsVo.description}%')</if>
+        <if test="cooperationAccountsVo.subjectId!=null"> and t.subject_id=#{cooperationAccountsVo.subjectId}</if>
+        <if test="cooperationAccountsVo.cashStatus!=null"> and t.cash_status=#{cooperationAccountsVo.cashStatus}</if>
+        <if test="cooperationAccountsVo.totalPay!=null"> and t.total_pay=#{cooperationAccountsVo.totalPay}</if>
+        <if test="cooperationAccountsVo.hander!=null"> and t.hander=#{cooperationAccountsVo.hander}</if>
+        <if test="cooperationAccountsVo.title!=null"> and t.cooperation_company_id=#{cooperationAccountsVo.title}</if>
+        <if test="cooperationAccountsVo.isCash!=null"> and t.is_cash=#{cooperationAccountsVo.isCash}</if>
+        <if test="cooperationAccountsVo.accountType!=null"> and t.account_type=#{cooperationAccountsVo.accountType}</if>
+    </sql>
+    <!---总部-->
+    <select id="countBy" resultType="java.lang.Long">
+        select count(t.id) from t_cooperation_accounts t,t_company c,t_cooperation_subject s,t_cooperation_company cc where t.hotel_id=-1 and  cc.id = t.cooperation_company_id and t.company_id=c.id and  t.subject_id=s.id and t.company_id=#{pageQuery.companyId}
+        <include refid="finds"></include>
+     </select>
+    <select id="listPageBy" resultMap="cooperationAccountsMap">
+        select t.*,
+        (select realname from t_user where t.hander=t_user.id) as hand,c.name,s.title as ctitle ,cc.name as ccname
+        from t_cooperation_accounts t,t_company c,t_cooperation_subject s,t_cooperation_company cc where t.cooperation_company_id=cc.id and  t.company_id=c.id and t.hotel_id=-1 and  t.subject_id=s.id and  t.company_id=#{pageQuery.companyId}
+        <include refid="finds"></include>
+        order by t.create_time desc limit #{pageQuery.pageNo},#{pageQuery.pageSize}
+    </select>
+    <select id="countByHotel" resultType="java.lang.Long">
+        select count(t.id) from  t_cooperation_accounts t,t_company c,t_cooperation_subject s,t_cooperation_company cc,t_hotel h where t.hotel_id=h.id and cc.id = t.cooperation_company_id and t.company_id=c.id and  t.subject_id=s.id and t.company_id=#{pageQuery.companyId} and t.hotel_id!=-1
+        <if test="cooperationAccountsVo.hotelId!=null">and t.hotel_id=#{cooperationAccountsVo.hotelId}</if>
+        <include refid="finds"></include>
+        order by t.create_time desc
+    </select>
+    <select id="listPageByHotel" resultMap="cooperationAccountsMap">
+        select t.*,(select realname from t_user where t.hander=t_user.id) as hand,h.title,c.name,s.title as ctitle,cc.name as ccname from t_cooperation_accounts t,t_company c,t_cooperation_subject s,t_cooperation_company cc,t_hotel h where cc.id = t.cooperation_company_id and t.hotel_id=h.id and t.company_id=c.id and  t.subject_id=s.id and  t.company_id=#{pageQuery.companyId} and t.hotel_id!=-1
+        <if test="cooperationAccountsVo.hotelId!=null">and t.hotel_id=#{cooperationAccountsVo.hotelId}</if>
+        <include refid="finds"></include>
+        order by t.create_time desc limit #{pageQuery.pageNo},#{pageQuery.pageSize}
+    </select>
+    <select id="cashSum" resultType="top.cflwork.vo.SumCashVo">
+        <if test="hotelId==-1">
+            <if test="accountType==null">
+                select
+                (select ifnull(sum(t.total_pay),0.0) from t_cooperation_accounts t where  t.company_id=1 and t.hotel_id=-1 and t.account_type=0 <include refid="find"></include>) as sumMoneyIn,
+                (select ifnull(sum(t.total_pay),0.0) from t_cooperation_accounts t where  t.company_id=1 and t.hotel_id=-1 and t.account_type=1 <include refid="find"></include>)  as sumMoneyOut
+                from t_cooperation_accounts where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> GROUP BY  company_id;
+            </if>
+            <if test="accountType==1">
+                select
+                (select ifnull(sum(t.total_pay),0.0) from t_cooperation_accounts t where  t.company_id=1 and t.hotel_id=-1 and t.account_type=1 <include refid="find"></include>)  as sumMoneyOut
+                from t_cooperation_accounts where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> GROUP BY  company_id;
+            </if><if test="accountType==0">
+            select
+            (select ifnull(sum(t.total_pay),0.0) from t_cooperation_accounts t where  t.company_id=1 and t.hotel_id=-1 and t.account_type=0 <include refid="find"></include>) as sumMoneyIn
+            from t_cooperation_accounts where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> GROUP BY  company_id;
+        </if>
+        </if>
+        <if test="hotelId!=-1">
+            <if test="accountType==null">
+                select
+                (select ifnull(sum(t.total_pay),0.0) from t_cooperation_accounts t where  t.company_id=1 and  t.hotel_id!=-1 <if test="hotelId!=null">and hotel_id=#{hotelId}</if> and t.account_type=0 <include refid="find"></include>) as sumMoneyIn,
+                (select ifnull(sum(t.total_pay),0.0) from t_cooperation_accounts t where  t.company_id=1 and  t.hotel_id!=-1 <if test="hotelId!=null">and hotel_id=#{hotelId}</if> and t.account_type=1 <include refid="find"></include>)  as sumMoneyOut
+                from t_cooperation_accounts where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> GROUP BY  company_id;
+            </if>
+            <if test="accountType==0">
+                select
+                (select ifnull(sum(t.total_pay),0.0) from t_cooperation_accounts t where  t.company_id=1 and  t.hotel_id!=-1 <if test="hotelId!=null">and hotel_id=#{hotelId}</if> and t.account_type=0 <include refid="find"></include>) as sumMoneyIn
+                from t_cooperation_accounts where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> GROUP BY  company_id;
+
+            </if>
+            <if test="accountType==1">
+                select
+                (select ifnull(sum(t.total_pay),0.0) from t_cooperation_accounts t where  t.company_id=1 and  t.hotel_id!=-1 <if test="hotelId!=null">and hotel_id=#{hotelId}</if> and t.account_type=1 <include refid="find"></include>)  as sumMoneyOut
+                from t_cooperation_accounts where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> GROUP BY  company_id;
+            </if>
+        </if>
+    </select>
+
+</mapper>

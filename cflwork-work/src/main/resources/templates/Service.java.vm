@@ -1,0 +1,18 @@
+package ${package}.service;
+
+import ${package}.vo.${className}Vo;
+import top.cflwork.query.PageQuery;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * ${comments}
+ * 
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+public interface ${className}Service  extends BaseService<${className}Vo>{
+    List<${className}Vo> listPages(PageQuery pageQuery, ${className}Vo ${classname}Vo);
+    long counts(PageQuery pageQuery,${className}Vo ${classname}Vo);
+}

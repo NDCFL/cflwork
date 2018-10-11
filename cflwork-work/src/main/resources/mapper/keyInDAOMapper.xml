@@ -1,0 +1,58 @@
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="top.cflwork.dao.KeyInDAO">
+	<resultMap type="userVo" id="keyInMap">
+	</resultMap>
+	<sql id="search">
+		<if test="#{searchVal!=null} and #{searchVal!=''}">
+			and (u.email like concat('%${searchVal}%')
+			or u.phone like concat ('%${searchVal}%')
+			or u.account_name like concat ('%${searchVal}%')
+			or u.nickname like concat ('%${searchVal}%')
+			or u.identity like concat ('%${searchVal}%')
+			or u.realname like concat ('%${searchVal}%')
+			or u.age like concat ('%${searchVal}%')
+			or u.address like concat ('%${searchVal}%')
+			or u.qq like concat ('%${searchVal}%')
+			or u.wechat like concat ('%${searchVal}%'))
+		</if>
+	</sql>
+	<resultMap type="userVo" id="hotelCheckerMap">
+
+	</resultMap>
+	<select id="getById" resultMap="keyInMap" parameterType="long">
+		select *  from t_user t where t.id = #{id}
+	</select>
+	<delete id="removeById" parameterType="long">
+		delete from t_user where id = #{id}
+	</delete>
+	<select id="listPage" resultMap="keyInMap" >
+		select u.*,(select title from t_hotel where t_hotel.id=e.hotel_id) as hotelName from t_user u,t_role r,t_user_role t,t_employee e where  e.employee_id=u.id and e.hotel_id!=-1 <if test="hotelId!=null"> and e.hotel_id=#{hotelId}</if> and u.company_id=#{companyId} and u.id=t.user_id and r.id=t.role_id and  r.id=(select id from t_role where title="酒店录入员") <include refid="search"></include>  order by u.create_time desc limit #{pageNo},#{pageSize}
+	</select>
+	<select id="listPages" resultMap="keyInMap" >
+		select u.* from t_user u,t_role r,t_user_role t,t_employee e where u.id=e.employee_id and e.user_id=#{userId} and u.id=t.user_id and r.id=t.role_id and u.company_id=#{companyId} and r.id=(select id from t_role where title="录入员") <include refid="search"></include> order by u.create_time desc  limit #{pageNo},#{pageSize}
+	</select>
+	<select id="listAll" resultMap="keyInMap">
+		select u.* from t_user u,t_role r,t_user_role t where u.id=t.user_id and r.id=t.role_id and r.id=(select id from t_role where title="录入员")
+	</select>
+	<select id="count" resultType="long">
+		select count(*) from t_user u,t_role r,t_user_role t,t_employee e where e.employee_id=u.id and e.hotel_id!=-1<if test="hotelId!=null"> and e.hotel_id=#{hotelId}</if> and u.id=t.user_id and r.id=t.role_id and u.company_id=#{companyId} and r.id=(select id from t_role where title="酒店录入员") <include refid="search"></include>
+	</select>
+	<select id="counts" resultType="long">
+		select count(*) from t_user u,t_role r,t_user_role t,t_employee e where u.id=e.employee_id and  u.id=t.user_id and r.id=t.role_id and u.company_id=#{companyId} and r.id=(select id from t_role where title="录入员") and e.user_id=#{userId} <include refid="search"></include>
+	</select>
+	<insert id="save" parameterType="userVo">
+		insert into t_user (phone,password,nickname,gender,is_active,headicon,realname,`identity`) values ( #{phone},#{password},#{nickname},#{gender},#{isActive},#{headicon},#{realname},#{identity})
+	</insert>
+	<update id="updateStatus">
+		update t_user set is_active=#{status} where id=#{id}
+	</update>
+	<update id="initPwd">
+		update t_user set password=#{password} where id=#{id}
+	</update>
+	<update id="update">
+		update t_user set realname=#{realname},`identity`=#{identity} where id = #{id}
+	</update>
+</mapper>

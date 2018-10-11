@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.cflwork.dao.HotelDAO">
+    <resultMap id="hotelMap" type="hotelVo">
+        <id column="id" property="id"></id>
+        <result column="title" property="title"></result>
+        <result column="tel" property="tel"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="is_active" property="isActive"></result>
+        <result column="hotel_manager_id" property="hotelManagerId"></result>
+        <result column="provice" property="provice"></result>
+        <result column="city" property="city"></result>
+        <result column="town" property="town"></result>
+        <result column="address" property="address"></result>
+        <association property="companyVo" javaType="companyVo">
+            <id column="companyId" property="id"></id>
+            <result column="companyTitle" property="title"></result>
+        </association>
+        <association property="userVo" javaType="userVo">
+            <id column="userId" property="id"></id>
+            <result column="nickname" property="nickname"></result>
+        </association>
+    </resultMap>
+    <resultMap id="select2Map" type="select2Vo"></resultMap>
+    <resultMap id="hotelVoMap" type="hotelVo"></resultMap>
+    <sql id="search">
+        <if test="#{pageQuery.searchVal!=null} and #{pageQuery.searchVal!=''}">
+            and (h.title like concat('%${pageQuery.searchVal}%')
+            or h.tel like concat ('%${pageQuery.searchVal}%')
+            or h.create_time like concat ('%${pageQuery.searchVal}%')
+            or h.is_active like concat ('%${pageQuery.searchVal}%'))
+        </if>
+    </sql>
+    <select id="getById" resultMap="hotelMap" parameterType="long">
+        select h.*,u.id as userId,c.id as companyId,u.nickname from t_hotel h,t_user u,t_company c where h.hotel_manager_id=u.id  and c.id=h.company_id and h.id = #{id}
+    </select>
+    <select id="findHotel" resultMap="hotelVoMap" parameterType="long">
+        select * from t_hotel where hotel_manager_id=#{hotelManagerId}
+    </select>
+    <delete id="removeById" parameterType="long">
+        delete from t_hotel where id = #{id}
+    </delete>
+    <select id="listPages" resultMap="hotelMap">
+        select h.*,u.id as userId,c.id as companyId,u.nickname from t_hotel h,t_user u,t_company c where h.hotel_manager_id=u.id  and c.id=h.company_id and h.company_id=#{companyId} <include refid="search"></include> limit #{pageQuery.pageNo},#{pageQuery.pageSize}
+    </select>
+    <select id="findPages" resultMap="hotelMap">
+        select h.*,u.id as userId,c.id as companyId,u.nickname from t_hotel h,t_user u,t_company c where h.hotel_manager_id=u.id  and c.id=h.company_id and h.company_id=#{pageQuery.companyId}
+        <if test="hotelVo.createTime!=null"> and h.create_time BETWEEN #{hotelVo.createTime} AND #{hotelVo.endTime}</if>
+        <if test="hotelVo.title!=null and hotelVo.title!='' "> and h.title like concat('%${hotelVo.title}%')</if>
+        <if test="hotelVo.hotelManagerId!=null"> and h.hotel_manager_id=#{hotelVo.hotelManagerId}</if>
+        <if test="hotelVo.tel!=null and hotelVo.tel!='' "> and h.tel like concat('%${hotelVo.tel}%')</if>
+        <if test="hotelVo.isActive!=null"> and h.is_active=#{hotelVo.isActive}</if>
+        limit #{pageQuery.pageNo},#{pageQuery.pageSize}
+    </select>
+    <select id="findCount" resultType="long">
+        select count(*) from t_hotel h,t_user u,t_company c where h.hotel_manager_id=u.id  and c.id=h.company_id and h.company_id=#{pageQuery.companyId}
+        <if test="hotelVo.createTime!=null"> and h.create_time BETWEEN #{hotelVo.createTime} AND #{hotelVo.endTime}</if>
+        <if test="hotelVo.title!=null and hotelVo.title!='' "> and h.title like concat('%${hotelVo.title}%')</if>
+        <if test="hotelVo.hotelManagerId!=null"> and h.hotel_manager_id=#{hotelVo.hotelManagerId}</if>
+        <if test="hotelVo.tel!=null and hotelVo.tel!='' "> and h.tel like concat('%${hotelVo.tel}%')</if>
+        <if test="hotelVo.isActive!=null"> and h.is_active=#{hotelVo.isActive}</if>
+    </select>
+    <select id="getContract" resultMap="select2Map">
+        select id,contract_contract as text from t_contract
+    </select>
+    <select id="getLandlord" resultMap="select2Map">
+        select u.id as id,u.nickname as text from t_user u,t_role r,t_user_role ur where r.id=ur.role_id and ur.user_id=u.id and r.title="店长"
+    </select>
+    <select id="listAll" resultMap="hotelMap">
+        select * from t_hotel
+    </select>
+    <select id="counts" resultType="java.lang.Long">
+        select count(*) from t_hotel h where h.company_id=#{companyId} <include refid="search"/>
+    </select>
+    <insert id="save" parameterType="hotelVo">
+        insert into t_hotel ( company_id,hotel_manager_id,title,tel,is_active,provice,city,town,address) values ( #{companyId},#{hotelManagerId},#{title},#{tel},#{isActive},#{provice},#{city},#{town},#{address})
+    </insert>
+    <update id="updateStatus">
+        update t_hotel set is_active=#{status} where id=#{id}
+    </update>
+    <update id="update">
+        update t_hotel set hotel_manager_id=#{hotelManagerId},title=#{title},tel=#{tel},provice=#{provice},city=#{city},town=#{town},address=#{address} where id = #{id}
+    </update>
+</mapper>

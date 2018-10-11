@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.cflwork.dao.HouseFactPayDAO">
+    <resultMap id="houseFactPayMap" type="top.cflwork.vo.HouseFactPayVo">
+    </resultMap>
+    <select id="getById" resultMap="houseFactPayMap" parameterType="long">
+        select t.*,(select house_name from t_rent_pay where id=t.house_rent_id) as houseName from t_house_fact_pay t where id = #{id}
+    </select>
+    <delete id="removeById" parameterType="long">
+        delete from t_house_fact_pay where id = #{id}
+    </delete>
+    <select id="listPage" resultMap="houseFactPayMap">
+        select t.*,(select house_name from t_rent_pay where id=t.house_rent_id) as houseName from t_house_fact_pay t where  t.company_id=#{companyId}  order by t.create_time desc limit #{pageNo},#{pageSize}
+    </select>
+    <select id="listAll" resultMap="houseFactPayMap">
+        select * from t_house_fact_pay where company_id=#{companyId}
+    </select>
+    <select id="count" resultType="java.lang.Long">
+        select count(*) from t_house_fact_pay t,t_rent_pay p where t.house_rent_id=p.id and t.company_id=#{companyId} 
+    </select>
+    <insert id="save" parameterType="houseFactPayVo">
+        insert into t_house_fact_pay (house_rent_id, pay_money,create_time, status,company_id) values ( #{houseRentId},#{payMoney},now(),#{status},#{companyId})
+    </insert>
+</mapper>

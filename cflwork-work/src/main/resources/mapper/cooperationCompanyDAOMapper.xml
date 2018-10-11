@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.cflwork.dao.CooperationCompanyDAO">
+    <resultMap id="cooperationCompanyMap" type="top.cflwork.vo.CooperationCompanyVo">
+        <id column="id" property="id"></id>
+        <result column="name" property="name"></result>
+        <result column="address" property="address"></result>
+        <result column="contact" property="contact"></result>
+        <result column="tel" property="tel"></result>
+        <result column="phone" property="phone"></result>
+        <result column="description" property="description"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="is_active" property="isActive"></result>
+        <result column="hotel_id" property="hotelId"></result>
+        <association property="companyVo" javaType="top.cflwork.vo.CompanyVo">
+            <id column="cid" property="id"></id>
+            <result column="cname" property="name"></result>
+        </association>
+        <association property="userVo" javaType="top.cflwork.vo.UserVo">
+            <id column="uid" property="id"></id>
+            <result column="nickname" property="nickname"></result>
+        </association>
+        <association property="hotelVo" javaType="top.cflwork.vo.HotelVo">
+            <id column="hid" property="id"></id>
+            <result column="title" property="title"></result>
+        </association>
+    </resultMap>
+    <sql id="search">
+        <if test="#{searchVal!=null} and #{searchVal!=''}">
+            and (t.name like concat('%${searchVal}%')
+            or t.address like concat ('%${searchVal}%')
+            or t.contact like concat ('%${searchVal}%')
+            or t.tel like concat ('%${searchVal}%')
+            or t.phone like concat ('%${searchVal}%')
+            or t.description like concat ('%${searchVal}%')
+            or t.is_active like concat ('%${searchVal}%'))
+        </if>
+    </sql>
+    <select id="getById" resultMap="cooperationCompanyMap" parameterType="long">
+        select t.*,c.name as cname from t_cooperation_company t,t_company c where t.company_id=c.id and t.id = #{id}
+    </select>
+    <delete id="removeById" parameterType="long">
+        delete from t_cooperation_company where id = #{id}
+    </delete>
+    <select id="listPage" resultMap="cooperationCompanyMap">
+        select t.*,c.name as cname from t_cooperation_company t,t_company c where  t.company_id=c.id and t.company_id=#{companyId} <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if> <include refid="search"/> order by t.create_time desc limit #{pageNo},#{pageSize}
+    </select>
+    <select id="count" resultType="java.lang.Long">
+        select count(*) from t_cooperation_company t,t_company c where t.company_id=c.id and t.company_id=#{companyId} <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if> <include refid="search"/>
+    </select>
+    <select id="listAll" resultMap="cooperationCompanyMap">
+        select t.*,c.name as cname,h.title from t_cooperation_company t,t_company c,t_hotel h where t.hotel_id=h.id and  t.company_id=c.id and t.company_id=#{companyId} <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if>
+    </select>
+    <select id="listPages" resultMap="cooperationCompanyMap">
+        select t.*,c.name as cname,h.title from t_cooperation_company t,t_company c,t_hotel h where t.hotel_id=h.id and  t.company_id=c.id and t.company_id=#{companyId} <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if> <include refid="search"/> order by t.create_time desc limit #{pageNo},#{pageSize}
+    </select>
+    <select id="counts" resultType="java.lang.Long">
+        select count(*) from t_cooperation_company t,t_company c,t_hotel h where t.hotel_id=h.id and  t.company_id=c.id and t.company_id=#{companyId} <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if> <include refid="search"/>
+    </select>
+    <insert id="save" parameterType="cooperationCompanyVo">
+        insert into t_cooperation_company (company_id, hotel_id,  name, address, contact, tel, phone, description, is_active) values ( #{companyId}, #{hotelId},  #{name}, #{address}, #{contact}, #{tel}, #{phone}, #{description}, #{isActive})
+    </insert>
+    <update id="updateStatus">
+        update t_cooperation_company set is_active=#{status} where id=#{id}
+    </update>
+    <update id="update">
+        update t_cooperation_company set name=#{name},address=#{address},contact=#{contact},tel=#{tel},phone=#{phone},description=#{description}<if test="hotelId!=null">,hotel_id=#{hotelId}</if> where id = #{id}
+    </update>
+</mapper>

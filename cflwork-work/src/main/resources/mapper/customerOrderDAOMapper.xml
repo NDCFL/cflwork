@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.cflwork.dao.CustomerOrderDAO">
+    <resultMap id="customerOrderMap" type="top.cflwork.vo.CustomerOrderVo">
+        <id column="id" property="id"></id>
+        <result column="customer_name" property="customerName"></result>
+        <result column="customer_identity" property="customerIdentity"></result>
+        <result column="customer_phone" property="customerPhone"></result>
+        <result column="customer_gender" property="customerGender"></result>
+        <result column="customer_from" property="customerFrom"></result>
+        <result column="unit_price" property="unitPrice"></result>
+        <result column="total_days" property="totalDays"></result>
+        <result column="house_pay" property="housePay"></result>
+        <result column="service_pay" property="servicePay"></result>
+        <result column="deposit" property="deposit"></result>
+        <result column="total_pay" property="totalPay"></result>
+        <result column="actual_return" property="actualReturn"></result>
+        <result column="checkin_time" property="checkinTime"></result>
+        <result column="checkout_time" property="checkoutTime"></result>
+        <result column="checkout_max_time" property="checkoutMaxTime"></result>
+        <result column="remark" property="remark"></result>
+        <result column="order_status" property="orderStatus"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="is_check" property="isCheck"></result>
+        <result column="check_remark" property="checkRemark"></result>
+        <result column="is_active" property="isActive"></result>
+        <result column="hand" property="hander"></result>
+        <result column="web" property="web"></result>
+        <result column="pay" property="pay"></result>
+        <result column="type" property="type"></result>
+        <result column="type_id" property="typeId"></result>
+        <result column="website_id" property="websiteId"></result>
+        <result column="house_type_id" property="houseTypeId"></result>
+        <result column="house_id" property="houseId"></result>
+        <result column="other_hotel" property="otherHotel"></result>
+        <result column="is_cash" property="isCash"></result>
+        <result column="payment_type_id" property="paymentTypeId"></result>
+        <result column="hotel_id" property="hotelId"></result>
+        <association property="companyVo" javaType="top.cflwork.vo.CompanyVo">
+            <id column="cid" property="id"></id>
+            <result column="name" property="name"></result>
+        </association>
+        <association property="hotelVo" javaType="top.cflwork.vo.HotelVo">
+            <id column="hid" property="id"></id>
+            <result column="title" property="title"></result>
+        </association>
+        <association property="userVo" javaType="top.cflwork.vo.UserVo">
+            <id column="uid" property="id"></id>
+            <result column="nickname" property="nickname"></result>
+        </association>
+        <association property="houseVo" javaType="top.cflwork.vo.HouseVo">
+            <id column="hid" property="id"></id>
+            <result column="card_title" property="cardTitle"></result>
+        </association>
+        <association property="contractVo" javaType="top.cflwork.vo.ContractVo">
+            <id column="ccid" property="id"></id>
+            <result column="contract" property="contractContract"></result>
+        </association>
+    </resultMap>
+    <resultMap id="select2VoMap" type="select2Vo"></resultMap>
+    <sql id="search">
+        <if test="#{searchVal!=null} and #{searchVal!=''}">
+            and (t.customer_name like concat('%${searchVal}%')
+            or t.customer_identity like concat ('%${searchVal}%')
+            or t.customer_phone like concat ('%${searchVal}%')
+            or t.customer_gender like concat ('%${searchVal}%')
+            or t.customer_from like concat ('%${searchVal}%')
+            or t.unit_price like concat ('%${searchVal}%')
+            or t.total_days like concat ('%${searchVal}%')
+            or t.house_pay like concat ('%${searchVal}%')
+            or t.service_pay like concat ('%${searchVal}%')
+            or t.deposit like concat ('%${searchVal}%')
+            or t.total_pay like concat ('%${searchVal}%')
+            or t.actual_return like concat ('%${searchVal}%')
+            or t.total_pay like concat ('%${searchVal}%')
+            or t.remark like concat ('%${searchVal}%')
+            or t.order_status like concat ('%${searchVal}%')
+            or t.is_check like concat ('%${searchVal}%')
+            or t.check_remark like concat ('%${searchVal}%')
+            or t.is_active like concat ('%${searchVal}%')
+            )
+        </if>
+    </sql>
+    <select id="getOthersHotel" resultMap="select2VoMap">
+        select id,title as text from t_hotel where company_id=#{companyId}  and id !=#{hotelId} and is_active=0
+    </select>
+    <select id="getHouse" resultMap="select2VoMap">
+        select id,card_title as text from t_house where  hotel_id=#{pageQuery.hotelId} and type=#{type} and #{leaveTime} >= leave_time and house_status=#{status} and is_active=0
+    </select>
+    <select id="getWeb" resultMap="select2VoMap" parameterType="long">
+        select id,title as text from t_cooperation_website where company_id=#{companyId} and is_active=0
+    </select>
+    <select id="getSubject" resultMap="select2VoMap" parameterType="long">
+        select id,title as text from t_payment_type where company_id=#{companyId} and is_active=0
+    </select>
+    <select id="getById" resultMap="customerOrderMap" parameterType="long">
+        select t.*,(select nickname from t_user where t.hander=t_user.id) as hand,(select h.title from t_cooperation_website where t.website_id=t_cooperation_website.id) as web,c.name,u.nickname,h.title,ho.card_title,co.contract_contract as contract,(SELECT title from t_payment_type where t.payment_type_id=t_payment_type.id) as pay  from t_customer_order t,t_company c,t_hotel h,t_house ho,t_contract co,t_user u where t.company_id=c.id and t.hotel_id=h.id and t.house_id=ho.id and t.shop_manager_id=u.id and t.contract_id=co.id and t.id = #{id}
+    </select>
+    <delete id="removeById" parameterType="long">
+        delete from t_customer_order where id = #{id}
+    </delete>
+    <select id="listPage" resultMap="customerOrderMap">
+        select t.*,(select nickname from t_user where t.hander=t_user.id) as hand,(select h.title from t_cooperation_website where t.website_id=t_cooperation_website.id) as web,c.name,u.nickname,h.title,ho.card_title,ho.id as hid,co.contract_contract as contract,(SELECT title from t_payment_type where t.payment_type_id=t_payment_type.id) as pay   from t_customer_order t,t_company c,t_hotel h,t_house ho,t_contract co,t_user u where t.company_id=c.id and t.hotel_id=h.id and t.house_id=ho.id and t.shop_manager_id=u.id and t.contract_id=co.id and  t.company_id=#{companyId} and t.hotel_id=#{hotelId} <include refid="search"/> order by t.create_time desc limit #{pageNo},#{pageSize}
+    </select>
+    <select id="listAll" resultMap="customerOrderMap">
+        select t.*,c.name,u.nickname,h.title,ho.card_title,co.contract_contract as contract,p.title as ptitle  from t_customer_order t,t_company c,t_hotel h,t_house ho,t_contract co,t_user u,t_payment_type p where t.company_id=c.id and t.hotel_id=h.id and t.house_id=ho.id and t.shop_manager_id=u.id and t.contract_id=co.id and t.payment_type_id = p.id and t.company_id=#{companyId} and t.hotel_id=#{hotelId}
+    </select>
+    <select id="count" resultType="java.lang.Long">
+        select count(*) from t_customer_order t,t_company c,t_hotel h,t_house ho,t_contract co,t_user u where t.company_id=c.id and t.hotel_id=h.id and t.house_id=ho.id and t.shop_manager_id=u.id and t.contract_id=co.id  and t.company_id=#{companyId} and t.hotel_id=#{hotelId} <include refid="search"/>
+    </select>
+    <insert id="save" parameterType="customerOrderVo">
+        insert into t_customer_order  ( company_id, hotel_id, shop_manager_id, house_id, contract_id, customer_name, customer_identity, customer_phone,customer_gender, customer_from, website_id, unit_price, total_days, house_pay, service_pay, deposit, total_pay, actual_return, payment_type_id, checkin_time, checkout_max_time, remark, order_status, is_check, is_active) values ( #{companyId}, #{hotelId}, #{shopManagerId}, #{houseId}, #{contractId}, #{customerName}, #{customerIdentity}, #{customerPhone},#{customerGender}, #{customerFrom}, #{websiteId}, #{unitPrice}, #{totalDays}, #{housePay}, #{servicePay}, #{deposit}, #{totalPay}, #{actualReturn}, #{paymentTypeId}, #{checkinTime}, #{checkoutMaxTime}, #{remark}, #{orderStatus}, #{isCheck}, #{isActive})
+    </insert>
+    <update id="updateStatus">
+        update t_customer_order set is_active=#{status} where id=#{id}
+    </update>
+    <update id="updateRemark">
+        update t_customer_order set remark=#{remark} where id=#{id}
+    </update>
+    <update id="updateCashStatus" parameterType="customerOrderVo">
+        update t_customer_order set is_check=#{isCheck},check_remark=#{reason},hander=#{hander} where id=#{id}
+    </update>
+    <update id="changeHouse" parameterType="customerOrderVo">
+        update t_customer_order set house_id=#{houseId} where id=#{id}
+    </update>
+    <update id="endHouse" parameterType="customerOrderVo">
+        update t_customer_order set actual_return=#{actualReturn} where id=#{id}
+    </update>
+    <insert id="saveList" parameterType="list">
+        insert into t_customer_order  ( company_id, hotel_id, shop_manager_id, house_id, contract_id, customer_name, customer_identity, customer_phone,customer_gender, customer_from, website_id, unit_price, total_days, house_pay, service_pay, deposit, total_pay, actual_return, payment_type_id, checkin_time, checkout_time, remark, order_status, is_check, is_active,type,type_id,other_hotel,other_hotel_money,other_hotel_money_type,is_cash) values
+        <foreach collection="list" index="index" item="item" separator=",">
+            ( #{item.companyId}, #{item.hotelId}, #{item.shopManagerId}, #{item.houseId}, #{item.contractId}, #{item.customerName}, #{item.customerIdentity}, #{item.customerPhone},#{item.customerGender}, #{item.customerFrom}, #{item.websiteId}, #{item.unitPrice}, #{item.totalDays}, #{item.housePay}, #{item.servicePay}, #{item.deposit}, #{item.totalPay}, #{item.actualReturn}, #{item.paymentTypeId}, #{item.checkinTime}, #{item.checkoutTime}, #{item.remark}, #{item.orderStatus}, #{item.isCheck}, #{item.isActive},#{item.type},#{item.typeId},#{item.otherHotel},#{item.otherHotelMoney},#{item.otherHotelMoneyType},#{item.isCash})
+        </foreach>
+    </insert>
+</mapper>

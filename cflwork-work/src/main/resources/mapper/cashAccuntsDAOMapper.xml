@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.cflwork.dao.CashAccountsDAO">
+    <resultMap id="cashAccountsMap" type="top.cflwork.vo.CashAccountsVo">
+        <id column="id" property="id"></id>
+        <result column="account_type" property="accountType"></result>
+        <result column="account_time" property="accountTime"></result>
+        <result column="account_time_end" property="accountTimeEnd"></result>
+        <result column="total_pay" property="totalPay"></result>
+        <result column="subject_id" property="subjectId"></result>
+        <result column="description" property="description"></result>
+        <result column="remark" property="remark"></result>
+        <result column="is_active" property="isActive"></result>
+        <result column="is_cash" property="isCash"></result>
+        <result column="cash_status" property="cashStatus"></result>
+        <result column="reason" property="reason"></result>
+        <result column="hand" property="hand"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="day_pay" property="dayPay"></result>
+        <result column="account_time_end" property="accountTimeEnd"></result>
+        <result column="pay_type_id" property="payTypeId"></result>
+        <result column="hotel_id" property="hotelId"></result>
+        <association property="companyVo" javaType="top.cflwork.vo.CompanyVo">
+            <id column="cid" property="id"></id>
+            <result column="name" property="name"></result>
+        </association>
+        <association property="hotelVo" javaType="top.cflwork.vo.HotelVo">
+            <id column="hid" property="id"></id>
+            <result column="title" property="title"></result>
+        </association>
+        <association property="userVo" javaType="top.cflwork.vo.UserVo">
+            <id column="uid" property="id"></id>
+            <result column="realname" property="realname"></result>
+        </association>
+        <association property="cashSubjectVo" javaType="top.cflwork.vo.CashSubjectVo">
+            <id column="caid" property="id"></id>
+            <result column="ctitle" property="title"></result>
+        </association>
+        <association property="paymentTypeVo" javaType="top.cflwork.vo.PaymentTypeVo">
+            <id column="pid" property="id"></id>
+            <result column="ptitle" property="title"></result>
+        </association>
+    </resultMap>
+    <resultMap id="select2VoMap" type="select2Vo"></resultMap>
+    <resultMap id="sumCashVoMap" type="top.cflwork.vo.SumCashVo"></resultMap>
+    <sql id="search">
+        <if test="#{searchVal!=null} and #{searchVal!=''}">
+            and (t.account_type like concat('%${searchVal}%')
+            or t.account_time like concat ('%${searchVal}%')
+            or t.total_pay like concat ('%${searchVal}%')
+            or t.subject_id like concat ('%${searchVal}%')
+            or t.description like concat ('%${searchVal}%')
+            or t.remark like concat ('%${searchVal}%')
+            or t.is_active like concat ('%${searchVal}%')
+            or t.is_cash like concat ('%${searchVal}%')
+            or t.cash_status like concat ('%${searchVal}%')
+            or t.reason like concat ('%${searchVal}%')
+            or t.is_cash like concat ('%${searchVal}%')
+            )
+        </if>
+    </sql>
+    <sql id="find">
+        <if test="createTime!=null"> and t.create_time BETWEEN #{createTime} AND #{endTime}</if>
+        <if test="description!=null"> and t.description like concat('%${description}%')</if>
+        <if test="subjectId!=null"> and t.subject_id=#{subjectId}</if>
+        <if test="cashStatus!=null"> and t.cash_status=#{cashStatus}</if>
+        <if test="payTypeId!=null"> and t.pay_type_id=#{payTypeId}</if>
+        <if test="totalPay!=null"> and t.total_pay=#{totalPay}</if>
+        <if test="loopTime!=null"> and #{loopTime} BETWEEN t.account_time AND t.account_time_end</if>
+        <if test="hander!=null"> and t.hander=#{hander}</if>
+    </sql>
+    <select id="getSubject" resultMap="select2VoMap" parameterType="long">
+        select id,title as text from t_cash_subject where company_id=#{companyId} and is_active=0
+    </select>
+    <select id="getHotel" resultMap="select2VoMap" parameterType="long">
+        select id,title as text from t_hotel where company_id=#{companyId} and  is_active=0
+    </select>
+    <select id="getPayType" resultMap="select2VoMap" parameterType="long">
+        select id,title as text from t_payment_type where company_id=#{companyId} and is_active=0
+    </select>
+    <select id="getById" resultMap="cashAccountsMap" parameterType="long">
+        select * from t_cash_accounts where id = #{id} and is_active=0
+    </select>
+    <delete id="removeById" parameterType="long">
+        delete from t_cash_accounts where id = #{id}
+    </delete>
+    <select id="listPage" resultMap="cashAccountsMap">
+        select t.*,(select realname from t_user where t.hander=t_user.id) as hand,h.title,c.name,s.title as ctitle,p.title as ptitle from t_cash_accounts t,t_company c,t_hotel h,t_cash_subject s,t_payment_type p where t.hotel_id=h.id and t.company_id=c.id and  t.subject_id=s.id and t.pay_type_id=p.id and t.company_id=#{companyId} and t.hotel_id!=-1  <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if>  order by create_time desc limit #{pageNo},#{pageSize}
+    </select>
+    <select id="listPages" resultMap="cashAccountsMap">
+        <if test="hotelId==-1">
+            select t.*,(select realname from t_user where t.hander=t_user.id) as hand,c.name,s.title as ctitle,p.title as ptitle from t_cash_accounts t,t_company c,t_cash_subject s,t_payment_type p where   t.company_id=c.id and   t.subject_id=s.id and t.pay_type_id=p.id  <if test="searchVal!=null and searchVal!=''"> and p.title=#{searchVal} </if> and t.account_type=#{type} and  month(t.create_time)=month(#{dateVal}) and t.company_id=#{companyId} <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if>  order by create_time desc limit #{pageNo},#{pageSize}
+        </if>
+        <if test="hotelId!=-1">
+            select t.*,(select realname from t_user where t.hander=t_user.id) as hand,h.title,c.name,s.title as ctitle,p.title as ptitle from t_cash_accounts t,t_company c,t_hotel h,t_cash_subject s,t_payment_type p where t.hotel_id=h.id and  t.company_id=c.id and   t.subject_id=s.id and t.pay_type_id=p.id  <if test="searchVal!=null and searchVal!=''"> and p.title=#{searchVal} </if> and t.account_type=#{type} and  month(t.create_time)=month(#{dateVal}) and t.company_id=#{companyId} <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if>  order by create_time desc limit #{pageNo},#{pageSize}
+        </if>
+    </select>
+    <select id="listAll" resultMap="cashAccountsMap">
+        select * from t_cash_accounts where company_id=#{companyId} and hotel_id=#{hotelId}
+    </select>
+    <select id="count" resultType="java.lang.Long">
+        <if test="hotelId==-1">
+          select count(*) from  t_cash_accounts t,t_company c,t_cash_subject s,t_payment_type p where  t.pay_type_id=p.id and t.company_id=c.id and  t.subject_id=s.id and t.company_id=#{companyId} <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if> 
+        </if>
+        <if test="hotelId!=-1">
+            select count(*) from  t_cash_accounts t,t_company c,t_hotel h,t_cash_subject s,t_payment_type p where t.hotel_id=h.id and t.pay_type_id=p.id and t.company_id=c.id and  t.subject_id=s.id and t.company_id=#{companyId} and t.hotel_id!=-1  <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if> 
+        </if>
+    </select>
+    <select id="counts" resultType="java.lang.Long">
+        select count(*) from  t_cash_accounts t,t_company c,t_hotel h,t_cash_subject s,t_payment_type p where t.hotel_id=h.id and t.pay_type_id=p.id and t.company_id=c.id and  t.subject_id=s.id <if test="searchVal!=null and searchVal!=''"> and p.title=#{searchVal} </if> and t.account_type=#{type} and month(t.create_time)=month(#{dateVal}) and t.company_id=#{companyId} <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if>
+    </select>
+    <insert id="save" parameterType="cashAccountsVo">
+        insert into t_cash_accounts  ( company_id, hotel_id,  account_type, account_time, total_pay, subject_id, description, remark, is_active, is_cash, cash_status, reason,account_time_end,day_pay,pay_type_id) values ( #{companyId}, #{hotelId}, #{accountType}, #{accountTime}, #{totalPay}, #{subjectId}, #{description}, #{remark}, #{isActive}, #{isCash}, #{cashStatus}, #{reason},#{accountTimeEnd},#{dayPay},#{payTypeId})
+    </insert>
+    <update id="updateStatus">
+        update t_cash_accounts set is_active=#{status} where id=#{id}
+    </update>
+    <update id="updateRemark">
+        update t_cash_accounts set remark=#{remark} where id=#{id}
+    </update>
+    <update id="updateCashStatus" parameterType="cashAccountsVo">
+        update t_cash_accounts set is_cash=#{isCash},cash_status=#{cashStatus},reason=#{reason},hander=#{hander} where id=#{id}
+    </update>
+    <update id="update" parameterType="cashAccountsVo">
+        update t_cash_accounts set account_type=#{accountType},total_pay=#{totalPay},subject_id=#{subjectId},description=#{description},account_time=#{accountTime},account_time_end=#{accountTimeEnd},day_pay=#{dayPay},pay_type_id=#{payTypeId},remark=#{remark},hotel_id=#{hotelId} where id = #{id}
+    </update>
+    <update id="checkerManyCashAccount" parameterType="java.util.List" >
+        <foreach collection="list" item="item" index="index" separator=";" >
+            update t_cash_accounts set is_cash=#{item.isCash},cash_status=#{item.cashStatus},reason=#{item.reason},hander=#{item.hander} where id=#{item.id}
+        </foreach>
+    </update>
+    <select id="sumCash" resultMap="sumCashVoMap">
+        <if test="hotelId==-1">
+            select
+            (select ifnull(sum(c.total_pay),0.0) from t_cash_accounts c where   c.is_cash=0 and c.account_type=0 <if test="dateVal!=null">and month(c.create_time)=month(#{dateVal}) and YEAR (c.create_time)=YEAR(#{dateVal})</if> and c.company_id=#{companyId}  <if test="hotelId!=null">and c.hotel_id=#{hotelId}</if>) as sumMoneyIn,
+            (select ifnull(sum(c.total_pay),0.0) from t_cash_accounts c where   c.is_cash=0 and c.account_type=1 <if test="dateVal!=null">and month(c.create_time)=month(#{dateVal}) and YEAR (c.create_time)=YEAR(#{dateVal})</if> and c.company_id=#{companyId} <if test="hotelId!=null">and c.hotel_id=#{hotelId}</if>) as sumMoneyOut
+            from t_cash_accounts where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> GROUP BY  company_id;
+        </if>
+        <if test="hotelId!=-1">
+            select
+            (select ifnull(sum(c.total_pay),0.0) from t_cash_accounts c where c.is_cash=0 and c.account_type=0 <if test="dateVal!=null">and month(c.create_time)=month(#{dateVal}) and YEAR (c.create_time)=YEAR(#{dateVal})</if> and c.hotel_id!=-1 and c.company_id=#{companyId}  <if test="hotelId!=null">and c.hotel_id=#{hotelId}</if>) as sumMoneyIn,
+            (select ifnull(sum(c.total_pay),0.0) from t_cash_accounts c where c.is_cash=0 and c.account_type=1 <if test="dateVal!=null">and month(c.create_time)=month(#{dateVal}) and YEAR (c.create_time)=YEAR(#{dateVal})</if> and c.hotel_id!=-1 and c.company_id=#{companyId} <if test="hotelId!=null">and c.hotel_id=#{hotelId}</if>) as sumMoneyOut
+            from t_cash_accounts where company_id=#{companyId} and hotel_id!=-1 GROUP BY  company_id;
+        </if>
+    </select>
+    <select id="countBy" resultType="java.lang.Long">
+        select count(*) from  t_cash_accounts t,t_company c,t_cash_subject s,t_payment_type p where t.hotel_id=-1 and  t.pay_type_id=p.id and t.company_id=c.id and  t.subject_id=s.id and t.company_id=#{companyId}  
+    </select>
+    <select id="listPageBy" resultMap="cashAccountsMap">
+        select t.*,(select realname from t_user where t.hander=t_user.id) as hand,c.name,s.title as ctitle,p.title as ptitle from t_cash_accounts t,t_company c,t_cash_subject s,t_payment_type p where  t.company_id=c.id and  t.subject_id=s.id and t.pay_type_id=p.id and t.company_id=#{companyId} <if test="hotelId!=null">and t.hotel_id=#{hotelId}</if>  order by create_time desc limit #{pageNo},#{pageSize}
+    </select>
+    <sql id="finds">
+        <if test="cashAccountsVo.createTime!=null"> and t.create_time BETWEEN #{cashAccountsVo.createTime} AND #{cashAccountsVo.endTime}</if>
+        <if test="cashAccountsVo.accountType!=null"> and t.account_type=#{cashAccountsVo.accountType}</if>
+        <if test="cashAccountsVo.totalPay!=null"> and t.total_pay=#{cashAccountsVo.totalPay}</if>
+        <if test="cashAccountsVo.description!=null"> and t.description like concat('%${cashAccountsVo.description}%')</if>
+        <if test="cashAccountsVo.subjectId!=null"> and t.subject_id=#{cashAccountsVo.subjectId}</if>
+        <if test="cashAccountsVo.cashStatus!=null"> and t.cash_status=#{cashAccountsVo.cashStatus}</if>
+        <if test="cashAccountsVo.payTypeId!=null"> and t.pay_type_id=#{cashAccountsVo.payTypeId}</if>
+        <if test="cashAccountsVo.loopTime!=null"> and #{cashAccountsVo.loopTime} BETWEEN t.account_time AND t.account_time_end</if>
+        <if test="cashAccountsVo.hander!=null"> and t.hander=#{cashAccountsVo.hander}</if>
+    </sql>
+    <select id="countBys" resultType="java.lang.Long">
+        select count(*) from  t_cash_accounts t,t_company c,t_cash_subject s,t_payment_type p where t.hotel_id=-1 and  t.pay_type_id=p.id and t.company_id=c.id and  t.subject_id=s.id and t.company_id=#{pageQuery.companyId}
+        <include refid="finds"></include>
+      </select>
+    <select id="listPageBys" resultMap="cashAccountsMap">
+        select t.*,
+        (select realname from t_user where t.hander=t_user.id) as hand,c.name,s.title as ctitle,p.title as ptitle from t_cash_accounts t,t_company c,t_cash_subject s,t_payment_type p where  t.company_id=c.id and  t.subject_id=s.id and t.pay_type_id=p.id and t.company_id=#{pageQuery.companyId}
+        <if test="pageQuery.hotelId!=null">and t.hotel_id=#{pageQuery.hotelId}</if>
+        <include refid="finds"></include>        order by t.create_time desc limit #{pageQuery.pageNo},#{pageQuery.pageSize}
+    </select>
+    <select id="countByHotel" resultType="java.lang.Long">
+        select count(*) from  t_cash_accounts t,t_company c,t_hotel h,t_cash_subject s,t_payment_type p where t.hotel_id=h.id and t.pay_type_id=p.id and t.company_id=c.id and  t.subject_id=s.id and t.company_id=#{pageQuery.companyId} and t.hotel_id!=-1
+        <if test="pageQuery.hotelId!=null">and t.hotel_id=#{pageQuery.hotelId}</if>
+        <include refid="finds"></include>    </select>
+    <select id="listPageByHotel" resultMap="cashAccountsMap">
+        select t.*,(select realname from t_user where t.hander=t_user.id) as hand,h.title,c.name,s.title as ctitle,p.title as ptitle from t_cash_accounts t,t_company c,t_hotel h,t_cash_subject s,t_payment_type p where t.hotel_id=h.id and t.company_id=c.id and  t.subject_id=s.id and t.pay_type_id=p.id and t.company_id=#{pageQuery.companyId} and t.hotel_id!=-1
+        <if test="pageQuery.hotelId!=null">and t.hotel_id=#{pageQuery.hotelId}</if>
+        <include refid="finds"></include>
+        order by t.create_time desc limit #{pageQuery.pageNo},#{pageQuery.pageSize}
+    </select>
+    <select id="cashSum" resultType="top.cflwork.vo.SumCashVo">
+      <if test="hotelId==-1">
+          <if test="accountType==null">
+              select
+              (select title from t_payment_type where id=#{payTypeId}) as payTypeName,
+              (select ifnull(sum(t.total_pay),0.0) from t_cash_accounts t where  t.company_id=1 and t.hotel_id=-1 and t.account_type=0 <include refid="find"></include>) as sumMoneyIn,
+              (select ifnull(sum(t.total_pay),0.0) from t_cash_accounts t where  t.company_id=1 and t.hotel_id=-1 and t.account_type=1 <include refid="find"></include>)  as sumMoneyOut
+              from t_cash_accounts where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> GROUP BY  company_id;
+          </if>
+          <if test="accountType==1">
+              select
+              (select title from t_payment_type where id=#{payTypeId}) as payTypeName,
+              (select ifnull(sum(t.total_pay),0.0) from t_cash_accounts t where  t.company_id=1 and t.hotel_id=-1 and t.account_type=1 <include refid="find"></include>)  as sumMoneyOut
+              from t_cash_accounts where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> GROUP BY  company_id;
+          </if><if test="accountType==0">
+          select
+          (select title from t_payment_type where id=#{payTypeId}) as payTypeName,
+          (select ifnull(sum(t.total_pay),0.0) from t_cash_accounts t where  t.company_id=1 and t.hotel_id=-1 and t.account_type=0 <include refid="find"></include>) as sumMoneyIn
+          from t_cash_accounts where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> GROUP BY  company_id;
+      </if>
+      </if>
+        <if test="hotelId!=-1">
+            <if test="accountType==null">
+                select
+                (select title from t_payment_type where id=#{payTypeId}) as payTypeName,
+                (select ifnull(sum(t.total_pay),0.0) from t_cash_accounts t where  t.company_id=1 and  t.hotel_id!=-1 <if test="hotelId!=null">and hotel_id=#{hotelId}</if> and t.account_type=0 <include refid="find"></include>) as sumMoneyIn,
+                (select ifnull(sum(t.total_pay),0.0) from t_cash_accounts t where  t.company_id=1 and  t.hotel_id!=-1 <if test="hotelId!=null">and hotel_id=#{hotelId}</if> and t.account_type=1 <include refid="find"></include>)  as sumMoneyOut
+                from t_cash_accounts where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> GROUP BY  company_id;
+
+            </if>
+            <if test="accountType==0">
+                select
+                (select title from t_payment_type where id=#{payTypeId}) as payTypeName,
+                (select ifnull(sum(t.total_pay),0.0) from t_cash_accounts t where  t.company_id=1 and  t.hotel_id!=-1 <if test="hotelId!=null">and hotel_id=#{hotelId}</if> and t.account_type=0 <include refid="find"></include>) as sumMoneyIn
+                from t_cash_accounts where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> GROUP BY  company_id;
+
+            </if>
+            <if test="accountType==1">
+                select
+                (select title from t_payment_type where id=#{payTypeId}) as payTypeName,
+                (select ifnull(sum(t.total_pay),0.0) from t_cash_accounts t where  t.company_id=1 and  t.hotel_id!=-1 <if test="hotelId!=null">and hotel_id=#{hotelId}</if> and t.account_type=1 <include refid="find"></include>)  as sumMoneyOut
+                from t_cash_accounts where company_id=#{companyId} <if test="hotelId!=null">and hotel_id=#{hotelId}</if> GROUP BY  company_id;
+
+            </if>
+        </if>
+    </select>
+</mapper>

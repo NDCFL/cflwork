@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.cflwork.dao.ContractDAO">
+    <resultMap id="contractMap" type="contractVo">
+        <id column="id" property="id"></id>
+        <result column="contract_contract" property="contractContract"></result>
+        <result column="contract_years" property="contractYears"></result>
+        <result column="contract_date" property="contractDate"></result>
+        <result column="contract_no" property="contractNo"></result>
+        <result column="min_profit" property="minProfit"></result>
+        <result column="profit_rate" property="profitRate"></result>
+        <result column="month_pay" property="monthPay"></result>
+        <result column="pay_date" property="payDate"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="is_active" property="isActive"></result>
+        <association property="contractMasterVo" javaType="top.cflwork.vo.ContractMasterVo">
+            <id column="mid" property="id"></id>
+            <result column="bank_account_name" property="bankAccountName"></result>
+        </association>
+    </resultMap>
+    <sql id="search">
+        <if test="#{pageQuery.searchVal!=null} and #{pageQuery.searchVal!=''}">
+            and (t.contract_contract like concat('%${pageQuery.searchVal}%')
+            or t.contract_years like concat ('%${pageQuery.searchVal}%')
+            or t.contract_date like concat ('%${pageQuery.searchVal}%')
+            or t.is_active like concat ('%${pageQuery.searchVal}%')
+            or t.contract_no like concat ('%${pageQuery.searchVal}%')
+            or t.create_time like concat ('%${pageQuery.searchVal}%')
+            or t.min_profit like concat ('%${pageQuery.searchVal}%')
+            or t.profit_rate like concat ('%${pageQuery.searchVal}%')
+            or t.month_pay like concat ('%${pageQuery.searchVal}%')
+            or t.pay_date like concat ('%${pageQuery.searchVal}%'))
+        </if>
+    </sql>
+    <select id="getById" resultMap="contractMap" parameterType="long">
+        select t.*,m.bank_account_name,m.id as mid from t_contract t,t_contract_master m where  t.master_id=m.id and t.id = #{id}
+    </select>
+    <delete id="removeById" parameterType="long">
+        delete from t_contract where id = #{id}
+    </delete>
+    <select id="listPages" resultMap="contractMap">
+        select t.*,m.bank_account_name from t_contract t,t_contract_master m where t.master_id=m.id and t.company_id=#{companyId} <include refid="search"/> limit #{pageQuery.pageNo},#{pageQuery.pageSize}
+    </select>
+    <select id="listPagesByMaster" resultMap="contractMap">
+        select t.*,m.bank_account_name from t_contract t,t_contract_master m where t.master_id=m.id and t.company_id=#{companyId} and t.master_id=#{masterId} limit #{pageQuery.pageNo},#{pageQuery.pageSize}
+    </select>
+    <select id="listAll" resultMap="contractMap">
+        select * from t_contract
+    </select>
+    <select id="counts" resultType="java.lang.Long">
+        select count(*) from t_contract t where t.company_id=#{companyId} <include refid="search"/>
+    </select>
+    <select id="countsByMaster" resultType="java.lang.Long">
+        select count(*) from t_contract t where t.company_id=#{companyId} and t.master_id=#{masterId}
+    </select>
+    <insert id="save" parameterType="contractVo">
+        insert into t_contract ( master_id,company_id,contract_contract,contract_years,contract_date,contract_no,min_profit,profit_rate,month_pay,pay_date,is_active) values ( #{masterId},#{companyId},#{contractContract},#{contractYears},#{contractDate},#{contractNo},#{minProfit},#{profitRate},#{monthPay},#{payDate},#{isActive})
+    </insert>
+    <update id="updateStatus">
+        update t_contract set is_active=#{status} where id=#{id}
+    </update>
+    <update id="update">
+        update t_contract set master_id=#{masterId},contract_contract=#{contractContract},contract_years=#{contractYears},contract_date=#{contractDate},contract_no=#{contractNo},min_profit=#{minProfit},profit_rate=#{profitRate},month_pay=#{monthPay},pay_date=#{payDate} where id = #{id}
+    </update>
+</mapper>

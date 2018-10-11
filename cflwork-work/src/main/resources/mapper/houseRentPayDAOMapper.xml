@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.cflwork.dao.HouseRentPayDAO">
+    <resultMap id="houseRentPayMap" type="top.cflwork.vo.HouseRentPayVo">
+        <id column="id" property="id"></id>
+        <result column="master_id" property="masterId"></result>
+        <result column="hotel_id" property="hotelId"></result>
+        <result column="company_id" property="companyId"></result>
+        <result column="total_pay" property="totalPay"></result>
+        <result column="pay_time" property="payTime"></result>
+        <result column="pay_count" property="payCount"></result>
+        <result column="pay_type" property="payType"></result>
+        <result column="pay_period_start" property="payPeriodStart"></result>
+        <result column="facted_pay_time_end" property="factedPayTimeEnd"></result>
+        <result column="facted_pay_time_start" property="factedPayTimeStart"></result>
+        <result column="fact_pay_time_end" property="factPayTimeEnd"></result>
+        <result column="fact_pay_time_start" property="factPayTimeStart"></result>
+        <result column="pay_period_end" property="payPeriodEnd"></result>
+        <result column="is_cash" property="isCash"></result>
+        <result column="description" property="description"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="is_active" property="isActive"></result>
+        <result column="house_name" property="houseName"></result>
+        <result column="first_pay" property="firstPay"></result>
+        <result column="first_pay_time" property="firstPayTime"></result>
+        <result column="area" property="area"></result>
+        <result column="house_count" property="houseCount"></result>
+        <result column="shuidian" property="shuidian"></result>
+        <result column="kongtiao" property="kongtiao"></result>
+        <result column="gongnuan" property="gongnuan"></result>
+        <result column="wuye" property="wuye"></result>
+        <result column="spare_money" property="spareMoney"></result>
+        <result column="zhuangxiu" property="zhuangxiu"></result>
+        <result column="yajin" property="yajin"></result>
+        <result column="bucaofei" property="bucaofei"></result>
+        <result column="buzhiqi" property="buzhiqi"></result>
+        <result column="nid" property="nid"></result>
+        <result column="qixian" property="qixian"></result>
+        <association property="contractMasterVo" javaType="top.cflwork.vo.ContractMasterVo">
+            <id column="cid" property="id"></id>
+            <result column="bank_account_name" property="bankAccountName"></result>
+            <result column="phone" property="phone"></result>
+        </association>
+        <association property="hotelVo" javaType="top.cflwork.vo.HotelVo">
+            <id column="hid" property="id"></id>
+            <result column="title" property="title"></result>
+        </association>
+    </resultMap>
+    <resultMap id="selet2VoMap" type="top.cflwork.vo.Select2Vo"></resultMap>
+    <resultMap id="houseRentMap" type="top.cflwork.vo.HouseRentVo"></resultMap>
+    <sql id="search">
+        <if test="#{searchVal!=null} and #{searchVal!=''}">
+            and (t.total_pay like concat('%${searchVal}%')
+            or t.pay_time like concat ('%${searchVal}%')
+            or t.pay_type like concat ('%${searchVal}%')
+            or t.description like concat ('%${searchVal}%')
+            or t.is_cash like concat ('%${searchVal}%')
+            or t.house_name like concat ('%${searchVal}%')
+            or t.first_pay like concat ('%${searchVal}%')
+            )
+        </if>
+    </sql>
+    <select id="getContractMaster" resultMap="selet2VoMap" parameterType="long">
+          select id,bank_account_name as text from t_contract_master where company_id=#{companyId} and is_active=0
+    </select>
+    <select id="getHotel" resultMap="selet2VoMap" parameterType="long">
+        select id,title as text from t_hotel where company_id=#{companyId} and is_active=0
+    </select>
+    <select id="getById" resultMap="houseRentPayMap" parameterType="long">
+        select t.*,c.id as cid,c.bank_account_name,c.phone,h.id as hid,h.title from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and t.id = #{id}
+    </select>
+    <delete id="removeById" parameterType="long">
+        delete from t_rent_pay where id = #{id}
+    </delete>
+    <select id="listPage" resultMap="houseRentPayMap">
+        select t.*,c.id as cid,c.bank_account_name,c.phone,h.id as hid,h.title from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and year(t.facted_pay_time_end)=year(now()) and t.company_id=#{companyId} <include refid="search"/> order by t.create_time desc limit #{pageNo},#{pageSize}
+    </select>
+    <select id="listAll" resultMap="houseRentPayMap">
+        select * from t_rent_pay where company_id=#{companyId}
+    </select>
+    <select id="count" resultType="java.lang.Long">
+        select count(*) from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} and year(t.facted_pay_time_end)=year(now())  <include refid="search"/>
+    </select>
+    <select id="chaoqicount" resultType="java.lang.Long">
+        <if test="temp==0">
+            <!--超期未付-->
+            select count(t.id) from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} and year(t.facted_pay_time_end)=year(now()) and NOW()>facted_pay_time_start order by t.create_time desc limit #{pageNo},#{pageSize}
+        </if>
+        <if test="temp==1">
+            <!--近五日待付-->
+            select count(t.id) from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} and year(t.facted_pay_time_end)=year(now()) and t.facted_pay_time_start BETWEEN NOW() and date_add(NOW(),interval 5 day) or date_add(NOW(),interval 5 day)>t.facted_pay_time_start order by t.create_time desc limit #{pageNo},#{pageSize}
+        </if>
+        <if test="temp==2">
+            <!--本月应付-->
+            select count(t.id) from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} and year(t.facted_pay_time_end)=year(now()) and t.qixian like CONCAT('%',DATE_FORMAT(now(),"%Y-%m"),'%') order by t.create_time desc limit #{pageNo},#{pageSize}
+        </if>
+        <if test="temp==3">
+            <!--本月已付付-->
+            select count(t.id) from t_rent_pay t,t_contract_master c,t_hotel h,t_house_fact_pay p where t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} and p.house_rent_id=t.id and p.house_rent_id=t.id and year(t.facted_pay_time_end)=year(now()) order by t.create_time desc limit #{pageNo},#{pageSize}
+        </if>
+        <if test="temp==4">
+            <!--本月待付-->
+            select count(t.id) from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} and year(t.facted_pay_time_end)=year(now()) and MONTH(NOW())>=month(t.facted_pay_time_start)  order by t.create_time desc limit #{pageNo},#{pageSize}
+        </if>
+        <if test="temp==5">
+            <!--次月应付-->
+            select count(t.id) from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} and year(t.facted_pay_time_end)=year(now()) and  DATE_FORMAT(date_add(now(), interval 1 month),"%Y-%m")>=DATE_FORMAT(t.facted_pay_time_start,"%Y-%m")  order by t.create_time desc limit #{pageNo},#{pageSize}
+        </if>
+    </select>
+    <select id="chaoqilistPage" resultMap="houseRentPayMap">
+        <if test="temp==0">
+            <!--超期未付-->
+            select t.*,c.id as cid,c.bank_account_name,c.phone,h.id as hid,h.title from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} and year(t.facted_pay_time_end)=year(now()) and NOW()>facted_pay_time_start order by t.create_time desc limit #{pageNo},#{pageSize}
+        </if>
+        <if test="temp==1">
+            <!--近五日待付-->
+            select t.*,c.id as cid,c.bank_account_name,c.phone,h.id as hid,h.title from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} and year(t.facted_pay_time_end)=year(now()) and t.facted_pay_time_start BETWEEN NOW() and date_add(NOW(),interval 5 day) or date_add(NOW(),interval 5 day)>t.facted_pay_time_start order by t.create_time desc limit #{pageNo},#{pageSize}
+        </if>
+        <if test="temp==2">
+            <!--本月应付-->
+            select t.*,c.id as cid,c.bank_account_name,c.phone,h.id as hid,h.title from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} and year(t.facted_pay_time_end)=year(now()) and t.qixian like CONCAT('%',DATE_FORMAT(now(),"%Y-%m"),'%') order by t.create_time desc limit #{pageNo},#{pageSize}
+        </if>
+        <if test="temp==3">
+            <!--本月已付付-->
+            select t.*,c.id as cid,c.bank_account_name,c.phone,h.id as hid,h.title from t_rent_pay t,t_contract_master c,t_hotel h,t_house_fact_pay p where t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} and p.house_rent_id=t.id and p.house_rent_id=t.id and year(t.facted_pay_time_end)=year(now()) order by t.create_time desc limit #{pageNo},#{pageSize}
+        </if>
+        <if test="temp==4">
+            <!--本月待付-->
+            select t.*,c.id as cid,c.bank_account_name,c.phone,h.id as hid,h.title from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} and year(t.facted_pay_time_end)=year(now()) and MONTH(NOW())>=month(t.facted_pay_time_start)  order by t.create_time desc limit #{pageNo},#{pageSize}
+        </if>
+        <if test="temp==5">
+            <!--次月应付-->
+            select t.*,c.id as cid,c.bank_account_name,c.phone,h.id as hid,h.title from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} and year(t.facted_pay_time_end)=year(now()) and  DATE_FORMAT(date_add(now(), interval 1 month),"%Y-%m")>=DATE_FORMAT(t.facted_pay_time_start,"%Y-%m")  order by t.create_time desc limit #{pageNo},#{pageSize}
+        </if>
+    </select>
+    <sql id="finds">
+        <if test="houseRentPayVo.createTime!=null"> and t.create_time BETWEEN #{houseRentPayVo.createTime} AND #{houseRentPayVo.endTime}</if>
+        <if test="houseRentPayVo.name!=null"> and c.bank_account_name like concat('%${houseRentPayVo.name}%')</if>
+        <if test="houseRentPayVo.phone!=null"> and c.phone like concat('%${houseRentPayVo.phone}%')</if>
+        <if test="houseRentPayVo.houseName!=null"> and t.house_name like concat('%${houseRentPayVo.houseName}%')</if>
+        <if test="houseRentPayVo.payTime!=null"> and t.pay_time=#{houseRentPayVo.payTime}</if>
+        <if test="houseRentPayVo.payType!=null"> and t.pay_type=#{houseRentPayVo.payType}</if>
+        <if test="houseRentPayVo.description!=null"> and t.description like concat('%${houseRentPayVo.description}%')</if>
+        <if test="houseRentPayVo.isActive!=null"> and t.is_active=#{houseRentPayVo.isActive}</if>
+        <if test="houseRentPayVo.hotelId!=null"> and t.hotel_id=#{houseRentPayVo.hotelId}</if>
+    </sql>
+    <select id="counts" resultType="java.lang.Long">
+        select count(*) from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and year(t.facted_pay_time_end)=year(now()) and  t.company_id=#{pageQuery.companyId} <include refid="finds"/>
+    </select>
+    <select id="pageLists" resultMap="houseRentPayMap">
+        select t.*,c.id as cid,c.bank_account_name,c.phone,h.id as hid,h.title from t_rent_pay t,t_contract_master c,t_hotel h where t.master_id=c.id and t.hotel_id=h.id and year(t.facted_pay_time_end)=year(now()) and  t.company_id=#{pageQuery.companyId} <include refid="finds"/> order by t.create_time desc limit #{pageQuery.pageNo},#{pageQuery.pageSize}
+    </select>
+
+    <insert id="save" parameterType="houseRentPayVo">
+        insert into t_rent_pay (master_id, hotel_id, company_id, total_pay, fact_pay_time_start, fact_pay_time_end, facted_pay_time_end, facted_pay_time_start, fact_pay, pay_count, pay_time, pay_type, spare_money, pay_fact_time, pay_period_start, pay_period_end, is_cash, description,is_active, house_name, first_pay, first_pay_time, sum_pay, day_pay, month_pay,area,house_count,shuidian,kongtiao,gongnuan,wuye,yajin,bucaofei,buzhiqi,nid,zhuangxiu,qixian) values
+        (#{masterId}, #{hotelId}, #{companyId}, #{totalPay}, #{factPayTimeStart}, #{factPayTimeEnd}, #{factedPayTimeEnd}, #{factedPayTimeStart}, #{factPay}, #{payCount}, #{payTime}, #{payType}, #{spareMoney}, #{payFactTime}, #{payPeriodStart}, #{payPeriodEnd}, #{isCash}, #{description},  #{isActive}, #{houseName}, #{firstPay}, #{firstPayTime}, #{sumPay}, #{dayPay}, #{monthPay},#{area},#{houseCount},#{shuidian},#{kongtiao},#{gongnuan},#{wuye},#{yajin},#{bucaofei},#{buzhiqi},#{nid},#{zhuangxiu},#{qixian})
+    </insert>
+    <update id="updateStatus">
+        update t_rent_pay set is_active=#{status} where id=#{id}
+    </update>
+    <update id="update">
+        update t_rent_pay set master_id=#{masterId},hotel_id=#{hotelId},house_name=#{houseName},description=#{description},area=#{area},house_count=#{houseCount},zhuangxiu=#{zhuangxiu},shuidian=#{shuidian},kongtiao=#{kongtiao},gongnuan=#{gongnuan},wuye=#{wuye},yajin=#{yajin},bucaofei=#{bucaofei},buzhiqi=#{buzhiqi} where nid = #{nid}
+    </update>
+    <select id="notHotelId" resultMap="houseRentMap">
+        select
+        (select IfNULL(count(house_name),0) from t_rent_pay where  year(facted_pay_time_end)=year(now()) and is_active=0) as 'houseTotal',
+        (select IfNULL(sum(spare_money),0) from t_rent_pay where   year(facted_pay_time_end)=year(now()) and is_active=0) as 'dfPayMoney',
+        (select IfNULL(sum(ceil(datediff(now(),facted_pay_time_start)/30)*first_pay),0.0) from t_rent_pay where  year(facted_pay_time_end)=year(now()) and NOW()>facted_pay_time_start and is_active=0) as 'chaoqiPayMoney',
+        (select IfNULL(sum(month_pay),0.0) from t_rent_pay where  year(facted_pay_time_end)=year(now()) and is_active=0) as 'monthPayMoney',
+        (select IfNULL(avg(month_pay),0.0) from t_rent_pay where  year(facted_pay_time_end)=year(now()) and is_active=0) as 'houseMonthPayMoney',
+        (select IfNULL(avg(day_pay),0.0) from t_rent_pay where  year(facted_pay_time_end)=year(now()) and is_active=0) as 'houseDayPayMoney',
+        (select IfNULL(sum(first_pay),0.0) from t_rent_pay where   year(facted_pay_time_end)=year(now()) and facted_pay_time_start BETWEEN NOW() and date_add(NOW(),interval 5 day) or date_add(NOW(),interval 5 day)>facted_pay_time_start and is_active=0) as 'fiveDayPayMoney',
+        (select IfNULL(sum(month_pay),0) from t_rent_pay where   year(facted_pay_time_end)=year(now()) and qixian like CONCAT('%',DATE_FORMAT(now(),"%Y-%m"),'%') and is_active=0) as 'thisMonthPayMoney',
+        (select IfNULL(sum(pay_money),0.0) from t_house_fact_pay t,t_rent_pay r where t.house_rent_id=r.id and t.house_rent_id=r.id and year(r.facted_pay_time_end)=year(now()) and is_active=0) as 'thisMonthPayAll',
+        (select IfNULL(sum(month_pay),0) from t_rent_pay where   year(facted_pay_time_end)=year(now()) and MONTH(NOW())>=month(facted_pay_time_start) and is_active=0) as 'thisMonthNotPay',
+        (select IfNULL(sum(month_pay),0.0) from t_rent_pay where  year(facted_pay_time_end)=year(now()) and  DATE_FORMAT(date_add(now(), interval 1 month),"%Y-%m")>=DATE_FORMAT(facted_pay_time_start,"%Y-%m") and is_active=0) as 'nextMonthPay'
+        from t_rent_pay limit 0,1;
+    </select>
+    <select id="haveHotelId" resultMap="houseRentMap" parameterType="long">
+        select
+        (select IfNULL(count(house_name),0) from t_rent_pay where hotel_id=#{hotelId} and year(facted_pay_time_end)=year(now()) and is_active=0 ) as 'houseTotal',
+        (select IfNULL(sum(spare_money),0) from t_rent_pay where hotel_id=#{hotelId} and  year(facted_pay_time_end)=year(now()) and is_active=0) as 'dfPayMoney',
+        (select IfNULL(sum(ceil(datediff(now(),facted_pay_time_start)/30)*first_pay),0.0) from t_rent_pay where hotel_id=#{hotelId} and year(facted_pay_time_end)=year(now()) and NOW()>facted_pay_time_start and is_active=0) as 'chaoqiPayMoney',
+        (select IfNULL(sum(month_pay),0.0) from t_rent_pay where hotel_id=#{hotelId} and year(facted_pay_time_end)=year(now()) and is_active=0) as 'monthPayMoney',
+        (select IfNULL(avg(month_pay),0.0) from t_rent_pay where hotel_id=#{hotelId} and year(facted_pay_time_end)=year(now()) and is_active=0) as 'houseMonthPayMoney',
+        (select IfNULL(avg(day_pay),0.0) from t_rent_pay where hotel_id=#{hotelId} and year(facted_pay_time_end)=year(now()) and is_active=0) as 'houseDayPayMoney',
+        (select IfNULL(sum(first_pay),0.0) from t_rent_pay where hotel_id=#{hotelId} and  year(facted_pay_time_end)=year(now()) and facted_pay_time_start BETWEEN NOW() and date_add(NOW(),interval 5 day) or date_add(NOW(),interval 5 day)>facted_pay_time_start and is_active=0) as 'fiveDayPayMoney',
+        (select IfNULL(sum(month_pay),0) from t_rent_pay where hotel_id=#{hotelId} and  year(facted_pay_time_end)=year(now()) and qixian like CONCAT('%',DATE_FORMAT(now(),"%Y-%m"),'%') and is_active=0) as 'thisMonthPayMoney',
+        (select IfNULL(sum(pay_money),0.0) from t_house_fact_pay t,t_rent_pay r where r.hotel_id=#{hotelId} and t.house_rent_id=r.id and t.house_rent_id=r.id and year(r.facted_pay_time_end)=year(now()) and is_active=0) as 'thisMonthPayAll',
+        (select IfNULL(sum(month_pay),0) from t_rent_pay where hotel_id=#{hotelId} and  year(facted_pay_time_end)=year(now()) and MONTH(NOW())>=month(facted_pay_time_start) and is_active=0) as 'thisMonthNotPay',
+        (select IfNULL(sum(month_pay),0.0) from t_rent_pay where hotel_id=#{hotelId} and year(facted_pay_time_end)=year(now()) and DATE_FORMAT(date_add(now(), interval 1 month),"%Y-%m")>=DATE_FORMAT(facted_pay_time_start,"%Y-%m") and is_active=0) as 'nextMonthPay'
+        from t_rent_pay where hotel_id=#{hotelId} GROUP BY  hotel_id;
+    </select>
+    <sql id="find">
+        <if test="createTime!=null"> and t.create_time BETWEEN #{createTime} AND #{endTime}</if>
+        <if test="name!=null"> and c.bank_account_name like concat('%${name}%')</if>
+        <if test="phone!=null"> and c.phone like concat('%${phone}%')</if>
+        <if test="houseName!=null"> and t.house_name like concat('%${houseName}%')</if>
+        <if test="payTime!=null"> and t.pay_time=#{payTime}</if>
+        <if test="payType!=null"> and t.pay_type=#{payType}</if>
+        <if test="description!=null"> and t.description like concat('%${description}%')</if>
+        <if test="isActive!=null"> and t.is_active=#{isActive}</if>
+        <if test="hotelId!=null"> and t.hotel_id=#{hotelId}</if>
+    </sql>
+    <select id="findHotelId" resultMap="houseRentMap" parameterType="houseRentPayVo">
+        select
+        (select IfNULL(count(t.house_name),0) from t_rent_pay t,t_contract_master c where  t.master_id=c.id and <if test="hotelId!=null">t.hotel_id=#{hotelId} and</if> year(t.facted_pay_time_end)=year(now()) <include refid="find"/>) as 'houseTotal',
+        (select IfNULL(sum(t.spare_money),0) from t_rent_pay t,t_contract_master c where  t.master_id=c.id and <if test="hotelId!=null">t.hotel_id=#{hotelId} and</if> year(t.facted_pay_time_end)=year(now()) <include refid="find"/>) as 'dfPayMoney',
+        (select IfNULL(SUM(ceil(datediff(now(),t.facted_pay_time_start)/30/t.pay_time)*t.first_pay),0.0) from t_rent_pay t,t_contract_master c where  t.master_id=c.id and <if test="hotelId!=null">t.hotel_id=#{hotelId} and</if> year(t.facted_pay_time_end)=year(now()) and NOW()>t.facted_pay_time_end <include refid="find"/>) as 'chaoqiPayMoney',
+        (select IfNULL(sum(t.month_pay),0.0) from t_rent_pay t,t_contract_master c where  t.master_id=c.id and <if test="hotelId!=null">t.hotel_id=#{hotelId} and</if> year(t.facted_pay_time_end)=year(now()) <include refid="find"/>) as 'monthPayMoney',
+        (select IfNULL(avg(t.month_pay),0.0) from t_rent_pay t,t_contract_master c where  t.master_id=c.id and <if test="hotelId!=null">t.hotel_id=#{hotelId} and</if> year(t.facted_pay_time_end)=year(now()) <include refid="find"/>) as 'houseMonthPayMoney',
+        (select IfNULL(avg(t.day_pay),0.0) from t_rent_pay t,t_contract_master c where  t.master_id=c.id and <if test="hotelId!=null">t.hotel_id=#{hotelId} and</if> year(t.facted_pay_time_end)=year(now()) <include refid="find"/>) as 'houseDayPayMoney',
+        (select IfNULL(sum(t.first_pay),0.0) from t_rent_pay t,t_contract_master c where  t.master_id=c.id and <if test="hotelId!=null">t.hotel_id=#{hotelId} and</if> year(t.facted_pay_time_end)=year(now()) and t.facted_pay_time_start BETWEEN NOW() and date_add(NOW(),interval 5 day) or date_add(NOW(),interval 5 day)>t.facted_pay_time_start and t.is_active=0) as 'fiveDayPayMoney',
+        (select IfNULL(sum(t.first_pay),0.0) from t_rent_pay t,t_contract_master c where  t.master_id=c.id and <if test="hotelId!=null">t.hotel_id=#{hotelId} and</if> year(t.facted_pay_time_end)=year(now()) and t.qixian like CONCAT('%',DATE_FORMAT(now(),'%Y-%m'),'%') <include refid="find"/>) as 'thisMonthPayMoney',
+        (select IfNULL(sum(p.pay_money),0.0) from t_house_fact_pay p,t_rent_pay t,t_contract_master c where t.master_id=c.id and <if test="hotelId!=null">t.hotel_id=#{hotelId} and</if> p.house_rent_id=t.id and p.house_rent_id=t.id and year(t.facted_pay_time_end)=year(now()) <include refid="find"/>) as 'thisMonthPayAll',
+        (select IfNULL(sum(t.first_pay),0.0) from t_rent_pay t,t_contract_master c where  t.master_id=c.id and <if test="hotelId!=null">t.hotel_id=#{hotelId} and</if> year(t.facted_pay_time_end)=year(now()) and MONTH(NOW())>=month(facted_pay_time_start) <include refid="find"/>) as 'thisMonthNotPay',
+        (select IfNULL(sum(t.month_pay),0.0) from t_rent_pay t,t_contract_master c where  t.master_id=c.id and <if test="hotelId!=null">t.hotel_id=#{hotelId} and</if> year(t.facted_pay_time_end)=year(now()) and DATE_FORMAT(date_add(now(), interval 1 month),"%Y-%m")>=DATE_FORMAT(t.facted_pay_time_start,"%Y-%m") <include refid="find"/>) as 'nextMonthPay'
+        from t_rent_pay <if test="hotelId!=null">where  hotel_id=#{hotelId}</if> GROUP BY  hotel_id;
+    </select>
+    <update id="huankuan">
+        update t_rent_pay set
+        facted_pay_time_start = date_add(facted_pay_time_start, interval pay_type*(#{thisCount})  MONTH ),
+        facted_pay_time_end = date_add(facted_pay_time_end, interval pay_type*(#{thisCount}) MONTH ),
+        spare_money = spare_money-#{thisPayMoney},
+        sum_pay=sum_pay+#{thisPayMoney},
+        pay_count=pay_count-#{thisCount}
+        where id=#{id}
+    </update>
+</mapper>
