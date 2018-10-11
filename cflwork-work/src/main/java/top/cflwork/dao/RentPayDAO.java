@@ -1,5 +1,6 @@
 package top.cflwork.dao;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import top.cflwork.query.PageQuery;
 import top.cflwork.vo.*;
@@ -21,4 +22,20 @@ public interface RentPayDAO extends BaseDAO<RentPayVo>{
      * @return
      */
     List<HotelVo> getOtherHotel(UserVo userVo);
+
+    /**
+     * 搜索分页
+     * @param pageQuery
+     * @param rentPayVo
+     * @return
+     */
+    List<RentPayVo> listPages(@Param("pageQuery") PageQuery pageQuery, @Param("rentPayVo") RentPayVo rentPayVo);
+
+    /**
+     * 搜索记录条数
+     * @param pageQuery
+     * @param rentPayVo
+     * @return
+     */
+    Long counts(@Param("pageQuery") PageQuery pageQuery, @Param("rentPayVo") RentPayVo rentPayVo);
 }

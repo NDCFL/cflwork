@@ -103,4 +103,14 @@ public class RentPayServiceImpl implements RentPayService{
     public List<HotelVo> getOtherHotel(UserVo userVo) {
         return rentPayDAO.getOtherHotel(userVo);
     }
+
+    @Override
+    public List<RentPayVo> listPages(PageQuery pageQuery, RentPayVo rentPayVo) {
+        return rentPayDAO.listPages(pageQuery, rentPayVo);
+    }
+
+    @Override
+    public Long counts(PageQuery pageQuery, RentPayVo rentPayVo) {
+        return rentPayDAO.counts(pageQuery, rentPayVo);
+    }
 }

@@ -279,7 +279,32 @@ function updatestatus(id, status) {
 }
 //查询按钮事件
 $('#search_btn').click(function () {
-    $('#mytab').bootstrapTable('refresh', {url: '/rentPay/rentPayList'});
+    var times = $("#test11").val();
+    var start,end;
+    if(!times){
+        start = null;
+        end = null;
+    }else {
+        start = times.substring(0,11)+"00:00:00";
+        end = times.substring(13,times.length)+" 23:59:59";
+    }
+    $('#mytab').bootstrapTable('refresh',
+        {
+            url: '/rentPay/findRentPayList',
+            query:{
+                createTime:start,
+                endTime:end,
+                name:$("#bankAccountName").val(),
+                phone:$("#phone").val(),
+                houseName:$("#houseName").val(),
+                payMoneyType:$("#payMoneyType").val(),
+                payType:$("#payType").val(),
+                description:$("#descriptions").val(),
+                isActive:$("#status").val(),
+                hotelId:$("#hotel_Ids").val()
+            }
+        }
+    );
 })
 function refush() {
     $('#mytab').bootstrapTable('refresh', {url: '/rentPay/rentPayList'});

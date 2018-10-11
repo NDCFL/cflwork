@@ -161,8 +161,6 @@
         </div>
     </div>
 </div>
-
-
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="ibox float-e-margins">
         <div class="ibox-title">
@@ -171,9 +169,13 @@
         <div class="ibox-content">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    房租列表
+                    搜索条件
                 </div>
                 <div class="panel-body form-group" style="margin-bottom:0px;">
+                    <label class="col-sm-1 control-label">创建时间</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="test11" />
+                    </div>
                     <label class="col-sm-1 control-label">姓名</label>
                     <div class="col-sm-2">
                         <input type="text" class="form-control" id="bankAccountName"
@@ -191,14 +193,14 @@
                             <option value="1">禁用</option>
                         </select>
                     </div>
+                </div>
+                <div class="panel-body form-group" style="margin-bottom:0px;">
                     <label class="col-sm-1 control-label">房源归属</label>
                     <div class="col-sm-2">
                         <select class="form-control" id="hotel_Ids" required name="hotelId">
                             <option value="">全部</option>
                         </select>
                     </div>
-                </div>
-                <div class="panel-body form-group" style="margin-bottom:0px;">
                     <label class="col-sm-1 control-label">房号</label>
                     <div class="col-sm-2">
                         <input type="text" class="form-control" id="houseName" name="houseName"/>
@@ -232,13 +234,12 @@
                             <option value="12">12/月付</option>
                         </select>
                     </div>
+                </div>
+                <div class="panel-body form-group" style="margin-bottom:0px;">
                     <label class="col-sm-1 control-label">备注</label>
                     <div class="col-sm-2">
                         <input type="text" class="form-control" id="descriptions" name="description"/>
                     </div>
-                </div>
-                <div class="panel-body form-group" style="margin-bottom:0px;">
-
                     <div class="col-sm-3">
                         <button class="btn btn-primary col-sm-12 " id="search_btn">查询</button>
                     </div>
@@ -870,7 +871,6 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
 </div>
-
 <%--网站信息的修改--%>
 <jsp:include page="../common/bootstraptablejs.jsp"></jsp:include>
 <script src="<%=path%>/static/js/pageJs/houseRentPay.js"></script>

@@ -271,34 +271,78 @@
     <div class="ibox float-e-margins">
         <div class="ibox-title">
             <h5>分成房租列表</h5>
-            <div class="ibox-tools">
-                <a class="collapse-link">
-                    <i class="fa fa-chevron-up"></i>
-                </a>
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="fa fa-wrench"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-user">
-                    <li><a href="#">选项1</a>
-                    </li>
-                    <li><a href="#">选项2</a>
-                    </li>
-                </ul>
-                <a class="close-link">
-                    <i class="fa fa-times"></i>
-                </a>
-            </div>
         </div>
         <div class="ibox-content">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    分成房租列表
+                    搜索条件
+                </div>
+                <div class="panel-body form-group" style="margin-bottom:0px;">
+                    <label class="col-sm-1 control-label">创建时间</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="test11" />
+                    </div>
+                    <label class="col-sm-1 control-label">姓名</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="bankAccountName"/>
+                    </div>
+                    <label class="col-sm-1 control-label">电话</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="phone"/>
+                    </div>
+                    <label class="col-sm-1 control-label">房源状态</label>
+                    <div class="col-sm-2">
+                        <select name="isActive" class="form-control" id="status" required>
+                            <option value="">全部</option>
+                            <option value="0">启用</option>
+                            <option value="1">禁用</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="panel-body form-group" style="margin-bottom:0px;">
+                    <label class="col-sm-1 control-label">房源归属</label>
+                    <div class="col-sm-2">
+                        <select class="form-control" id="hotel_Ids" required name="hotelId">
+                            <option value="">全部</option>
+                        </select>
+                    </div>
+                    <label class="col-sm-1 control-label">房间名称</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="houseName" name="houseName"/>
+                    </div>
+                    <label class="col-sm-1 control-label">分成方式</label>
+                    <div class="col-sm-2">
+                        <select class="form-control" required id="payMoneyType">
+                            <option value="0">有成本</option>
+                            <option value="1">无成本</option>
+                        </select>
+                    </div>
+                    <label class="col-sm-1 control-label">付款方式</label>
+                    <div class="col-sm-2">
+                        <select class="form-control" required name="payType" id="payType">
+                            <option value="">全部</option>
+                            <option value="1">1/月付</option>
+                            <option value="2">2/月付</option>
+                            <option value="3">3/月付</option>
+                            <option value="4">4/月付</option>
+                            <option value="6">6/月付</option>
+                            <option value="12">12/月付</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="panel-body form-group" style="margin-bottom:0px;">
+                    <label class="col-sm-1 control-label">备注</label>
+                    <div class="col-sm-2">
+                        <input type="text" class="form-control" id="descriptions" name="description"/>
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-primary col-sm-12 " id="search_btn">查询</button>
+                    </div>
                 </div>
                 <div class="panel-body form-group" style="margin-bottom:0px;">
                     <table id="mytab" name="mytab" class="table table-hover"></table>
                 </div>
             </div>
-
             <div id="toolbar" class="btn-group pull-right" style="margin-right: 20px;">
                 <button id="btn_edit" type="button" class="btn btn-default" style="display: block; border-radius: 0">
                     <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>修改
@@ -595,6 +639,10 @@
     });
     laydate.render({
         elem: '#test4' //指定元素
+    });
+    laydate.render({
+        elem: '#test11' //指定元素
+        , range: true
     });
     laydate.render({
         elem: '#test5' //指定元素

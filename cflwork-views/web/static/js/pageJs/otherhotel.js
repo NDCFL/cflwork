@@ -19,22 +19,6 @@ $('#mytab').bootstrapTable({
     sidePagination : "client", // 设置在哪里进行分页，可选值为"client" 或者
     columns:[
         {
-            title:'全选',
-            field:'select',
-            //复选框
-            checkbox:true,
-            width:25,
-            align:'center',
-            valign:'middle'
-        },
-
-        {
-            title:'店长',
-            field:'userVo.nickname',
-            align:'center',
-            sortable:true
-        },
-        {
             title:'分店名称',
             field:'title',
             align:'center',
@@ -42,14 +26,14 @@ $('#mytab').bootstrapTable({
         }
         ,
         {
-            title:'分店电话',
-            field:'tel',
+            title:'未录入天数',
+            field:'title',
             align:'center',
             sortable:true
         }
         ,
         {
-            title:'创建时间',
+            title:'最新录入',
             field:'createTime',
             align:'center',
             sortable:true,
@@ -66,52 +50,16 @@ $('#mytab').bootstrapTable({
         }
         ,
         {
-            title:'营业状态',
-            field:'isActive',
-            align:'center',
-            formatter: function (value, row, index) {
-                if(value==0){
-                    //表示启用状态
-                    return '<i style="color: green">启用</i>';
-                }else{
-                    //表示启用状态
-                    return '<i style="color: red">停用</i>';
-                }
-            }
-        }
-        ,
-        {
             title:'操作',
             align:'center',
             field:'',
             formatter: function (value, row, index) {
-                var e = '<a title="编辑" href="javascript:void(0);" id="hotel"  data-toggle="modal" data-id="\'' + row.id + '\'" data-target="#myModal" onclick="return edit(\'' + row.id + '\')"><i class="glyphicon glyphicon-pencil" alt="修改" style="color:green">修改</i></a> ';
-                var d = '<a title="删除" href="javascript:void(0);" onclick="del('+row.id+','+row.isActive+')"><i class="glyphicon glyphicon-trash" alt="删除" style="color:red">删除</i></a> ';
-                var f='';
-                if(row.isActive==1){
-                    f = '<a title="启用" href="javascript:void(0);" onclick="updatestatus('+row.id+','+0+')"><i class="glyphicon glyphicon-ok-sign" style="color:green">启用</i></a> ';
-                }else if(row.isActive==0){
-                    f = '<a title="停用" href="javascript:void(0);" onclick="updatestatus('+row.id+','+1+')"><i class="glyphicon glyphicon-remove-sign"  style="color:red">停用</i></a> ';
-                }
-
-                return e + d+f;
+                var e = '<a title="录入" href="javascript:void(0);" id="hotel"  data-toggle="modal" data-id="\'' + row.id + '\'" data-target="#myModal" onclick="return edit(\'' + row.id + '\')"><i class="glyphicon glyphicon-pencil" alt="修改" style="color:green">修改</i></a> ';
+                return e;
             }
         }
     ],
-    locale:'zh-CN',//中文支持,
-    responseHandler:function(res){
-        if (res) {
-            return {
-                "res" : res.rows,
-                "total" : res.total
-            };
-        } else {
-            return {
-                "rows" : [],
-                "total" : 0
-            };
-        }
-    }
+    locale:'zh-CN'
 })
 
 function del(hotelid,status){

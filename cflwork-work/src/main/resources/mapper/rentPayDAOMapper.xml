@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="top.cflwork.dao.RentPayDAO">
-    <resultMap id="houseRentPayMap" type="top.cflwork.vo.RentPayVo">
+    <resultMap id="rentPayMap" type="top.cflwork.vo.RentPayVo">
         <id column="id" property="id"></id>
         <result column="hotel_id" property="hotelId"></result>
         <result column="master_id" property="masterId"></result>
@@ -36,7 +36,7 @@
         </association>
     </resultMap>
     <resultMap id="selet2VoMap" type="top.cflwork.vo.Select2Vo"></resultMap>
-    <resultMap id="houseRentMap" type="top.cflwork.vo.HouseRentVo"></resultMap>
+    <resultMap id="rentMap" type="top.cflwork.vo.HouseRentVo"></resultMap>
     <resultMap id="rentPayMoneyMap" type="top.cflwork.vo.RentPayMoneyVo"></resultMap>
     <resultMap id="hotelMap" type="top.cflwork.vo.HotelVo"></resultMap>
     <sql id="search">
@@ -58,43 +58,62 @@
     <select id="getHouse" resultMap="selet2VoMap">
         select id,card_title as text from t_house where hotel_id=#{hotelId} and is_active=0
     </select>
-    <select id="getById" resultMap="houseRentPayMap" parameterType="long">
-        select t.*,c.id as cid,c.bank_name,c.phone,h.id as hid,h.title,u.card_title from t_house_rent_pay t,t_contract_master c,t_hotel h, t_house u where t.house_id=u.id and t.master_id=c.id and t.hotel_id=h.id and t.id = #{id}
+    <select id="getById" resultMap="rentPayMap" parameterType="long">
+        select t.*,c.id as cid,c.bank_name,c.phone,h.id as hid,h.title,u.card_title from t_rent_pay t,t_contract_master c,t_hotel h, t_house u where t.house_id=u.id and t.master_id=c.id and t.hotel_id=h.id and t.id = #{id}
     </select>
     <delete id="removeById" parameterType="long">
-        delete from t_house_rent_pay where id = #{id}
+        delete from t_rent_pay where id = #{id}
     </delete>
-    <select id="listPage" resultMap="houseRentPayMap">
-        select t.*,c.id as cid,c.bank_name,c.phone,h.id as hid,h.title,u.card_title from t_house_rent_pay t,t_contract_master c,t_hotel h,t_house u where t.house_id=u.id and t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} <include refid="search"/> order by t.create_time desc limit #{pageNo},#{pageSize}
+    <select id="listPage" resultMap="rentPayMap">
+        select t.*,c.id as cid,c.bank_name,c.phone,h.id as hid,h.title,u.card_title from t_rent_pay t,t_contract_master c,t_hotel h,t_house u where t.house_id=u.id and t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} <include refid="search"/> order by t.create_time desc limit #{pageNo},#{pageSize}
     </select>
-    <select id="listAll" resultMap="houseRentPayMap">
-        select * from t_house_rent_pay where company_id=#{companyId}
+    <select id="listAll" resultMap="rentPayMap">
+        select * from t_rent_pay where company_id=#{companyId}
     </select>
     <select id="count" resultType="java.lang.Long">
-        select count(t.id) from t_house_rent_pay t,t_contract_master c,t_hotel h,t_house u where t.house_id=u.id and t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} <include refid="search"/>
+        select count(t.id) from t_rent_pay t,t_contract_master c,t_hotel h,t_house u where t.house_id=u.id and t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{companyId} <include refid="search"/>
     </select>
-    <insert id="save" parameterType="houseRentPayVo">
-        insert into t_house_rent_pay (master_id, hotel_id, company_id, baodi_pay,  pay_time, pay_type, pay_period_start, pay_period_end, is_cash, description,is_active, house_id,  sum_pay,area,pay_money_type,pay_proportion,fact_pay_time_start,fact_pay_time_end,create_time) values
+    <!--条件搜索分页开始-->
+    <sql id="finds">
+        <if test="rentPayVo.createTime!=null"> and t.create_time BETWEEN #{rentPayVo.createTime} AND #{rentPayVo.endTime}</if>
+        <if test="rentPayVo.name!=null"> and c.bank_account_name like concat('%${rentPayVo.name}%')</if>
+        <if test="rentPayVo.phone!=null"> and c.phone like concat('%${rentPayVo.phone}%')</if>
+        <if test="rentPayVo.houseName!=null"> and u.card_title like concat('%${rentPayVo.houseName}%')</if>
+        <if test="rentPayVo.payMoneyType!=null"> and t.pay_money_type=#{rentPayVo.payMoneyType}</if>
+        <if test="rentPayVo.payType!=null"> and t.pay_type=#{rentPayVo.payType}</if>
+        <if test="rentPayVo.description!=null"> and t.description like concat('%${rentPayVo.description}%')</if>
+        <if test="rentPayVo.isActive!=null"> and t.is_active=#{rentPayVo.isActive}</if>
+        <if test="rentPayVo.hotelId!=null"> and t.hotel_id=#{rentPayVo.hotelId}</if>
+    </sql>
+    <select id="listPages" resultMap="rentPayMap">
+        select t.*,c.id as cid,c.bank_name,c.phone,h.id as hid,h.title,u.card_title from t_rent_pay t,t_contract_master c,t_hotel h,t_house u where t.house_id=u.id and t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{pageQuery.companyId} <include refid="finds"/> order by t.create_time desc limit #{pageQuery.pageNo},#{pageQuery.pageSize}
+    </select>
+    <select id="counts" resultType="java.lang.Long">
+        select count(t.id) from t_rent_pay t,t_contract_master c,t_hotel h,t_house u where t.house_id=u.id and t.master_id=c.id and t.hotel_id=h.id and t.company_id=#{pageQuery.companyId} <include refid="finds"/>
+    </select>
+    <!--条件搜索分页结束-->
+    <insert id="save" parameterType="rentPayVo">
+        insert into t_rent_pay (master_id, hotel_id, company_id, baodi_pay,  pay_time, pay_type, pay_period_start, pay_period_end, is_cash, description,is_active, house_id,  sum_pay,area,pay_money_type,pay_proportion,fact_pay_time_start,fact_pay_time_end,create_time) values
         (#{masterId}, #{hotelId}, #{companyId}, #{baodiPay},#{payTime}, #{payType},  #{payPeriodStart}, #{payPeriodEnd}, #{isCash}, #{description},  #{isActive}, #{houseId},  #{sumPay},#{area},#{payMoneyType},#{payProportion},#{factPayTimeStart},#{factPayTimeEnd},now())
     </insert>
     <update id="updateStatus">
-         update t_house_rent_pay set is_active=#{status} where id=#{id}
+         update t_rent_pay set is_active=#{status} where id=#{id}
     </update>
     <update id="update">
-        update t_house_rent_pay set master_id=#{masterId},hotel_id=#{hotelId},baodi_pay=#{baodiPay},pay_type=#{payType},house_id=#{houseId},pay_period_start=#{payPeriodStart},pay_period_end=#{payPeriodEnd},
+        update t_rent_pay set master_id=#{masterId},hotel_id=#{hotelId},baodi_pay=#{baodiPay},pay_type=#{payType},house_id=#{houseId},pay_period_start=#{payPeriodStart},pay_period_end=#{payPeriodEnd},
         is_cash=#{isCash},description=#{description},pay_money_type=#{payMoneyType},pay_proportion=#{payProportion},
         fact_pay_time_start=#{factPayTimeStart},fact_pay_time_end=#{factPayTimeEnd},area=#{area}
         where id = #{id}
     </update>
-    <select id="notHotelId" resultMap="houseRentMap">
+    <select id="notHotelId" resultMap="rentMap">
         select
-        (select IfNULL(count(house_id),0) from t_house_rent_pay) as 'houseTotal'
-        from t_house_rent_pay limit 0,1;
+        (select IfNULL(count(house_id),0) from t_rent_pay) as 'houseTotal'
+        from t_rent_pay limit 0,1;
     </select>
-    <select id="haveHotelId" resultMap="houseRentMap" parameterType="long">
+    <select id="haveHotelId" resultMap="rentMap" parameterType="long">
         select
-        (select IfNULL(count(house_id),0) from t_house_rent_pay where hotel_id=#{hotelId}) as 'houseTotal'
-        from t_house_rent_pay where hotel_id=#{hotelId} GROUP BY  hotel_id;
+        (select IfNULL(count(house_id),0) from t_rent_pay where hotel_id=#{hotelId}) as 'houseTotal'
+        from t_rent_pay where hotel_id=#{hotelId} GROUP BY  hotel_id;
     </select>
     <select id="getSubjectMoney" resultMap="rentPayMoneyMap">
         select c.title as title,t.id,max(t.end_time) as endTime,

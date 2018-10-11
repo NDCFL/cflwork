@@ -55,6 +55,23 @@ public class RentPayController {
         return pagingBean;
     }
 
+    @RequestMapping("findRentPayList")
+    @ResponseBody
+    public PagingBean findRentPayList(int pageSize, int pageIndex, String searchVal, HttpSession session,RentPayVo rentPayVo) throws Exception {
+        UserVo userVo = (UserVo) session.getAttribute("userVo");
+        PagingBean pagingBean = new PagingBean();
+        PageQuery pageQuery = new PageQuery();
+        pageQuery.setCompanyId(userVo.getCompanyId());
+        pageQuery.setSearchVal(searchVal);
+        pagingBean.setTotal(rentPayService.counts(pageQuery,rentPayVo));
+        pagingBean.setPageSize(pageSize);
+        pagingBean.setCurrentPage(pageIndex);
+        pageQuery.setPageNo(pagingBean.getStartIndex());
+        pageQuery.setPageSize(pagingBean.getPageSize());
+        pagingBean.setrows(rentPayService.listPages(pageQuery,rentPayVo));
+        return pagingBean;
+    }
+
     @RequestMapping("/getContractMaster")
     @ResponseBody
     public List<Select2Vo> getContractMaster(HttpSession session) throws Exception {

@@ -62,5 +62,12 @@ public class RentPayVo implements Serializable {
 
     private ContractMasterVo contractMasterVo;
 
+    private String name;
+
+    private Date endTime;
+
+    private String houseName;
+
+    private String phone;
 
 }

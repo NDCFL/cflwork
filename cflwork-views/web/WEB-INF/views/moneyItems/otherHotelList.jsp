@@ -196,15 +196,6 @@
 <script src="<%=path%>/static/js/pageJs/otherhotel.js"></script>
 </body>
 <script>
-    $('#distpicker1').distpicker({
-        province: '山东省',
-        city: '青岛市',
-        district: '市南区',
-        autoSelect: true,
-        placeholder: false
-    });
-</script>
-<script>
     lay('#version').html('-v'+ laydate.v);
     var checkDate = "";
     //执行一个laydate实例

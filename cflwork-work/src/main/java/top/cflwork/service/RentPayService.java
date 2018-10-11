@@ -1,5 +1,6 @@
 package top.cflwork.service;
 
+import org.apache.ibatis.annotations.Param;
 import top.cflwork.query.PageQuery;
 import top.cflwork.vo.*;
 
@@ -18,4 +19,19 @@ public interface RentPayService extends BaseService<RentPayVo>{
      * @return
      */
     List<HotelVo> getOtherHotel(UserVo userVo);
+    /**
+     * 搜索分页
+     * @param pageQuery
+     * @param rentPayVo
+     * @return
+     */
+    List<RentPayVo> listPages(PageQuery pageQuery,RentPayVo rentPayVo);
+
+    /**
+     * 搜索记录条数
+     * @param pageQuery
+     * @param rentPayVo
+     * @return
+     */
+    Long counts(PageQuery pageQuery,RentPayVo rentPayVo);
 }
