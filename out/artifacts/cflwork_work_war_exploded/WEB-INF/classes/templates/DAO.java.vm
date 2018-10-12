@@ -1,0 +1,23 @@
+package ${package}.dao;
+
+import ${package}.vo.${className}Vo;
+
+import java.util.List;
+import java.util.Map;
+import org.apache.ibatis.annotations.Param;
+import top.cflwork.query.PageQuery;
+import org.apache.ibatis.annotations.Mapper;
+import org.springframework.stereotype.Repository;
+import top.cflwork.dao.BaseDAO;
+
+/**
+ * ${comments}
+ * @author ${author}
+ * @email ${email}
+ * @date ${datetime}
+ */
+@Repository
+public interface ${className}DAO extends BaseDAO<${className}Vo>{
+    List<${className}Vo> listPages(@Param("pageQuery") PageQuery pageQuery, @Param("${classname}Vo") ${className}Vo ${classname}Vo);
+    long counts(@Param("pageQuery") PageQuery pageQuery, @Param("${classname}Vo") ${className}Vo ${classname}Vo);
+}

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.cflwork.dao.PriceItemDAO">
+    <resultMap id="priceItemMap" type="top.cflwork.vo.PriceItemVo">
+        <id column="id" property="id"></id>
+        <result column="businessman_id" property="businessManId"></result>
+        <result column="hotel_type_id" property="hotelTypeId"></result>
+        <result column="price" property="price"></result>
+        <result column="number" property="number"></result>
+        <result column="create_time" property="createTime"></result>
+        <result column="is_active" property="isActive"></result>
+        <association property="businessManVo" javaType="top.cflwork.vo.BusinessManVo">
+            <result column="hotel_sin_name" property="hotelSinName"></result>
+            <result column="name" property="name"></result>
+            <result column="face_img" property="faceImg"></result>
+        </association>
+        <association property="hotelTypeVo" javaType="top.cflwork.vo.HotelTypeVo">
+            <result column="title" property="title"></result>
+        </association>
+    </resultMap>
+    <resultMap id="busnissVoMap" type="top.cflwork.vo.BusinessVo"></resultMap>
+    <select id="getInfo" resultMap="busnissVoMap">
+        select sum(number) as sumHotel,avg(price) as sumPrice,(select count(t.id) from (select count(businessman_id) as id from t_price_item where number>0 and  DATE_FORMAT(create_time, '%Y-%m-%d')=DATE_FORMAT(#{times},'%Y-%m-%d') group by businessman_id) t) as countBusincess from t_price_item where DATE_FORMAT(create_time, '%Y-%m-%d')=DATE_FORMAT(#{times},'%Y-%m-%d') and number>0
+    </select>
+    <select id="getInfos" resultMap="busnissVoMap">
+        select h.id as hotelTypeId,h.title as hotelName,sum(t.number) as sumHotels,avg(price) as sumPrices,count(t.businessman_id) as countBusincesss from  t_price_item t,t_hotel_type h where t.hotel_type_id=h.id and  DATE_FORMAT(t.create_time, '%Y-%m-%d')=DATE_FORMAT(#{times},'%Y-%m-%d') and t.number>0 group by t.hotel_type_id
+    </select>
+    <select id="getById" resultMap="priceItemMap" parameterType="long">
+        select t.*,b.hotel_sin_name,h.title from t_price_item t,t_businessman b,t_hotel_type h where t.businessman_id=b.id and  t.hotel_type_id=h.id and t.id = #{id}
+    </select>
+    <delete id="removeById" parameterType="long">
+        delete from t_price_item where id = #{id}
+    </delete>
+    <delete id="deletePriceItem" parameterType="long">
+        delete from t_price_item where businessman_id = #{id}
+    </delete>
+    <select id="listPage" resultMap="priceItemMap">
+        select t.*,b.hotel_sin_name,h.title from t_price_item t,t_businessman b,t_hotel_type h where t.businessman_id=b.id and  t.hotel_type_id=h.id order by t.create_time desc limit #{pageNo},#{pageSize}
+    </select>
+    <select id="listAll" resultMap="priceItemMap">
+        select * from t_price_item
+    </select>
+    <select id="count" resultType="java.lang.Long">
+        select count(*) from t_price_item
+    </select>
+    <sql id="find">
+        <if test="priceItemVo.createTime!=null"> and t.create_time BETWEEN #{priceItemVo.createTime} AND #{priceItemVo.endTime}</if>
+        <if test="priceItemVo.businessManId!=null"> and t.businessman_id=#{priceItemVo.businessManId}</if>
+        <if test="priceItemVo.hotelTypeId!=null"> and t.hotel_type_id=#{priceItemVo.hotelTypeId}</if>
+    </sql>
+    <select id="findPriceItemList" resultMap="priceItemMap">
+        select t.*,b.hotel_sin_name,h.title from t_price_item t,t_businessman b,t_hotel_type h where t.businessman_id=b.id and  t.hotel_type_id=h.id <include refid="find"></include> order by t.create_time desc limit #{pageQuery.pageNo},#{pageQuery.pageSize}
+    </select>
+    <select id="findPriceItemByCount" resultType="java.lang.Long">
+        select count(t.id) from t_price_item t,t_businessman b,t_hotel_type h where t.businessman_id=b.id and  t.hotel_type_id=h.id  <include refid="find"></include>
+    </select>
+    <insert id="save" parameterType="priceItemVo">
+        insert into t_price_item (businessman_id, hotel_type_id, price, number,is_active,create_time) values (#{businessManId}, #{hotelTypeId},#{price}, #{number},#{isActive},#{createTime})
+    </insert>
+    <select id="findItems" resultType="int">
+        select count(id) from t_price_item where businessman_id=#{businessManId} and hotel_type_id=#{hotelTypeId} and DATE_FORMAT(create_time, '%Y-%m-%d')=DATE_FORMAT(#{createTime},'%Y-%m-%d')
+    </select>
+    <select id="priceItems" resultMap="priceItemMap">
+        select t.*,b.hotel_sin_name,b.name,h.title,b.id as id from t_price_item t,t_businessman b,t_hotel_type h where t.businessman_id=b.id and  t.hotel_type_id=h.id and t.businessman_id=#{businessManId} and t.create_time BETWEEN #{createTime} and #{endTime} order by t.create_time desc
+    </select>
+    <select id="findItemes" resultMap="priceItemMap">
+        select t.*,b.hotel_sin_name,b.name,b.face_img,h.title,b.id as id from t_price_item t,t_businessman b,t_hotel_type h where t.businessman_id=b.id and  t.hotel_type_id=h.id and  DATE_FORMAT(t.create_time, '%Y-%m-%d')=DATE_FORMAT(#{createTime},'%Y-%m-%d') and t.hotel_type_id=#{hotelTypeId} order by t.create_time desc
+    </select>
+    <select id="infos" resultMap="busnissVoMap">
+        select t.id as hotelTypeId,SUM(t.number) as sumHotel,avg(t.price) as sumPrice,count(t.hotel_type_id) as types,b.hotel_sin_name as hotelName,b.face_img as faceImg,b.id as id from t_price_item t,t_businessman b where t.businessman_id=b.id and DATE_FORMAT(t.create_time,"%Y-%m-%d")=DATE_FORMAT(#{times},"%Y-%m-%d") and t.number>0 group by t.businessman_id
+    </select>
+    <select id="priceInfo" resultMap="busnissVoMap">
+        select t.id as hotelTypeId,SUM(t.number) as sumHotel,avg(t.price) as sumPrice,count(t.hotel_type_id) as types,b.hotel_sin_name as hotelName,b.face_img as faceImg,b.id as id from t_price_item t,t_businessman b where t.businessman_id=b.id and t.number>0 and DATE_FORMAT(t.create_time,"%Y-%m-%d")=DATE_FORMAT(#{times},"%Y-%m-%d") and t.businessman_id=#{id} group by t.businessman_id
+    </select>
+    <select id="allPriceInfo" resultMap="busnissVoMap">
+        select h.title as hotelName,b.hotel_sin_name,t.price as sumPrice,(select sum(number) from t_price_item where  DATE_FORMAT(create_time, '%Y-%m-%d')=DATE_FORMAT(#{times},'%Y-%m-%d') and hotel_type_id=t.hotel_type_id  and businessman_id=#{id}) as sumHotels,(select avg(price) from t_price_item where  DATE_FORMAT(create_time, '%Y-%m-%d')=DATE_FORMAT(#{times},'%Y-%m-%d') and hotel_type_id=t.hotel_type_id and number>0) as sumPrices from t_price_item t,t_businessman b,t_hotel_type h where t.hotel_type_id=h.id and DATE_FORMAT(t.create_time, '%Y-%m-%d')=DATE_FORMAT(#{times},'%Y-%m-%d') and t.businessman_id=b.id  and t.businessman_id=#{id}
+    </select>
+    <update id="updateStatus">
+        update t_price_item set is_active=#{status} where id=#{id}
+    </update>
+    <update id="update">
+        update t_price_item set
+        price = #{price},
+        number = #{number}
+        where id = #{id}
+    </update>
+    <update id="updatePriceItem">
+        update t_price_item set
+        price = #{price},
+        number = #{number}
+        where businessman_id=#{businessManId} and hotel_type_id=#{hotelTypeId}
+    </update>
+</mapper>

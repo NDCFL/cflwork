@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.cflwork.dao.CodeDAO">
+    <resultMap id="codeMap" type="codeVo"></resultMap>
+    <select id="getCode" parameterType="string" resultType="string">
+        select code from t_code  where  phone = #{phone} and end_time>=now() and status=0 order by  create_time limit 0,1
+    </select>
+    <insert id="save" parameterType="codeVo">
+        insert into t_code (phone, code, msg,end_time,status,create_time) values ( #{phone}, #{code}, #{msg},date_add(#{endTime}, interval 30 minute),#{status},#{createTime})
+    </insert>
+    <update id="updateCode">
+        update t_code set status =1 where  phone = #{phone} and end_time>=now() and status=0 order by create_time
+    </update>
+    <select id="codeCnt" resultType="int" parameterType="string">
+        select count(*) from t_code where phone=#{phone} and month(end_time)=MONTH(now())
+    </select>
+</mapper>

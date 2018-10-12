@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.cflwork.dao.BusinessManDAO">
+    <resultMap id="businessManMap" type="top.cflwork.vo.BusinessManVo"></resultMap>
+        <resultMap id="select2VoMap" type="top.cflwork.vo.Select2Vo"></resultMap>
+    <select id="getById" resultMap="businessManMap" parameterType="long">
+        select * from t_businessman where id = #{id}
+    </select>
+    <delete id="removeById" parameterType="long">
+        delete from t_businessman where id = #{id}
+    </delete>
+    <select id="listPage" resultMap="businessManMap">
+        select * from t_businessman  order by create_time desc limit #{pageNo},#{pageSize}
+    </select>
+    <select id="listAll" resultMap="businessManMap">
+        select * from t_businessman
+    </select>
+    <select id="count" resultType="java.lang.Long">
+        select count(*) from t_businessman
+    </select>
+    <select id="businessManList" resultMap="select2VoMap">
+        select id,hotel_sin_name as text from t_businessman where is_active=0
+    </select>
+    <select id="getByOpenid" resultMap="businessManMap">
+      select count(id) from t_businessman where wxopenid=#{openId}
+    </select>
+    <sql id="find">
+        <if test="businessManVo.createTime!=null and businessManVo.endTime!=null"> and create_time BETWEEN #{businessManVo.createTime} AND #{businessManVo.endTime}</if>
+        <if test="businessManVo.name!=null and businessManVo.name!=''"> and name like concat('%${businessManVo.name}%')</if>
+        <if test="businessManVo.phone!=null and businessManVo.phone!=''"> and phone like concat('%${businessManVo.phone}%')</if>
+        <if test="businessManVo.tel!=null and businessManVo.tel!=''"> and tel  like concat('%${businessManVo.tel}%')</if>
+        <if test="businessManVo.nickname!=null and businessManVo.nickname!=''"> and nickname like concat('%${businessManVo.nickname}%')</if>
+        <if test="businessManVo.hotelSinName!=null and businessManVo.hotelSinName!=''"> and hotel_sin_name like concat('%${businessManVo.hotelSinName}%')</if>
+        <if test="businessManVo.hotelName!=null and businessManVo.hotelName!=''"> and hotel_name  like concat('%${businessManVo.hotelName}%')</if>
+        <if test="businessManVo.remark!=null and businessManVo.remark!=''"> and remark  like concat('%${businessManVo.remark}%')</if>
+        <if test="businessManVo.isActive!=null"> and is_active=#{businessManVo.isActive}</if>
+        <if test="businessManVo.type!=null"> and `type`=#{businessManVo.type}</if>
+    </sql>
+    <select id="findBusinessManList" resultMap="businessManMap">
+        select * from t_businessman where 1=1 <include refid="find"></include> order by create_time desc limit #{pageQuery.pageNo},#{pageQuery.pageSize}
+    </select>
+    <select id="findBusinessByCount" resultType="java.lang.Long">
+        select count(id) from t_businessman where 1=1  <include refid="find"></include>
+    </select>
+    <insert id="save" parameterType="businessManVo">
+        <selectKey keyProperty='id' resultType='long' order='AFTER'  >
+            select LAST_INSERT_ID();
+        </selectKey>
+        insert into t_businessman (password,name, phone, tel, nickname, hotel_sin_name, hotel_name, wxopenid, remark, is_active,type,face_img) values ( #{password},#{name}, #{phone}, #{tel}, #{nickname}, #{hotelSinName}, #{hotelName}, #{wxopenid}, #{remark}, #{isActive},#{type},#{faceImg} )
+    </insert>
+    <update id="updateStatus">
+        update t_businessman set is_active=#{status} where id=#{id}
+    </update>
+    <update id="updateFaceImg">
+        update t_businessman set face_img=#{url} where id=#{id}
+    </update>
+    <update id="updateType">
+        update t_businessman set type=#{status},is_active=#{status} where id=#{id}
+    </update>
+    <update id="update">
+        update t_businessman set
+                name = #{name},
+                phone = #{phone},
+                tel = #{tel},
+                hotel_sin_name = #{hotelSinName},
+                hotel_name=#{hotelName},
+                remark = #{remark}
+        where id = #{id}
+    </update>
+    <select id="getByAccountPassword" resultMap="businessManMap">
+        select * from t_businessman where phone=#{phone} and password=#{password} and is_active=0
+    </select>
+    <select id="checkPhone" parameterType="string" resultType="int">
+        select count(id) from t_businessman where phone=#{phone}
+    </select>
+    <select id="checkName" resultType="int">
+        select count(id) from t_businessman where hotel_sin_name=#{hotelSinName} and id!=#{id}
+    </select>
+    <select id="checkPhones" resultType="int">
+        select count(id) from t_businessman where phone=#{phone} and id!=#{id}
+    </select>
+    <select id="findByOpenId" parameterType="string" resultMap="businessManMap">
+        select * from t_businessman where wxopenid=#{openId}
+    </select>
+    <select id="getBusinessManList" resultMap="businessManMap" parameterType="string">
+        select id,hotel_sin_name,face_img from t_businessman where is_active=0 <if test="#{findName}!=null">and hotel_sin_name like concat('%${findName}%')</if>
+    </select>
+    <select id="updatePwd">
+         update t_businessman set
+                password = #{password}
+        where phone = #{phone}
+    </select>
+</mapper>

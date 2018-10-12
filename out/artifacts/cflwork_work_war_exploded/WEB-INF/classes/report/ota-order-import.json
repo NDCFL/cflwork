@@ -1,0 +1,20 @@
+{
+  "beginRow": 2,
+  "destinationClass":"top.cflwork.vo.CustomerOrderOTAVO",
+  "properties":[
+    "id",
+    "hotelName",
+    "houseName",
+    "orderNo",
+    "orderTime",
+    "customerName",
+    "checkinTime",
+    "checkoutTime",
+    "totalDays",
+    "totalPay",
+    "otaCommission",
+    "actualMoney",
+    "websiteName",
+    "remark"
+  ]
+}

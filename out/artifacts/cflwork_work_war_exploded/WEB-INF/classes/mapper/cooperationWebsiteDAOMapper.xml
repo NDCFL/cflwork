@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.cflwork.dao.CooperationWebsiteDAO">
+  <resultMap id="cooperationWebsiteMap" type="cooperationWebsiteVo"></resultMap>
+  <sql id="Base_Column_List">id, title,description,create_time,is_active</sql>
+    <sql id="search">
+        <if test="#{searchVal!=null} and #{searchVal!=''}">
+            and (title like concat('%${searchVal}%')
+            or description like concat ('%${searchVal}%')
+            or is_active like concat ('%${searchVal}%'))
+        </if>
+    </sql>
+    <select id="getById" resultMap="cooperationWebsiteMap" parameterType="long">
+      select
+      <include refid="Base_Column_List"/>
+      from t_cooperation_website where id = #{id}
+  </select>
+  <delete id="removeById" parameterType="long">
+        delete from t_cooperation_website where id = #{id}
+  </delete>
+  <select id="listPage" resultMap="cooperationWebsiteMap">
+        select * from t_cooperation_website where company_id=#{companyId} <include refid="search"></include> order by create_time desc limit #{pageNo},#{pageSize}
+  </select>
+    <select id="thisAll" resultMap="cooperationWebsiteMap">
+        select * from t_cooperation_website
+    </select>
+    <select id="count" resultType="long">
+        select count(*) from t_cooperation_website where company_id=#{companyId}
+    </select>
+  <select id=""></select>
+  <insert id="save" parameterType="cooperationWebsiteVo">
+        insert into t_cooperation_website ( title,description,is_active,company_id) values ( #{title},#{description},#{isActive},#{companyId})
+  </insert>
+    <update id="updateStatus">
+        update t_cooperation_website set is_active=#{status} where id=#{id}
+    </update>
+  <update id="update">
+        update t_cooperation_website set   title = #{title},
+                description = #{description}
+        where id = #{id}
+  </update>
+</mapper>

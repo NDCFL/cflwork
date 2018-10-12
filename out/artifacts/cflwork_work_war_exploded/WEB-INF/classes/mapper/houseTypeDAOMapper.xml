@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.cflwork.dao.HouseTypeDAO">
+  <resultMap id="houseTypeMap" type="houseTypeVo">
+      <id column="id" property="id"></id>
+      <result column="title" property="title"></result>
+      <result column="description" property="description"></result>
+      <result column="create_time" property="createTime"></result>
+      <result column="is_active" property="isActive"></result>
+      <result column="price" property="price"></result>
+      <result column="hotel_id" property="hotelId"></result>
+      <association property="hotelVo" javaType="top.cflwork.vo.HotelVo">
+          <result column="htitle" property="title"></result>
+      </association>
+  </resultMap>
+  <select id="getById" resultMap="houseTypeMap" parameterType="long">
+      select t.*,h.title as htitle from t_house_type t,t_hotel h where t.hotel_id=h.id and  t.id = #{id}
+  </select>
+  <delete id="removeById" parameterType="long">
+        delete from t_house_type where id = #{id}
+  </delete>
+  <select id="listPage" resultMap="houseTypeMap">
+        select t.*,h.title as htitle from t_house_type t,t_hotel h where t.hotel_id=h.id limit #{pageNo},#{pageSize}
+  </select>
+    <select id="findPage" resultMap="houseTypeMap">
+        select t.*,h.title as htitle from t_house_type t,t_hotel h where t.hotel_id=h.id
+        <if test="houseTypeVo.hotelId!=null"> and t.hotel_id=#{houseTypeVo.hotelId}</if>
+        <if test="houseTypeVo.title!=null and houseTypeVo.title!='' "> and t.title like concat('%${houseTypeVo.title}%')</if>
+        <if test="houseTypeVo.isActive!=null"> and t.is_active=#{houseTypeVo.isActive}</if>
+        limit #{pageQuery.pageNo},#{pageQuery.pageSize}
+    </select>
+    <select id="findCount" resultType="long">
+        select count(*) from t_house_type t,t_hotel h where t.hotel_id=h.id
+        <if test="houseTypeVo.hotelId!=null"> and t.hotel_id=#{houseTypeVo.hotelId}</if>
+        <if test="houseTypeVo.title!=null and houseTypeVo.title!='' "> and t.title like concat('%${houseTypeVo.title}%')</if>
+        <if test="houseTypeVo.isActive!=null"> and t.is_active=#{houseTypeVo.isActive}</if>
+    </select>
+    <select id="listAll" resultMap="houseTypeMap">
+        select from t_house_type t,t_hotel h where t.hotel_id=h.id
+    </select>
+    <select id="getHouseType" resultType="int">
+        select count(*) from t_house_type where hotel_id=#{hotelId} and title=#{name}
+    </select>
+    <select id="count" resultType="long">
+        select count(*) from t_house_type t,t_hotel h where t.hotel_id=h.id
+    </select>
+  <insert id="save" parameterType="houseTypeVo">
+        insert into t_house_type ( title,description,is_active,company_id,hotel_id,price) values ( #{title},#{description},#{isActive},#{companyId},#{hotelId},#{price})
+  </insert>
+    <update id="updateStatus">
+        update t_house_type set is_active=#{status} where id=#{id}
+    </update>
+  <update id="update">
+        update t_house_type set
+            title = #{title},
+            description = #{description},
+            hotel_id=#{hotelId},
+            price = #{price}
+        where id = #{id}
+  </update>
+</mapper>

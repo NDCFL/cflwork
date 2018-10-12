@@ -1,0 +1,200 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="top.cflwork.dao.OutcomeDAO">
+    <resultMap id="OutcomeMap" type="top.cflwork.vo.OutcomeVo">
+        <id column="id" property="id"></id>
+        <result column="hotel_id" property="hotelId"></result>
+        <result column="subject_id" property="subjectId"></result>
+        <result column="company_id" property="companyId"></result>
+        <result column="outcomme_name" property="outcommeName"></result>
+        <result column="remark" property="remark"></result>
+        <result column="start_time" property="startTime"></result>
+        <result column="end_time" property="endTime"></result>
+        <result column="money" property="money"></result>
+        <result column="day_money" property="dayMoney"></result>
+        <result column="outcome_status" property="outcomeStatus"></result>
+        <result column="is_active" property="isActive"></result>
+        <result column="create_time" property="createTime"></result>
+        <association property="hotelVo" javaType="top.cflwork.vo.HotelVo">
+            <result column="title" property="title"></result>
+        </association>
+        <association property="cashSubjectVo" javaType="top.cflwork.vo.CashSubjectVo">
+            <result column="ctitle" property="title"></result>
+        </association>
+    </resultMap>
+    <sql id="search">
+        <if test="#{searchVal!=null} and #{searchVal!=''}">
+            and (t.id like concat('%${searchVal}%'))
+        </if>
+    </sql>
+    <select id="getById" resultMap="OutcomeMap" parameterType="long">
+        select t.id,t.company_id,t.hotel_id,t.subject_id,t.outcomme_name,t.remark,t.start_time,t.end_time,t.money,t.day_money,t.outcome_status,t.is_active,t.create_time        from t_outcome t where t.id = #{value}
+    </select>
+    <select id="listPage" resultMap="OutcomeMap">
+        select
+        t.id,t.company_id,t.hotel_id,t.subject_id,t.outcomme_name,t.remark,t.start_time,t.end_time,t.money,t.day_money,t.outcome_status,t.is_active,t.create_time,
+        h.title,c.title as ctitle
+        from t_outcome t,t_hotel h, t_cash_subject c where t.company_id = #{companyId} and t.hotel_id=h.id and t.subject_id=c.id  order by t.create_time
+        desc limit #{pageNo}, #{pageSize}
+    </select>
+    <select id="count" resultType="long">
+        select count(t.id) from t_outcome t,t_hotel h, t_cash_subject c where t.company_id = #{companyId} and t.hotel_id=h.id and t.subject_id=c.id order by t.create_time desc
+    </select>
+    <select id="listPages" resultMap="OutcomeMap">
+        select
+        t.id,t.company_id,t.hotel_id,t.subject_id,t.outcomme_name,t.remark,t.start_time,t.end_time,t.money,t.day_money,t.outcome_status,t.is_active,t.create_time,
+        h.title,c.title as ctitle
+        from t_outcome t,t_hotel h, t_cash_subject c where t.hotel_id=h.id and t.subject_id=c.id
+        <if test="outcomeVo.hotelId != null">
+            and t.hotel_id = #{outcomeVo.hotelId}
+        </if>
+        <if test="outcomeVo.subjectId != null">
+            and t.subject_id = #{outcomeVo.subjectId}
+        </if>
+        <if test="outcomeVo.outcommeName != null and outcomeVo.outcommeName != ''">
+            and t.outcomme_name = #{outcomeVo.outcommeName}
+        </if>
+        <if test="outcomeVo.remark != null and outcomeVo.remark != ''">
+            and t.remark = #{outcomeVo.remark}
+        </if>
+        <if test="outcomeVo.money != null and outcomeVo.money != ''">
+            and t.money = #{outcomeVo.money}
+        </if>
+        <if test="outcomeVo.dayMoney != null and outcomeVo.dayMoney != ''">
+            and t.day_money = #{outcomeVo.dayMoney}
+        </if>
+        <if test="outcomeVo.outcomeStatus != null">
+            and t.outcome_status = #{outcomeVo.outcomeStatus}
+        </if>
+        <if test="outcomeVo.isActive != null">
+            and t.is_active = #{outcomeVo.isActive}
+        </if>
+        <if test="outcomeVo.createTime != null and outcomeVo.createTime != ''">
+            and t.create_time BETWEEN #{outcomeVo.createTime} and #{outcomeVo.endTime}
+        </if>
+        <choose>
+            <when test="outcomeVo.sort != null and outcomeVo.sort.trim() != ''">
+                order by t.${outcomeVo.sort} t.${outcomeVo.order}
+            </when>
+            <otherwise>
+                order by t.id desc
+            </otherwise>
+        </choose>
+        <if test="pageQuery.pageNo != null and pageQuery.pageSize != null">
+            limit #{pageQuery.pageNo}, #{pageQuery.pageSize}
+        </if>
+    </select>
+    <select id="listAll" resultType="top.cflwork.vo.OutcomeVo">
+        select * from t_outcome
+    </select>
+    <select id="counts" resultType="long">
+        select count(t.id) from t_outcome t,t_hotel h, t_cash_subject c where t.hotel_id=h.id and t.subject_id=c.id
+        <if test="outcomeVo.hotelId != null">
+            and t.hotel_id = #{outcomeVo.hotelId}
+        </if>
+        <if test="outcomeVo.subjectId != null">
+            and t.subject_id = #{outcomeVo.subjectId}
+        </if>
+        <if test="outcomeVo.outcommeName != null and outcomeVo.outcommeName != ''">
+            and t.outcomme_name = #{outcomeVo.outcommeName}
+        </if>
+        <if test="outcomeVo.remark != null and outcomeVo.remark != ''">
+            and t.remark = #{outcomeVo.remark}
+        </if>
+        <if test="outcomeVo.money != null and outcomeVo.money != ''">
+            and t.money = #{outcomeVo.money}
+        </if>
+        <if test="outcomeVo.dayMoney != null and outcomeVo.dayMoney != ''">
+            and t.day_money = #{outcomeVo.dayMoney}
+        </if>
+        <if test="outcomeVo.outcomeStatus != null">
+            and t.outcome_status = #{outcomeVo.outcomeStatus}
+        </if>
+        <if test="outcomeVo.isActive != null">
+            and t.is_active = #{outcomeVo.isActive}
+        </if>
+        <if test="outcomeVo.createTime != null and outcomeVo.createTime != ''">
+            and t.create_time BETWEEN #{outcomeVo.createTime} and #{outcomeVo.endTime}
+        </if>
+        <choose>
+            <when test="outcomeVo.sort != null and outcomeVo.sort.trim() != ''">
+                order by t.${outcomeVo.sort} ${outcomeVo.order}
+            </when>
+            <otherwise>
+                order by t.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="save" parameterType="top.cflwork.vo.OutcomeVo" useGeneratedKeys="true" keyProperty="id">
+        outsert outto t_outcome (
+        company_id,                                                                 hotel_id,                                                                 subject_id,                                                                 outcomme_name,                                                                 remark,                                                                 start_time,                                                                 end_time,                                                                 money,                                                                 day_money,                                                                 outcome_status,                                                                 is_active,                                                                 create_time                                  ) values (
+        #{companyId},
+        #{hotelId},
+        #{subjectId},
+        #{outcommeName},
+        #{remark},
+        #{startTime},
+        #{endTime},
+        #{money},
+        #{dayMoney},
+        #{outcomeStatus},
+        #{isActive},
+        now()
+        )
+    </insert>
+
+    <update id="update" parameterType="top.cflwork.vo.OutcomeVo">
+        update t_outcome
+        <set>
+            <if test="companyId != null">company_id = #{companyId
+                    },
+            </if>
+            <if test="hotelId != null">hotel_id = #{hotelId
+                    },
+            </if>
+            <if test="subjectId != null">subject_id = #{subjectId
+                    },
+            </if>
+            <if test="outcommeName != null">outcomme_name = #{outcommeName
+                    },
+            </if>
+            <if test="remark != null">remark = #{remark
+                    },
+            </if>
+            <if test="startTime != null">start_time = #{startTime
+                    },
+            </if>
+            <if test="endTime != null">end_time = #{endTime
+                    },
+            </if>
+            <if test="money != null">money = #{money
+                    },
+            </if>
+            <if test="dayMoney != null">day_money = #{dayMoney
+                    },
+            </if>
+            <if test="outcomeStatus != null">outcome_status = #{outcomeStatus
+                    },
+            </if>
+            <if test="isActive != null">is_active = #{isActive
+                    },
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateStatus">
+        update t_outcome set is_active=#{status} where id=#{id}
+    </update>
+    <delete id="removeById" parameterType="long">
+        delete from t_outcome where id = #{value}
+    </delete>
+    <delete id="removeMany">
+        delete from t_outcome where id out
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

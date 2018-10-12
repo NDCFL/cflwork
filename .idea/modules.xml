@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/cflwork-common/cflwork-common.iml" filepath="$PROJECT_DIR$/cflwork-common/cflwork-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cflwork-document/cflwork-document.iml" filepath="$PROJECT_DIR$/cflwork-document/cflwork-document.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cflwork-views/cflwork-views.iml" filepath="$PROJECT_DIR$/cflwork-views/cflwork-views.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cflwork-work/cflwork-work.iml" filepath="$PROJECT_DIR$/cflwork-work/cflwork-work.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cflwork-worktest/cflwork-worktest.iml" filepath="$PROJECT_DIR$/cflwork-worktest/cflwork-worktest.iml" />
+    </modules>
+  </component>
+</project>

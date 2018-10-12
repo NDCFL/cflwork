@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.cflwork.dao.EmployeeDAO">
+    <resultMap id="employeeMap" type="top.cflwork.vo.EmployeeVo"></resultMap>
+    <select id="getById" resultMap="employeeMap" parameterType="long">
+        select * from t_employee where id = #{id}
+    </select>
+    <delete id="removeById" parameterType="long">
+        delete from t_employee where id = #{id}
+    </delete>
+    <select id="listPage" resultMap="employeeMap">
+        select * from t_employee limit #{pageNo},#{pageSize}
+    </select>
+    <select id="listAll" resultMap="employeeMap">
+        select * from t_employee
+    </select>
+    <select id="count" resultType="java.lang.Long">
+        select count(*) from t_employee
+    </select>
+    <insert id="save" parameterType="employeeVo">
+        insert into t_employee (company_id, hotel_id, user_id,employee_id) values (#{companyId}, #{hotelId}, #{userId},#{employeeId})
+    </insert>
+    <select id="getHotelId" parameterType="long" resultMap="employeeMap">
+        select * from t_employee where employee_id=#{employeeId}
+    </select>
+</mapper>
