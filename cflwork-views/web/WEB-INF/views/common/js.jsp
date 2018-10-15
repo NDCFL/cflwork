@@ -20,7 +20,7 @@
 <script src="<%=path%>/static/js/bootstrap.min.js?v=3.3.5"></script>
 <script src="<%=path%>/static/js/plugins/metisMenu/jquery.metisMenu.js"></script>
 <script src="<%=path%>/static/js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
-<script src="<%=path%>/static/js/plugins/layer/layer.min.js"></script>
+<script src="<%=path%>/static/js/plugins/layer/layer.js"></script>
 <script src="<%=path%>/static/js/hplus.min.js?v=4.0.0"></script>
 <script src="<%=path%>/static/js/contabs.min.js"></script>
 <script src="<%=path%>/static/js/plugins/pace/pace.min.js"></script>

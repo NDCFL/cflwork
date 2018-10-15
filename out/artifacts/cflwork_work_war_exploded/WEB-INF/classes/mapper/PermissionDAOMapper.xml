@@ -26,5 +26,67 @@
 			(u.email = #{account} or u.phone = #{account} or u.account_name = #{account})
 		]]>
 	</select>
+	<select id="getById" resultType="permissionVo">
+		select
+		id,parent_id,name,url,perms,type,icon,order_num,create_time,update_time
+		from t_permission where id = #{id}
+	</select>
+
+	<select id="listPage" resultType="permissionVo">
+		select
+		id,parent_id,name,url,perms,type,icon,order_num,create_time,update_time
+		from t_permission order by id desc
+		<if test="pageNo != null and pageSize != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+	<select id="count" resultType="long">
+		select count(id) from t_permission
+		<where>
+			<if test="id != null and id != ''"> and id = #{id} </if>
+			<if test="parentId != null and parentId != ''"> and parent_id = #{parentId} </if>
+			<if test="name != null and name != ''"> and name = #{name} </if>
+			<if test="url != null and url != ''"> and url = #{url} </if>
+			<if test="perms != null and perms != ''"> and perms = #{perms} </if>
+			<if test="type != null and type != ''"> and type = #{type} </if>
+			<if test="icon != null and icon != ''"> and icon = #{icon} </if>
+			<if test="orderNum != null and orderNum != ''"> and order_num = #{orderNum} </if>
+			<if test="createTime != null and createTime != ''"> and create_time = #{createTime} </if>
+			<if test="updateTime != null and updateTime != ''"> and update_time = #{updateTime} </if>
+		</where>
+	</select>
+
+	<insert id="save" useGeneratedKeys="true" keyProperty="id">
+		insert into t_permission (parent_id,name,url,perms,type,icon,order_num,create_time,update_time)values(#{parentId},#{name},#{url},#{perms},#{type},#{icon},#{orderNum},now(),#{updateTime})
+	</insert>
+
+	<update id="update" >
+		update t_permission
+		<set>
+			<if test="parentId != null">parent_id = #{parentId}, </if>
+			<if test="name != null">name = #{name}, </if>
+			<if test="url != null">url = #{url}, </if>
+			<if test="perms != null">perms = #{perms}, </if>
+			<if test="type != null">type = #{type}, </if>
+			<if test="icon != null">icon = #{icon}, </if>
+			<if test="orderNum != null">order_num = #{orderNum}, </if>
+			<if test="createTime != null">create_time = #{createTime}, </if>
+			<if test="updateTime != null">update_time = #{updateTime}</if>
+		</set>
+		where id = #{id}
+	</update>
+	<delete id="removeById" parameterType="long">
+		delete from t_permission where id = #{id}
+	</delete>
+
+	<delete id="removeMany">
+		delete from t_permission where id in
+		<foreach item="id" collection="array" open="(" separator=","
+				 close=")">
+			#{id}
+		</foreach>
+	</delete>
+
 
 </mapper>

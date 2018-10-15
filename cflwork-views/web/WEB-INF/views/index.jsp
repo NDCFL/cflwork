@@ -306,6 +306,9 @@
                             <li>
                                 <a class="J_menuItem" href="/userRole/userRolePage">用户角色管理</a>
                             </li>
+                            <li>
+                                <a class="J_menuItem" href="/permission/permissionPage">系统菜单</a>
+                            </li>
                         </ul>
                     </li>
                     <li>

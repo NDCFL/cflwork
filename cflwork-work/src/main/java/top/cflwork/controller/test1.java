@@ -51,6 +51,9 @@ public class test1 {
             //处理IC卡号 09-----01
             getICCardNo(num.substring(6,num.length()));
         }*/
+        String idcard = "020901356CD372F003";
+        System.out.println();
+//        System.out.println(idcard.substring(idcard.lastIndexOf(4)+6,idcard.lastIndexOf(4)));
 
     }
 

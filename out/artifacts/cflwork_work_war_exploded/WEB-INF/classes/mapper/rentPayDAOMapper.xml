@@ -36,7 +36,7 @@
         </association>
     </resultMap>
     <resultMap id="selet2VoMap" type="top.cflwork.vo.Select2Vo"></resultMap>
-    <resultMap id="rentMap" type="top.cflwork.vo.HouseRentVo"></resultMap>
+    <resultMap id="rentMap" type="top.cflwork.vo.RentVo"></resultMap>
     <resultMap id="rentPayMoneyMap" type="top.cflwork.vo.RentPayMoneyVo"></resultMap>
     <resultMap id="hotelMap" type="top.cflwork.vo.HotelVo"></resultMap>
     <sql id="search">
@@ -107,13 +107,17 @@
     </update>
     <select id="notHotelId" resultMap="rentMap">
         select
-        (select IfNULL(count(house_id),0) from t_rent_pay) as 'houseTotal'
-        from t_rent_pay limit 0,1;
+        (select count(hotel_id) from t_house_rent_pay group by hotel_id) as 'rentHouseCount',
+        (select sum(area) from t_house_rent_pay group by hotel_id) as 'rentHouseSumArea',
+        ((select sum(money) from t_income group by hotel_id)/((select sum(area) from t_house_rent_pay group by hotel_id)+(select sum(area) from t_rent_pay group by hotel_id))) as 'money'
+        from t_house_rent_pay
     </select>
     <select id="haveHotelId" resultMap="rentMap" parameterType="long">
         select
-        (select IfNULL(count(house_id),0) from t_rent_pay where hotel_id=#{hotelId}) as 'houseTotal'
-        from t_rent_pay where hotel_id=#{hotelId} GROUP BY  hotel_id;
+            (select count(hotel_id) from t_house_rent_pay where hotel_id=#{hotelId} group by hotel_id) as 'rentHouseCount',
+            (select sum(area) from t_house_rent_pay where hotel_id=#{hotelId} group by hotel_id) as 'rentHouseSumArea',
+            ((select sum(money) from t_income where hotel_id=#{hotelId} group by hotel_id)/((select sum(area) from t_house_rent_pay where hotel_id=#{hotelId} group by hotel_id)+(select sum(area) from t_rent_pay where hotel_id=#{hotelId} group by hotel_id))) as 'money'
+        from t_house_rent_pay where hotel_id=#{hotelId}
     </select>
     <select id="getSubjectMoney" resultMap="rentPayMoneyMap">
         select c.title as title,t.id,max(t.end_time) as endTime,

@@ -15,8 +15,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>瑞蓝酒店登录</title>
-    <meta name="keywords" content="HTML5,美观,简洁大气,响应式,第三方登录,网页模板" />
-    <meta name="description" content="HTML5美观简洁大气响应式带第三方登录网页模板下载。鼠标经过登录按钮带紫色渐变炫酷动画效果。带有简单的表单验证功能。" />
+    <meta name="keywords" content="瑞蓝酒店后端管理系统，超炫酷的登录页面" />
+    <meta name="description" content="瑞蓝酒店后端登录管理系统，HTML5美观简洁大气响应式带第三方登录网页模板下载。鼠标经过登录按钮带紫色渐变炫酷动画效果。带有简单的表单验证功能。" />
+    <link rel="shortcut icon" href="<%=path%>/static/img/favicon.ico">
     <link rel="stylesheet" type="text/css" href="<%=path%>/static/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="<%=path%>/static/css/login/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="<%=path%>/static/css/login/fonts/iconic/css/material-design-iconic-font.min.css">

@@ -1,89 +1,30 @@
 package top.cflwork.vo;
 
+import lombok.Data;
+
 import java.util.Date;
-
+@Data
 public class PermissionVo {
+    private static final long serialVersionUID = 1L;
+    //
     private Long id;
-
-    private String title;
-
-    private String permission;
-
-    private String description;
-
-    private Long moduleId;
-
+    // 父菜单ID，一级菜单为0
+    private Long parentId;
+    // 菜单名称
+    private String name;
+    // 菜单URL
+    private String url;
+    // 授权(多个用逗号分隔，如：user:list,user:create)
+    private String perms;
+    // 类型 0：目录 1：菜单 2：按钮
+    private Integer type;
+    // 菜单图标
+    private String icon;
+    // 排序
+    private Integer orderNum;
+    // 创建时间
     private Date createTime;
+    // 修改时间
+    private Date updateTime;
 
-    private Byte isActive;
-
-    public PermissionVo(Long id, String title, String permission, String description, Long moduleId, Date createTime, Byte isActive) {
-        this.id = id;
-        this.title = title;
-        this.permission = permission;
-        this.description = description;
-        this.moduleId = moduleId;
-        this.createTime = createTime;
-        this.isActive = isActive;
-    }
-
-    public PermissionVo() {
-        super();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title == null ? null : title.trim();
-    }
-
-    public String getPermission() {
-        return permission;
-    }
-
-    public void setPermission(String permission) {
-        this.permission = permission == null ? null : permission.trim();
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
-    }
-
-    public Long getModuleId() {
-        return moduleId;
-    }
-
-    public void setModuleId(Long moduleId) {
-        this.moduleId = moduleId;
-    }
-
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Byte getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Byte isActive) {
-        this.isActive = isActive;
-    }
 }

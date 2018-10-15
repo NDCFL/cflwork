@@ -202,7 +202,7 @@
                     <h5>分成房源总数/间</h5>
                 </div>
                 <div class="ibox-content">
-                    <h1 class="no-margins" id="houseTotal"></h1>
+                    <h1 class="no-margins" id="rentHouseCount"></h1>
                     <div class="stat-percent font-bold text-info">20% <i class="fa fa-level-up"></i>
                     </div>
                     <small>房源总数</small>
@@ -216,7 +216,7 @@
                     <h5>分成房源总面积/平米</h5>
                 </div>
                 <div class="ibox-content">
-                    <h1 class="no-margins" id="dfPayMoney"></h1>
+                    <h1 class="no-margins" id="rentHouseSumArea"></h1>
                     <div class="stat-percent font-bold text-info">20% <i class="fa fa-level-up"></i>
                     </div>
                     <small>总面积/平米</small>
@@ -230,7 +230,7 @@
                     <h5>今日单平营业额/元</h5>
                 </div>
                 <div class="ibox-content">
-                    <h1 class="no-margins" id="monthPayMoney"></h1>
+                    <h1 class="no-margins" id="money"></h1>
                     <div class="stat-percent font-bold text-info">20% <i class="fa fa-level-up"></i>
                     </div>
                     <small>单平收益/元</small>
@@ -244,7 +244,7 @@
                     <h5>当前应结算房源总数/间</h5>
                 </div>
                 <div class="ibox-content">
-                    <h1 class="no-margins" id="houseMonthPayMoney">0</h1>
+                    <h1 class="no-margins" id="payMoneyHouse">0</h1>
                     <div class="stat-percent font-bold text-info">20% <i class="fa fa-level-up"></i>
                     </div>
                     <small>结算房源总数/间</small>
@@ -258,7 +258,7 @@
                     <h5>当前可结算分成总额/元</h5>
                 </div>
                 <div class="ibox-content">
-                    <h1 class="no-margins" id="houseDayPayMoney"></h1>
+                    <h1 class="no-margins" id="sumMoney"></h1>
                     <div class="stat-percent font-bold text-info">20% <i class="fa fa-level-up"></i>
                     </div>
                     <small>分成总额/元</small>
@@ -741,17 +741,11 @@
                 "hotelId": hotelId
             },
             function (data) {
-                $("#houseTotal").html(data.houseTotal);//房源总数
-                $("#dfPayMoney").html("￥" + data.dfPayMoney);//代付资金
-                $("#monthPayMoney").html("￥" + data.monthPayMoney);//代付资金
-                $("#houseMonthPayMoney").html("￥" + data.houseMonthPayMoney);//每间每月
-                $("#houseDayPayMoney").html("￥" + data.houseDayPayMoney);//每间，每天
-                $("#chaoqiPayMoney").html("￥" + data.chaoqiPayMoney);//超期未付
-                $("#fiveDayPayMoney").html("￥" + data.fiveDayPayMoney);//近5日待付
-                $("#thisMonthPayMoney").html("￥" + data.thisMonthPayMoney);//本月应付
-                $("#thisMonthPayAll").html("￥" + data.thisMonthPayAll);//本月已付租金总额
-                $("#thisMonthNotPay").html("￥" + data.thisMonthNotPay);//本月待付
-                $("#nextMonthPay").html("￥" + data.nextMonthPay);//次月应付
+                $("#rentHouseCount").html(data.rentHouseCount);//房源总数
+                $("#rentHouseSumArea").html("￥" + data.rentHouseSumArea);//分成房源总面积
+                $("#money").html("￥" + data.money);//单平收益
+                $("#payMoneyHouse").html("￥" + data.payMoneyHouse);//待结算的房间
+                $("#sumMoney").html("￥" + data.sumMoney);//总金额
             },
             "json"
         );

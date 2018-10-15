@@ -1,6 +1,7 @@
 package top.cflwork.service;
 
 import top.cflwork.vo.PermissionVo;
+import top.cflwork.vo.TreeVo;
 
 import java.util.List;
 
@@ -40,4 +41,8 @@ public interface PermissionService extends BaseService<PermissionVo> {
      * @return 指定用户名下的所有权限，并剔除了重复的权限
      */
     List<PermissionVo> listByAccount(String account);
+
+    TreeVo<PermissionVo> getTree();
+
+    TreeVo<PermissionVo> getTree(Long id);
 }

@@ -45,7 +45,7 @@ public class AppShiroRealm extends AuthorizingRealm {
         }
         List<PermissionVo> permissionVoList = permissionService.listByAccount(username);
         for (PermissionVo permissionVo : permissionVoList) {
-            authorizationInfo.addStringPermission(permissionVo.getPermission());
+            authorizationInfo.addStringPermission(permissionVo.getUrl());
         }
         return authorizationInfo;
     }

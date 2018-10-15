@@ -75,12 +75,12 @@ public class RentPayServiceImpl implements RentPayService{
     }
 
     @Override
-    public HouseRentVo notHotelId() {
+    public RentVo notHotelId() {
         return rentPayDAO.notHotelId();
     }
 
     @Override
-    public HouseRentVo haveHotelId(Long hotelId) {
+    public RentVo haveHotelId(Long hotelId) {
         return rentPayDAO.haveHotelId(hotelId);
     }
 

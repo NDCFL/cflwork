@@ -9,8 +9,8 @@ import java.util.List;
 public interface RentPayService extends BaseService<RentPayVo>{
     List<Select2Vo> getContractMaster(Long companyId);
     List<Select2Vo> getHotel(Long companyId);
-    HouseRentVo notHotelId();
-    HouseRentVo haveHotelId(Long hotelId);
+    RentVo notHotelId();
+    RentVo haveHotelId(Long hotelId);
     void huankuan(Long id);
     List<Select2Vo> getHouse(PageQuery pageQuery);
     List<RentPayMoneyVo> getSubjectMoney(RentPayMoneyVo rentPayMoneyVo);
