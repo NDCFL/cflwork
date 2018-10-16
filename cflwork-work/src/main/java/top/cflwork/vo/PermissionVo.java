@@ -26,5 +26,6 @@ public class PermissionVo {
     private Date createTime;
     // 修改时间
     private Date updateTime;
-
+    //父菜单
+    private String pName;
 }

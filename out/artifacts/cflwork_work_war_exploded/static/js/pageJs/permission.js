@@ -1,18 +1,42 @@
-//生成用户数据
-$('#mytab').bootstrapTreeTable({
-    id: 'id',
-    code: 'id',
-    parentCode: 'parentId',
-    type: "GET", // 请求数据的ajax类型
-    url: '/permission/list', // 请求数据的ajax的url
-    expandColumn: '1',// 在哪一列上面显示展开按钮
-    striped: true, // 是否各行渐变色
-    bordered: true, // 是否显示边框
-    expandAll: false, // 是否全部展开
-    showRefresh: true,//刷新按钮
-    showColumns: true,
-    clickToSelect: true,//是否启用点击选中行
-    columns: [
+$(document).ready(function () {
+    load();
+});
+var load = function () {//生成用户数据
+    $('#mytab').bootstrapTreeTable({
+        id: 'id',
+        code: 'id',
+        parentCode: 'parentId',
+        method: 'post',
+        contentType: "application/x-www-form-urlencoded",//必须要有！！！！
+        url: "/permission/permissionList",//要请求数据的文件路径
+        striped: true, //是否显示行间隔色
+        dataField: "res",
+        sortable: true, //是否启用排序 sortOrder: "ID asc",
+        sortOrder: "ID asc",
+        pagination: true,//是否分页
+        queryParamsType: 'limit',//查询参数组织方式
+        queryParams: queryParams,//请求服务器时所传的参数
+        sidePagination: 'cline',//指定服务器端分页
+        pageNumber: 1, //初始化加载第一页，默认第一页
+        pageSize: 10,//单页记录数
+        pageList: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],//分页步进值
+        showRefresh: true,//刷新按钮
+        showColumns: true,
+        clickToSelect: true,//是否启用点击选中行
+        toolbarAlign: 'right',//工具栏对齐方式
+        buttonsAlign: 'right',//按钮对齐方式
+        search: true,
+        uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+        showExport: true,
+        exportDataType: 'all',
+        expandColumn: '1',// 在哪一列上面显示展开按钮
+        striped: true, // 是否各行渐变色
+        bordered: true, // 是否显示边框
+        expandAll: false, // 是否全部展开
+        showRefresh: true,//刷新按钮
+        showColumns: true,
+        clickToSelect: true,//是否启用点击选中行
+        columns: [
             {
                 title: '编号',
                 field: 'id',
@@ -33,7 +57,7 @@ $('#mytab').bootstrapTreeTable({
                 field: 'icon',
                 align: 'center',
                 valign: 'center',
-                width : '5%',
+                width: '5%',
                 formatter: function (item, index) {
                     return item.icon == null ? ''
                         : '<i class="' + item.icon
@@ -45,7 +69,7 @@ $('#mytab').bootstrapTreeTable({
                 field: 'type',
                 align: 'center',
                 valign: 'center',
-                width : '10%',
+                width: '10%',
                 formatter: function (item, index) {
                     if (item.type === 0) {
                         return '<span class="label label-primary">目录</span>';
@@ -61,13 +85,13 @@ $('#mytab').bootstrapTreeTable({
             {
                 title: '地址',
                 valign: 'center',
-                width : '20%',
+                width: '20%',
                 field: 'url'
             },
             {
                 title: '权限标识',
                 valign: 'center',
-                width : '20%',
+                width: '20%',
                 field: 'perms'
             },
             {
@@ -76,23 +100,14 @@ $('#mytab').bootstrapTreeTable({
                 align: 'center',
                 valign: 'center',
                 formatter: function (item, index) {
-                    var e = '<a class="btn btn-primary btn-sm '
-                        + '" href="#" mce_href="#" title="编辑" onclick="edit(\''
-                        + item.id
-                        + '\')"><i class="fa fa-edit"></i></a> ';
-                    var p = '<a class="btn btn-primary btn-sm '
-                        + '" href="#" mce_href="#" title="添加下级" onclick="add(\''
-                        + item.id
-                        + '\')"><i class="fa fa-plus"></i></a> ';
-                    var d = '<a class="btn btn-warning btn-sm '
-                        + '" href="#" title="删除"  mce_href="#" onclick="remove(\''
-                        + item.id
-                        + '\')"><i class="fa fa-remove"></i></a> ';
-                    return e + d + p;
+                    var e = '<a title="编辑" href="javascript:void(0);" id="char"  data-toggle="modal" data-id="\'' + item.id + '\'" data-target="#myModal" onclick="return edit(\'' + item.id + '\')"><i class="glyphicon glyphicon-pencil" alt="修改" style="color:green">修改</i></a> ';
+                    var d = '<a title="删除" href="javascript:void(0);" onclick="del(' + item.id+')"><i class="glyphicon glyphicon-trash" alt="删除" style="color:red">删除</i></a> ';
+                    var f = '<a title="新增下级" data-toggle="modal"  data-target="#webAdd" onclick="return  addPermission(' + item.id + ')"><i class="glyphicon glyphicon-plus" alt="添加下级" style="color:#3cb3ff">添加下级</i></a> ';
+                    return e + d + f;
                 }
             }]
     });
-
+}
 //请求服务数据时所传参数
 function queryParams(params) {
     var title = "";
@@ -107,15 +122,12 @@ function queryParams(params) {
         searchVal: title
     }
 }
-function del(cashSubjectid, status) {
-    if (status == 0) {
-        layer.msg("删除失败，已经启用的不允许删除!", {icon: 2, time: 1000});
-        return;
-    }
+function del(permissionid) {
+
     layer.confirm('确认要删除吗？', function (index) {
         $.ajax({
             type: 'POST',
-            url: '/cashSubject/deleteCashSubject/' + cashSubjectid,
+            url: '/permission/deletePermission/' + permissionid,
             dataType: 'json',
             success: function (data) {
                 if (data.message == '删除成功!') {
@@ -132,15 +144,51 @@ function del(cashSubjectid, status) {
     });
 }
 function edit(name) {
-    $.post("/cashSubject/findCashSubject/" + name,
+    $.post("/permission/findPermission/" + name,
         function (data) {
+            console.log(JSON.stringify(data));
             $("#updateform").autofill(data);
         },
         "json"
     );
 }
+function addPermission(pId) {
+    $.post("/permission/add/" + pId,
+        function (data) {
+            $("#parentId").val(data.parentId);
+            $("#pName").val(data.pname);
+        },
+        "json"
+    );
+}
+//打开图标列表
+$("#ico-btn").click(function(){
+    layer.open({
+        type: 2,
+        title:'图标列表',
+        content: '/static/FontIcoList.html',
+        area: ['480px', '400px'],
+        success: function(layero, index){
+            //var body = layer.getChildFrame('.ico-list', index);
+            //console.log(layero, index);
+        }
+    });
+});
+//打开图标列表
+$("#ico-btns").click(function(){
+    layer.open({
+        type: 2,
+        title:'图标列表',
+        content: '/static/IcoList.html',
+        area: ['480px', '400px'],
+        success: function(layero, index){
+            //var body = layer.getChildFrame('.ico-list', index);
+            //console.log(layero, index);
+        }
+    });
+});
 function updatestatus(id, status) {
-    $.post("/cashSubject/updateStatus/" + id + "/" + status,
+    $.post("/permission/updateStatus/" + id + "/" + status,
         function (data) {
             if(status==0){
                 if(data.message=="ok"){
@@ -162,14 +210,14 @@ function updatestatus(id, status) {
 }
 //查询按钮事件
 $('#search_btn').click(function () {
-    $('#mytab').bootstrapTable('refresh', {url: '/cashSubject/cashSubjectList'});
+    $('#mytab').bootstrapTreeTable('refresh', {url: '/permission/permissionList'});
 })
 function refush() {
-    $('#mytab').bootstrapTable('refresh', {url: '/cashSubject/cashSubjectList'});
+    load();
 }
 $("#update").click(function () {
     $.post(
-        "/cashSubject/cashSubjectUpdateSave",
+        "/permission/permissionUpdateSave",
         $("#updateform").serialize(),
         function (data) {
             if (data.message == "修改成功!") {
@@ -184,10 +232,10 @@ $("#update").click(function () {
 });
 $("#add").click(function () {
     $.post(
-        "/cashSubject/cashSubjectAddSave",
+        "/permission/permissionAddSave",
         $("#formadd").serialize(),
         function (data) {
-            if (data.message == "新增成功!") {
+            if (data.result == "success") {
                 layer.alert(data.message, {icon: 6});
                 refush();
             } else {
@@ -197,16 +245,6 @@ $("#add").click(function () {
         }, "json"
     );
 });
-function add(pId) {
-    layer.open({
-        type: 2,
-        title: '增加菜单',
-        maxmin: true,
-        shadeClose: false, // 点击遮罩关闭层
-        area: ['800px', '520px'],
-        content: prefix + '/add/' + pId // iframe的url
-    });
-}
 
 function deleteMany11() {
     var isactivity = "";
@@ -234,7 +272,7 @@ function deleteMany11() {
     $("#deleteId").val(row);
     layer.confirm('确认要执行批量删除网站信息数据吗？', function (index) {
         $.post(
-            "/cashSubject/deleteManyCashSubject",
+            "/permission/deleteManyPermission",
             {
                 "manyId": $("#deleteId").val()
             },
@@ -272,7 +310,7 @@ function deleteMany(){
 $("#updateSta").click(function () {
     layer.confirm('确认要执行批量修改收支科目状态吗？',function(index){
         $.post(
-            "/cashSubject/deleteManyCashSubject",
+            "/permission/deleteManyPermission",
             {
                 "manyId":$("#statusId").val(),
                 "status":$("#status").val()

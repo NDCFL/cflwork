@@ -22,14 +22,12 @@ public class PermissionController {
 	private PermissionService permissionService;
 
 	public String prefix = "permission";
-	@RequiresPermissions("sys:menu:menu")
 	@GetMapping("permissionPage")
 	public String permissionPage() {
 		return "/permission/permissionList";
 	}
 
-	@RequiresPermissions("sys:menu:menu")
-	@RequestMapping("/list")
+	@RequestMapping("/permissionList")
 	@ResponseBody
 	public List<PermissionVo> list(@RequestParam Map<String, Object> params) {
 		List<PermissionVo> menus = permissionService.listPage(new PageQuery());
@@ -37,37 +35,34 @@ public class PermissionController {
 	}
 
 	@Log("添加菜单")
-	@RequiresPermissions("sys:menu:add")
-	@GetMapping("/add/{pId}")
-	public String add(Model model, @PathVariable("pId") Long pId) {
-		model.addAttribute("pId", pId);
+	@RequestMapping("/add/{pId}")
+	@ResponseBody
+	public PermissionVo add(@PathVariable("pId") Long pId) {
+		PermissionVo permissionVo = new PermissionVo();
+		permissionVo.setParentId(pId);
 		if (pId == 0) {
-			model.addAttribute("pName", "根目录");
+			permissionVo.setPName("根目录");
 		} else {
-			model.addAttribute("pName", permissionService.getById(pId).getName());
+			permissionVo.setPName(permissionService.getById(pId).getName());
 		}
-		return prefix + "/add";
+		return permissionVo;
 	}
 
 	@Log("编辑菜单")
-	@RequiresPermissions("sys:menu:edit")
-	@GetMapping("/edit/{id}")
-	public String edit(Model model, @PathVariable("id") Long id) {
-		PermissionVo mdo = permissionService.getById(id);
-		Long pId = mdo.getParentId();
-		model.addAttribute("pId", pId);
-		if (pId == 0) {
-			model.addAttribute("pName", "根目录");
+	@RequestMapping("/findPermission/{id}")
+    @ResponseBody
+	public PermissionVo edit(Model model, @PathVariable("id") Long id) {
+		PermissionVo permissionVo = permissionService.getById(id);
+		if (permissionVo.getParentId() == 0) {
+			permissionVo.setPName("根目录");
 		} else {
-			model.addAttribute("pName", permissionService.getById(pId).getName());
+            permissionVo.setPName(permissionService.getById(permissionVo.getParentId()).getName());
 		}
-		model.addAttribute("menu", mdo);
-		return prefix+"/edit";
+		return permissionVo;
 	}
 
 	@Log("保存菜单")
-	@RequiresPermissions("sys:menu:add")
-	@PostMapping("/save")
+	@RequestMapping("/permissionAddSave")
 	@ResponseBody
 	public Message save(PermissionVo menu) {
 		permissionService.save(menu);
@@ -75,21 +70,29 @@ public class PermissionController {
 	}
 
 	@Log("更新菜单")
-	@RequiresPermissions("sys:menu:edit")
-	@PostMapping("/update")
+	@RequestMapping("/permissionUpdateSave")
 	@ResponseBody
 	public Message update(PermissionVo menu) {
-		permissionService.update(menu);
-		return Message.fail( "更新失败");
+        try{
+            permissionService.update(menu);
+            return  Message.success("修改成功!");
+        }catch (Exception e){
+            e.printStackTrace();
+            return  Message.fail("修改失败!");
+        }
 	}
 
 	@Log("删除菜单")
-	@RequiresPermissions("sys:menu:remove")
-	@PostMapping("/remove")
+	@RequestMapping("/deletePermission/{id}")
 	@ResponseBody
-	public Message remove(Long id) {
-		permissionService.removeById(id);
-		return Message.success("删除失败");
+	public Message remove(@PathVariable("id") Long id) {
+        try{
+            permissionService.removeById(id);
+            return Message.success("删除成功!");
+        }catch (Exception e){
+            e.printStackTrace();
+            return Message.fail("删除失败!");
+        }
 	}
 
 	@GetMapping("/tree")

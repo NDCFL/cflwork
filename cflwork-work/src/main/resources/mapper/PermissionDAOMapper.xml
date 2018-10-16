@@ -58,7 +58,7 @@
 	</select>
 
 	<insert id="save" useGeneratedKeys="true" keyProperty="id">
-		insert into t_permission (parent_id,name,url,perms,type,icon,order_num,create_time,update_time)values(#{parentId},#{name},#{url},#{perms},#{type},#{icon},#{orderNum},now(),#{updateTime})
+		insert into t_permission (parent_id,name,url,perms,`type`,icon,order_num,create_time,update_time)values(#{parentId},#{name},#{url},#{perms},#{type},#{icon},#{orderNum},now(),#{updateTime})
 	</insert>
 
 	<update id="update" >
