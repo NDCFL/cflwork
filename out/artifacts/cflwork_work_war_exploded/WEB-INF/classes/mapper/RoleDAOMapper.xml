@@ -39,8 +39,8 @@
 	<select id="count" resultType="long">
 		select count(*) from t_role
 	</select>
-	<insert id="save" parameterType="paymentTypeVo">
-		insert into t_role ( title,description,is_active) values ( #{title},#{description},#{isActive})
+	<insert id="save" parameterType="roleVo" useGeneratedKeys="true" keyProperty="id">
+		insert into t_role ( title,description,is_active,create_time) values ( #{title},#{description},#{isActive},now())
 	</insert>
 	<update id="updateStatus">
 		update t_role set is_active=#{status} where id=#{id}

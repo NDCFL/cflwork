@@ -1,6 +1,7 @@
 package top.cflwork.vo;
 
 import java.util.Date;
+import java.util.List;
 
 public class RoleVo {
     private Long id;
@@ -12,6 +13,8 @@ public class RoleVo {
     private Date createTime;
 
     private Byte isActive;
+
+    private Long[] permissionList;//权限菜单列表
 
     public RoleVo(Long id, String title, String description, Date createTime, Byte isActive) {
         this.id = id;
@@ -63,5 +66,13 @@ public class RoleVo {
 
     public void setIsActive(Byte isActive) {
         this.isActive = isActive;
+    }
+
+    public Long[] getPermissionList() {
+        return permissionList;
+    }
+
+    public void setPermissionList(Long[] permissionList) {
+        this.permissionList = permissionList;
     }
 }

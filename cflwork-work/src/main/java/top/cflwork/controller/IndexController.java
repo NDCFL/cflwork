@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import top.cflwork.query.UserAccountPasswordQuery;
-import top.cflwork.service.BusinessManService;
-import top.cflwork.service.HotelService;
-import top.cflwork.service.UserRoleService;
-import top.cflwork.service.UserService;
+import top.cflwork.service.*;
 import top.cflwork.util.MsgInfo;
 import top.cflwork.vo.BusinessManVo;
 import top.cflwork.vo.HotelVo;
@@ -43,9 +40,12 @@ public class IndexController {
     @Resource
     private HotelService hotelService;
     @Resource
+    private PermissionService permissionService;
+    @Resource
     private BusinessManService businessManService;
     @RequestMapping(value = "index", method = RequestMethod.GET)
-    public String index(HttpSession session) {
+    public ModelAndView index(HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView();
         try{
             UserVo user = (UserVo) session.getAttribute("userVo");
             Subject subject = SecurityUtils.getSubject();
@@ -57,10 +57,13 @@ public class IndexController {
                 session.setAttribute("hotelVo",hotelVo);
             }
             session.setAttribute("userRole",userRoleVo);
-            return "index";
+            modelAndView.addObject("permissionList",permissionService.listPermissionTree(user.getId()));
+            modelAndView.setViewName("index");
+            return modelAndView;
         }catch (Exception e){
             e.printStackTrace();
-            return "loginRegister/loginPage";
+            modelAndView.setViewName("loginRegister/loginPage");
+            return modelAndView;
         }
     }
     @RequestMapping(value = "logins", method = RequestMethod.GET)

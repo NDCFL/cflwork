@@ -236,6 +236,8 @@ public class RentPayController {
                 rentPayMoneyVo.setTime2(new Date());
             }
             List<RentPayMoneyVo> rentPayMoneyVoList = rentPayService.getSubjectMoney(rentPayMoneyVo);
+            Double sumMoney = rentPayMoneyVoList.stream().mapToDouble(RentPayMoneyVo::getMoney).sum();//和
+            rentPayMoneyVoList.get(0).setSumMoney(sumMoney);
             return rentPayMoneyVoList;
         } catch (Exception e) {
             e.printStackTrace();

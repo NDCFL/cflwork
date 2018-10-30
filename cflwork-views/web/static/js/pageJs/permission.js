@@ -123,7 +123,6 @@ function queryParams(params) {
     }
 }
 function del(permissionid) {
-
     layer.confirm('确认要删除吗？', function (index) {
         $.ajax({
             type: 'POST',
@@ -146,7 +145,6 @@ function del(permissionid) {
 function edit(name) {
     $.post("/permission/findPermission/" + name,
         function (data) {
-            console.log(JSON.stringify(data));
             $("#updateform").autofill(data);
         },
         "json"

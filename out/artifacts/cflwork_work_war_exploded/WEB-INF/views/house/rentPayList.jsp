@@ -258,7 +258,7 @@
                     <h5>当前可结算分成总额/元</h5>
                 </div>
                 <div class="ibox-content">
-                    <h1 class="no-margins" id="sumMoney"></h1>
+                    <h1 class="no-margins" id="sumMoney1"></h1>
                     <div class="stat-percent font-bold text-info">20% <i class="fa fa-level-up"></i>
                     </div>
                     <small>分成总额/元</small>
@@ -745,7 +745,7 @@
                 $("#rentHouseSumArea").html("￥" + data.rentHouseSumArea);//分成房源总面积
                 $("#money").html("￥" + data.money);//单平收益
                 $("#payMoneyHouse").html("￥" + data.payMoneyHouse);//待结算的房间
-                $("#sumMoney").html("￥" + data.sumMoney);//总金额
+                $("#sumMoney1").html("￥" + data.sumMoney);//总金额
             },
             "json"
         );
@@ -772,11 +772,7 @@
             function (data) {
                 console.log(data);
                 vm.$data.sites = data;
-                var moneys = 0.0;
-                for (var i = 0; i < data.length; i++) {
-                    moneys = parseFloat(moneys) + parseFloat(data[i].money);
-                }
-                $("#sumMoney").text("￥"+moneys);
+                $("#sumMoney").text("￥"+parseFloat(data[0].sumMoney).toFixed(2));
             }, "json"
         );
     }

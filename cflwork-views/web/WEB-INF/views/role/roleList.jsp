@@ -15,7 +15,13 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>角色列表</title>
-    <jsp:include page="../common/bootstraptablecss.jsp"></jsp:include>
+    <link href="<%=path%>/static/css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+    <link href="<%=path%>/static/css/font-awesome.min.css?v=4.4.0" rel="stylesheet">
+    <link href="<%=path%>/static/css/plugins/bootstrap-table/bootstrap-table.min.css" rel="stylesheet">
+    <link href="<%=path%>/static/css/animate.min.css" rel="stylesheet">
+    <link href="<%=path%>/static/css/style.min.css?v=4.0.0" rel="stylesheet">
+    <link href="<%=path%>/static/css/jstree/style.min.css" rel="stylesheet">
+    <link href="<%=path%>/static/css/jstree/jquery.treegrid.css" rel="stylesheet">
 </head>
 
 <body class="gray-bg">
@@ -58,6 +64,7 @@
                 </h4>
             </div>
             <form class="form-horizontal" method="post" id="formadd">
+                <input id="permissionList" name="permissionList" type="text">
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="col-sm-3 control-label">角色：</label>
@@ -71,11 +78,17 @@
                             <textarea  name="description" class="form-control" required="" aria-required="true"></textarea>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">菜单权限：</label>
+                        <div class="col-sm-8">
+                            <div id="menuTree"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭
                     </button>
-                    <button type="button" id="add" class="btn btn-primary" data-dismiss="modal">
+                    <button type="button" id="add" class="btn btn-primary"  data-dismiss="modal">
                         确认新增
                     </button>
                 </div>
@@ -134,7 +147,7 @@
             </div>
             <form class="form-horizontal" id="updateform" >
                 <div class="modal-body">
-
+                    <input id="permissionList1" name="permissionList" type="text">
                     <input type="hidden" name="id" id="id" value="">
                     <div class="form-group">
                         <label class="col-sm-3 control-label">角色：</label>
@@ -148,11 +161,17 @@
                             <textarea  name="description" class="form-control" id="description" required="" value="" aria-required="true"></textarea>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">菜单权限：</label>
+                        <div class="col-sm-8">
+                            <div id="menuTree1"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭
                     </button>
-                    <button type="button" id="update" class="btn btn-primary" data-dismiss="modal">
+                    <button type="button" id="update" class="btn btn-primary"  data-dismiss="modal">
                         确认修改
                     </button>
                 </div>
@@ -162,6 +181,11 @@
 </div>
 <%--网站信息的修改--%>
 <jsp:include page="../common/bootstraptablejs.jsp"></jsp:include>
+<script src="<%=path%>/static/js/jstree.min.js"></script>
+<script src="<%=path%>/static/js/plugins/jqTreeGrid/jquery.treegrid.min.js"></script>
+<script src="<%=path%>/static/js/plugins/jqTreeGrid/jquery.treegrid.extension.js"></script>
+<script src="<%=path%>/static/js/plugins/jqTreeGrid/jquery.treegrid.bootstrap3.js"></script>
+<script src="<%=path%>/static/js/chosen.jquery.js"></script>
 <script src="<%=path%>/static/js/pageJs/role.js"></script>
 </body>
 <%--<script>--%>

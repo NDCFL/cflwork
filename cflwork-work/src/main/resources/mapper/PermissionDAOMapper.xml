@@ -87,6 +87,19 @@
 			#{id}
 		</foreach>
 	</delete>
-
+	<select id="listPermissionByUserId" resultType="permissionVo">
+		select distinct
+		m.id , parent_id, name, url,
+		perms,`type`,icon,order_num,m.create_time, update_time
+		from t_permission m
+		left
+		join t_role_permission rm on m.id = rm.permission_id left join
+		t_user_role ur
+		on rm.role_id =ur.role_id where ur.user_id = #{id}
+		and
+		m.type in(0,1)
+		order by
+		m.order_num
+	</select>
 
 </mapper>

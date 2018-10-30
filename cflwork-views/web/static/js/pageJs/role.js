@@ -93,11 +93,7 @@ $('#mytab').bootstrapTable({
                 }else if(row.isActive==0){
                     f = '<a title="停用" href="javascript:void(0);" onclick="updatestatus('+row.id+','+1+')"><i class="glyphicon glyphicon-remove-sign"  style="color:red">停用</i></a> ';
                 }
-                if(row.id<=1){
-                    return "<i>不能操作自己</i>";
-                }else{
-                    return e + d+f;
-                }
+                return e + d+f;
             }
         }
     ],
@@ -118,7 +114,11 @@ $('#mytab').bootstrapTable({
 })
 
 //请求服务数据时所传参数
-function queryParams(params){var title = "";    $(".search input").each(function () {        title=$(this).val();    });
+function queryParams(params){
+    var title = "";
+    $(".search input").each(function () {
+        title=$(this).val();
+    });
     return{
         //每页多少条数据
         pageSize: this.pageSize,
@@ -127,10 +127,10 @@ function queryParams(params){var title = "";    $(".search input").each(function
     }
 }
 function del(roleid,status){
-    if(status==0){
-        layer.msg("删除失败，已经启用的不允许删除!",{icon:2,time:1000});
-        return;
-    }
+    // if(status==0){
+    //     layer.msg("删除失败，已经启用的不允许删除!",{icon:2,time:1000});
+    //     return;
+    // }
     layer.confirm('确认要删除吗？',function(index){
         $.ajax({
             type: 'POST',
@@ -154,6 +154,7 @@ function edit(name){
     $.post("/role/findRole/"+name,
         function(data){
             $("#updateform").autofill(data);
+            getMenuTreeData1(data.id);
         },
         "json"
     );
@@ -186,7 +187,74 @@ $('#search_btn').click(function(){
 function refush(){
     $('#mytab').bootstrapTable('refresh', {url: '/role/roleList'});
 }
+getMenuTreeData();
+function getAllSelectNodes() {
+    var menuIds = new Array();
+    var ref = $('#menuTree').jstree(true); // 获得整个树
+    menuIds = ref.get_selected(); // 获得所有选中节点的，返回值为数组
+    $("#menuTree").find(".jstree-undetermined").each(function(i, element) {
+        menuIds.push($(element).closest('.jstree-node').attr("id"));
+    });
+    $("#permissionList").val(menuIds);
+}
+function getMenuTreeData() {
+    $.ajax({
+        type : "GET",
+        url : "/permission/tree",
+        success : function(menuTree) {
+            loadMenuTree(menuTree);
+        }
+    });
+}
+function loadMenuTree(menuTree) {
+    $('#menuTree').jstree({
+        'core' : {
+            'data' : menuTree
+        },
+        "checkbox" : {
+            "three_state" : true,
+        },
+        "plugins" : [ "wholerow", "checkbox" ]
+    });
+    $('#menuTree').jstree("open_all");
+}
+
+function loadMenuTree1(menuTree) {
+    $('#menuTree1').jstree({
+        "plugins" : [ "wholerow", "checkbox" ],
+        'core' : {
+            'data' : menuTree
+        },
+        "checkbox" : {
+            //"keep_selected_style" : false,
+            //"undetermined" : true
+            //"three_state" : false,
+            //"cascade" : ' up'
+        }
+    });
+    $('#menuTree1').jstree('open_all');
+}
+function getAllSelectNodes1() {
+    var menuIds = new Array();
+    var ref = $('#menuTree1').jstree(true); // 获得整个树
+    menuIds = ref.get_selected(); // 获得所有选中节点的，返回值为数组
+    $("#menuTree1").find(".jstree-undetermined").each(function(i, element) {
+        menuIds.push($(element).closest('.jstree-node').attr("id"));
+    });
+    $("#permissionList1").val(menuIds);
+}
+function getMenuTreeData1(id) {
+    $.ajax({
+        type : "GET",
+        url : "/permission/tree/" + id,
+        success : function(data) {
+            loadMenuTree1(data);
+        }
+    });
+}
+
 $("#update").click(function(){
+    getAllSelectNodes1();
     $.post(
         "/role/roleUpdateSave",
         $("#updateform").serialize(),
@@ -202,6 +270,7 @@ $("#update").click(function(){
     );
 });
 $("#add").click(function(){
+    getAllSelectNodes();
     $.post(
         "/role/roleAddSave",
         $("#formadd").serialize(),

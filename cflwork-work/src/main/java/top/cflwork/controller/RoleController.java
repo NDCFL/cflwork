@@ -3,6 +3,7 @@ package top.cflwork.controller;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,13 +14,16 @@ import top.cflwork.common.PagingBean;
 import top.cflwork.enums.ActiveStatusEnum;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
+import top.cflwork.service.RolePermissionService;
 import top.cflwork.service.RoleService;
+import top.cflwork.vo.RolePermissionVo;
 import top.cflwork.vo.RoleVo;
 import top.cflwork.vo.Select2Vo;
 
 import javax.annotation.Resource;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +36,9 @@ public class RoleController {
 
     @Resource
     private RoleService roleService;
+    @Resource
+    private RolePermissionService rolePermissionService;
+
     @RequestMapping("roleList")
     @ResponseBody
     public PagingBean roleList(int pageSize, int pageIndex,String searchVal) throws  Exception{
@@ -44,12 +51,28 @@ public class RoleController {
     }
     @RequestMapping("/roleAddSave")
     @ResponseBody
-    public Message addSaveRole(RoleVo role) throws  Exception {
+    @Transactional
+    public Message addSaveRole(RoleVo roleVo) throws  Exception {
         try{
-            role.setIsActive(ActiveStatusEnum.ACTIVE.getValue().byteValue());
-            roleService.save(role);
+            //保存角色
+            roleVo.setIsActive(ActiveStatusEnum.ACTIVE.getValue().byteValue());
+            roleService.save(roleVo);
+            //保存角色权限
+            Long[] permissionIds = roleVo.getPermissionList();
+            Long roleId = roleVo.getId();
+            List<RolePermissionVo> rms = new ArrayList<>();
+            for (Long permissionId : permissionIds) {
+                RolePermissionVo rmDo = new RolePermissionVo();
+                rmDo.setRoleId(roleId);
+                rmDo.setPermissionId(permissionId);
+                rms.add(rmDo);
+            }
+            //先移除
+            rolePermissionService.removeByRoleId(roleVo.getId());
+            rolePermissionService.batchSave(rms);
             return  Message.success("新增成功!");
         }catch (Exception E){
+            E.printStackTrace();
             return Message.fail("新增失败!");
         }
 
@@ -62,11 +85,25 @@ public class RoleController {
     }
     @RequestMapping("/roleUpdateSave")
     @ResponseBody
-    public Message updaterole(RoleVo role) throws  Exception{
+    public Message updaterole(RoleVo roleVo) throws  Exception{
         try{
-            roleService.update(role);
+            roleService.update(roleVo);
+            //保存角色权限
+            Long[] permissionIds = roleVo.getPermissionList();
+            Long roleId = roleVo.getId();
+            List<RolePermissionVo> rms = new ArrayList<>();
+            for (Long permissionId : permissionIds) {
+                RolePermissionVo rmDo = new RolePermissionVo();
+                rmDo.setRoleId(roleId);
+                rmDo.setPermissionId(permissionId);
+                rms.add(rmDo);
+            }
+            //先移除
+            rolePermissionService.removeByRoleId(roleVo.getId());
+            rolePermissionService.batchSave(rms);
             return  Message.success("修改成功!");
         }catch (Exception e){
+            e.printStackTrace();
             return Message.fail("修改失败!");
         }
     }

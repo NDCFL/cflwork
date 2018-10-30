@@ -42,4 +42,11 @@ public interface PermissionDAO extends BaseDAO<PermissionVo> {
      * @return 指定用户名下的所有权限，并剔除了重复的权限
      */
     List<PermissionVo> listByAccount(String account);
+
+    /**
+     * 根据用户编号进行权限的查询
+     * @param id
+     * @return
+     */
+    List<PermissionVo> listPermissionByUserId(Long id);
 }

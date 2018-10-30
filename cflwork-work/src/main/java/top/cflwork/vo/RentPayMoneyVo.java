@@ -17,4 +17,5 @@ public class RentPayMoneyVo implements Serializable {
     private Date time2;//终止时间
     private Long hotelId;//酒店编号
     private Date nowTime = new Date();
+    private double sumMoney;//总金额
 }

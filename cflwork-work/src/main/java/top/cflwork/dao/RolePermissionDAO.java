@@ -10,5 +10,7 @@ import java.util.List;
  */
 @Repository
 public interface RolePermissionDAO extends  BaseDAO<RolePermissionVo>{
-    List<String> pageListByRoleId(String roleId);
+    List<Long> pageListByRoleId(long roleId);
+    void batchSave(List<RolePermissionVo> rolePermissionVoList);
+    void removeByRoleId(Long id);
 }

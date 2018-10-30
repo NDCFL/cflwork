@@ -1,14 +1,18 @@
 package top.cflwork.service.impl;
 
+import lombok.Lombok;
 import org.springframework.stereotype.Service;
 import top.cflwork.common.DozerMapperUtils;
 import top.cflwork.common.ExceptionUtils;
 import top.cflwork.dao.PermissionDAO;
+import top.cflwork.dao.RoleDAO;
+import top.cflwork.dao.RolePermissionDAO;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
 import top.cflwork.service.AbstractBaseService;
 import top.cflwork.service.PermissionService;
 import top.cflwork.util.BuildTree;
+import top.cflwork.util.Tree;
 import top.cflwork.vo.PermissionVo;
 import top.cflwork.vo.TreeVo;
 import top.cflwork.vo.TreeVo;
@@ -31,14 +35,16 @@ public class PermissionServiceImpl extends AbstractBaseService implements Permis
 
     @Resource
     private PermissionDAO permissionDAO;
+    @Resource
+    private RolePermissionDAO rolePermissionDAO;
     @Override
     public List<PermissionVo> listByModuleId(String moduleId) {
-        return null;
+        return permissionDAO.listByModuleId(moduleId);
     }
 
     @Override
     public List<PermissionVo> listByRoleId(String roleId) {
-        return null;
+        return permissionDAO.listByRoleId(roleId);
     }
 
     @Override
@@ -85,7 +91,7 @@ public class PermissionServiceImpl extends AbstractBaseService implements Permis
         pageQuery.setTemp(16);
         // 根据roleId查询权限
         List<PermissionVo> menus = permissionDAO.listPage(pageQuery);
-        List<Long> menuIds = null;
+        List<Long> menuIds = rolePermissionDAO.pageListByRoleId(id);
         List<Long> temp = menuIds;
         for (PermissionVo menu : menus) {
             if (temp.contains(menu.getParentId())) {
@@ -112,6 +118,31 @@ public class PermissionServiceImpl extends AbstractBaseService implements Permis
         // 默认顶级菜单为０，根据数据库实际情况调整
         TreeVo<PermissionVo> t = BuildTree.build(trees);
         return t;
+    }
+
+    @Override
+    public List<TreeVo<PermissionVo>> listPermissionTree(Long id) {
+        List<TreeVo<PermissionVo>> trees = new ArrayList<TreeVo<PermissionVo>>();
+        List<PermissionVo> menuDOs = permissionDAO.listPermissionByUserId(id);
+        for (PermissionVo sysPermissionVo : menuDOs) {
+            TreeVo<PermissionVo> tree = new TreeVo<PermissionVo>();
+            tree.setId(sysPermissionVo.getId().toString());
+            tree.setParentId(sysPermissionVo.getParentId().toString());
+            tree.setText(sysPermissionVo.getName());
+            Map<String, Object> attributes = new HashMap<>(16);
+            attributes.put("url", sysPermissionVo.getUrl());
+            attributes.put("icon", sysPermissionVo.getIcon());
+            tree.setAttributes(attributes);
+            trees.add(tree);
+        }
+        // 默认顶级菜单为０，根据数据库实际情况调整
+        List<TreeVo<PermissionVo>> list = BuildTree.buildList(trees, "0");
+        return list;
+    }
+
+    @Override
+    public List<PermissionVo> listPermissionByUserId(Long id) {
+        return permissionDAO.listPermissionByUserId(id);
     }
 
     @Override

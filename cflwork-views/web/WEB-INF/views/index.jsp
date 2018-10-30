@@ -949,6 +949,7 @@
             $("#updateHeadIcon").attr("src",data.headicon);
         },"json"
     );
+    <%--console.log(JSON.stringify(${permissionList})+'===============');--%>
 </script>
 </body>
 </html>

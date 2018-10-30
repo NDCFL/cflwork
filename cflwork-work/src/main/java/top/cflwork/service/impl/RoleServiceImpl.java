@@ -4,14 +4,17 @@ import org.springframework.stereotype.Service;
 import top.cflwork.common.DozerMapperUtils;
 import top.cflwork.common.ExceptionUtils;
 import top.cflwork.dao.RoleDAO;
+import top.cflwork.dao.RolePermissionDAO;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
 import top.cflwork.service.AbstractBaseService;
 import top.cflwork.service.RoleService;
+import top.cflwork.vo.RolePermissionVo;
 import top.cflwork.vo.RoleVo;
 import top.cflwork.vo.Select2Vo;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,8 +27,10 @@ import java.util.List;
 @Service
 public class RoleServiceImpl extends AbstractBaseService implements RoleService {
 
+    @Resource
     private RoleDAO roleDAO;
-
+    @Resource
+    private RolePermissionDAO rolePermissionDAO;
     @Override
     public List<RoleVo> listByAccount(String account) {
         try {

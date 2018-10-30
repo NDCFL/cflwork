@@ -1,5 +1,6 @@
 package top.cflwork.service;
 
+import top.cflwork.util.Tree;
 import top.cflwork.vo.PermissionVo;
 import top.cflwork.vo.TreeVo;
 
@@ -45,4 +46,8 @@ public interface PermissionService extends BaseService<PermissionVo> {
     TreeVo<PermissionVo> getTree();
 
     TreeVo<PermissionVo> getTree(Long id);
+
+    List<TreeVo<PermissionVo>> listPermissionTree(Long id);
+
+    List<PermissionVo> listPermissionByUserId(Long id);
 }
