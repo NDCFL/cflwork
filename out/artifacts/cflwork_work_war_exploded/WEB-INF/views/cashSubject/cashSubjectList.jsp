@@ -20,7 +20,7 @@
 <div class="wrapper wrapper-content animated fadeInRight">
     <div class="ibox float-e-margins">
         <div class="ibox-title">
-            <h5>收支流水科目列表</h5>
+            <h5>科目列表</h5>
         </div>
         <div class="ibox-content">
             <div class="panel panel-default">
@@ -28,15 +28,13 @@
                     查询条件
                 </div>
                 <div class="panel-body form-group" style="margin-bottom:0px;">
-                    <table id="mytab" name="mytab" class="table table-hover"></table>
-                    <div id="toolbar" class="btn-group pull-right" style="margin-right: 20px;">
-                        <button id="btn_delete" onclick="deleteMany();" type="button" class="btn btn-default" style="display: block;">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true" ></span>批量修改状态
-                        </button>
-                        <button id="btn_add" type="button" class="btn btn-default" data-toggle="modal" data-target="#webAdd">
+                    <div id="toolbar" class="btn-group pull-right" style="margin-right: 20px;margin-bottom: 20px">
+                        <button class="btn btn-default" type="button" onclick="refush()" title="刷新"><i class="glyphicon glyphicon-refresh icon-refresh"></i></button>
+                        <button id="btn_add" type="button"  class="btn btn-default"  data-toggle="modal"  data-target="#webAdd">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true" ></span>新增
                         </button>
                     </div>
+                    <table id="mytab" name="mytab" class="table table-hover"></table>
                 </div>
             </div>
         </div>
@@ -160,6 +158,9 @@
 </div>
 <%--网站信息的修改--%>
 <jsp:include page="../common/bootstraptablejs.jsp"></jsp:include>
+<script src="<%=path%>/static/js/plugins/jqTreeGrid/jquery.treegrid.min.js"></script>
+<script src="<%=path%>/static/js/plugins/jqTreeGrid/jquery.treegrid.extension.js"></script>
+<script src="<%=path%>/static/js/plugins/jqTreeGrid/jquery.treegrid.bootstrap3.js"></script>
 <script src="<%=path%>/static/js/pageJs/cashSubject.js"></script>
 </body>
 <%--<script>--%>

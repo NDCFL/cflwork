@@ -15,7 +15,6 @@ var load = function () {//生成用户数据
         sortOrder: "ID asc",
         pagination: true,//是否分页
         queryParamsType: 'limit',//查询参数组织方式
-        queryParams: queryParams,//请求服务器时所传的参数
         sidePagination: 'cline',//指定服务器端分页
         pageNumber: 1, //初始化加载第一页，默认第一页
         pageSize: 10,//单页记录数

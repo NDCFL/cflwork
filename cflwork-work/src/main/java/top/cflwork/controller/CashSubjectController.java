@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSession;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by chenfeilong on 2017/10/21.
@@ -34,14 +35,9 @@ public class CashSubjectController {
     private CashSubjectService cashSubjectService;
     @RequestMapping("cashSubjectList")
     @ResponseBody
-    public PagingBean cashSubjectList(int pageSize, int pageIndex, String searchVal, HttpSession session) throws  Exception{
+    public List<CashSubjectVo> cashSubjectList(String searchVal, HttpSession session) throws  Exception{
         UserVo userVo = (UserVo) session.getAttribute("userVo");
-        PagingBean pagingBean = new PagingBean();
-        pagingBean.setTotal(cashSubjectService.count(new PageQuery(searchVal,userVo.getCompanyId())));
-        pagingBean.setPageSize(pageSize);
-        pagingBean.setCurrentPage(pageIndex);
-        pagingBean.setrows(cashSubjectService.listPage(new PageQuery(pagingBean.getStartIndex(),pagingBean.getPageSize(),searchVal,userVo.getCompanyId())));
-        return pagingBean;
+        return cashSubjectService.listPage(new PageQuery(0,0,null,userVo.getCompanyId()));
     }
     @RequestMapping("/cashSubjectAddSave")
     @ResponseBody

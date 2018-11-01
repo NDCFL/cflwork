@@ -15,6 +15,10 @@ public class CashSubjectVo {
 
     private Long companyId;
 
+    private Long parentId;//父节点
+
+
+
     public CashSubjectVo(Long id, String title, String description, Date createTime, Byte isActive) {
         this.id = id;
         this.title = title;
@@ -73,5 +77,13 @@ public class CashSubjectVo {
 
     public void setCompanyId(Long companyId) {
         this.companyId = companyId;
+    }
+
+    public Long getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
     }
 }

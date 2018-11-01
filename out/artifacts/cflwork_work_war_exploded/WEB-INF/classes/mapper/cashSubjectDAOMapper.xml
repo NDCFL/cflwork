@@ -19,16 +19,16 @@
         delete from t_cash_subject where id = #{id}
     </delete>
     <select id="listPage" resultMap="cashSubjectMap">
-        select * from t_cash_subject where company_id=#{companyId} <include refid="search"/> order by create_time desc limit #{pageNo},#{pageSize}
+        select * from t_cash_subject where company_id=#{companyId} <include refid="search"/> order by create_time desc
     </select>
     <select id="listAll" resultMap="cashSubjectMap">
         select * from t_cash_subject where company_id=#{companyId}
     </select>
     <select id="count" resultType="java.lang.Long">
-        select count(*) from t_cash_subject where company_id=#{companyId} <include refid="search"/>
+        select count(id) from t_cash_subject where company_id=#{companyId} <include refid="search"/>
     </select>
     <insert id="save" parameterType="cashSubjectVo">
-        insert into t_cash_subject ( title,description,is_active,company_id) values ( #{title},#{description},#{isActive},#{companyId})
+        insert into t_cash_subject ( parent_id,title,description,is_active,company_id) values ( #{parentId},#{title},#{description},#{isActive},#{companyId})
     </insert>
     <update id="updateStatus">
         update t_cash_subject set is_active=#{status} where id=#{id}
@@ -37,6 +37,8 @@
         update t_cash_subject set
 
                 title = #{title},
+
+                parent_id = #{parentId},
 
                 description = #{description}
 
