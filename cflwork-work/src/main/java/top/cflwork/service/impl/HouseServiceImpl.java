@@ -103,4 +103,9 @@ public class HouseServiceImpl implements HouseService {
     public void updateHouseStatus(StatusQuery statusQuery,Date leaveTitle) {
         houserDAO.updateHouseStatus(statusQuery,leaveTitle);
     }
+
+    @Override
+    public List<Select2Vo> getHouseList(Integer type,Long hotelId) {
+        return houserDAO.getHouseList(type,hotelId);
+    }
 }

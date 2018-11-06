@@ -17,6 +17,7 @@ public class StatusQuery {
     private String cardTitle;
     private Long houseId;
     private String mobile;
+    private Integer temp;
 
 
     public StatusQuery() {}
@@ -98,5 +99,13 @@ public class StatusQuery {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public Integer getTemp() {
+        return temp;
+    }
+
+    public void setTemp(Integer temp) {
+        this.temp = temp;
     }
 }

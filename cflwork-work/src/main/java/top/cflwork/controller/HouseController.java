@@ -103,16 +103,20 @@ public class HouseController {
     }
     @RequestMapping("/deleteManyHouse")
     @ResponseBody
-    public Message deleteManyhouse(@Param("manyId") String manyId,Integer status) throws  Exception{
+    public Message deleteManyhouse(@Param("manyId") String manyId,Integer status,Integer houseTypes) throws  Exception{
         try{
             String str[] = manyId.split(",");
             for (String s: str) {
-                houseService.updateStatus(new StatusQuery(Long.parseLong(s),status));
+                StatusQuery statusQuery = new StatusQuery();
+                statusQuery.setId(Long.parseLong(s));
+                statusQuery.setStatus(status);
+                statusQuery.setTemp(houseTypes);
+                houseService.updateStatus(statusQuery);
             }
-            return Message.success("状态修改成功!");
+            return Message.success("修改成功!");
         }catch (Exception e){
             e.printStackTrace();
-            return  Message.fail("状态修改失败!");
+            return  Message.fail("修改失败!");
         }
     }
     @RequestMapping("/deleteHouse/{id}")
@@ -141,6 +145,18 @@ public class HouseController {
         HouseVo houseVo = new HouseVo();
         houseVo.setCardTitle(card);
         return houseVo;
+    }
+
+    /**
+     * 根据状态模式，获取所属的分成模式，还是房租模式 type0 分成模式 type1 房租模式
+     * @param type
+     * @return 返回select2的集合组件
+     * @throws Exception
+     */
+    @RequestMapping("/getHouseList")
+    @ResponseBody
+    public List<Select2Vo> getHouseCardTitle(Integer type,Long hotelId) throws  Exception{
+        return houseService.getHouseList(type,hotelId);
     }
     @RequestMapping("updateStatus/{id}/{status}")
     @ResponseBody

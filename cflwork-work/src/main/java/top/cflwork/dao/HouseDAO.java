@@ -22,4 +22,5 @@ public interface HouseDAO extends  BaseDAO<HouseVo> {
     Long findCount(@Param("pageQuery") PageQuery pageQuery, @Param("houseVo") HouseVo houseVo);
     List<HouseVo> findPages(@Param("pageQuery") PageQuery pageQuery, @Param("houseVo") HouseVo houseVo);
     void updateHouseStatus(@Param("statusQuery") StatusQuery statusQuery, @Param("leaveTime") Date leaveTime);
+    List<Select2Vo> getHouseList(@Param("type") Integer type,@Param("hotelId") Long hotelId);
 }

@@ -19,4 +19,5 @@ public interface HouseService extends  BaseService<HouseVo>{
     Long findCount(PageQuery pageQuery, HouseVo houseVo);
     List<HouseVo> findPages(PageQuery pageQuery, HouseVo houseVo);
     void updateHouseStatus(StatusQuery statusQuery, Date leaveTitle);
+    List<Select2Vo> getHouseList(Integer type,Long hotelId);
 }
