@@ -48,12 +48,14 @@ var load = function () {//生成用户数据
                 title: '科目名称',
                 field: 'title',
                 align: 'center',
+                valign: 'center',
                 sortable: true
             },
             {
                 title: '科目描述',
                 field: 'description',
                 align: 'center',
+                valign: 'center',
                 sortable: true
             }
             ,
@@ -61,9 +63,10 @@ var load = function () {//生成用户数据
                 title: '创建时间',
                 field: 'createTime',
                 align: 'center',
+                valign: 'center',
                 sortable: true,
-                formatter: function (value) {
-                    var date = new Date(value);
+                formatter: function (item) {
+                    var date = new Date(item.createTime);
                     var y = date.getFullYear();
                     var m = date.getMonth() + 1;
                     var d = date.getDate();
@@ -78,13 +81,14 @@ var load = function () {//生成用户数据
                 title: '当前状态',
                 field: 'isActive',
                 align: 'center',
-                formatter: function (value, row, index) {
-                    if (value == 0) {
+                valign: 'center',
+                formatter: function (value,index) {
+                    if (value.isActive == 0) {
                         //表示启用状态
-                        return '<i class="btn btn-primary" >启用</i>';
+                        return '<span style="color: green" >启用</span>';
                     } else {
                         //表示启用状态
-                        return '<i class="btn btn-danger">停用</i>';
+                        return '<span style="color: red">停用</span>';
                     }
                 }
             }
@@ -92,17 +96,18 @@ var load = function () {//生成用户数据
             {
                 title: '操作',
                 align: 'center',
+                valign: 'center',
                 field: '',
-                formatter: function (value, row, index) {
-                    var e = '<a title="编辑" href="javascript:void(0);" id="cashSubject"  data-toggle="modal" data-id="\'' + row.id + '\'" data-target="#myModal" onclick="return edit(\'' + row.id + '\')"><i class="glyphicon glyphicon-pencil" alt="修改" style="color:green">修改</i></a> ';
-                    var d = '<a title="删除" href="javascript:void(0);" onclick="del(' + row.id + ',' + row.isActive + ')"><i class="glyphicon glyphicon-trash" alt="删除" style="color:red">删除</i></a> ';
+                formatter: function (item, index) {
+                    var e = '<a title="编辑" href="javascript:void(0);" id="cashSubject"  data-toggle="modal" data-id="\'' + item.id + '\'" data-target="#myModal" onclick="return edit(\'' + item.id + '\')"><i class="glyphicon glyphicon-pencil" alt="修改" style="color:green">修改</i></a> ';
+                    var d = '<a title="删除" href="javascript:void(0);" onclick="del(' + item.id + ',' + item.isActive + ')"><i class="glyphicon glyphicon-trash" alt="删除" style="color:red">删除</i></a> ';
                     var f = '';
-                    if (row.isActive == 1) {
-                        f = '<a title="启用" href="javascript:void(0);" onclick="updatestatus(' + row.id + ',' + 0 + ')"><i class="glyphicon glyphicon-ok-sign" style="color:green">启用</i></a> ';
-                    } else if (row.isActive == 0) {
-                        f = '<a title="停用" href="javascript:void(0);" onclick="updatestatus(' + row.id + ',' + 1 + ')"><i class="glyphicon glyphicon-remove-sign"  style="color:red">停用</i></a> ';
+                    if (item.isActive == 1) {
+                        f = '<a title="启用" href="javascript:void(0);" onclick="updatestatus(' + item.id + ',' + 0 + ')"><i class="glyphicon glyphicon-ok-sign" style="color:green">启用</i></a> ';
+                    } else if (item.isActive == 0) {
+                        f = '<a title="停用" href="javascript:void(0);" onclick="updatestatus(' + item.id + ',' + 1 + ')"><i class="glyphicon glyphicon-remove-sign"  style="color:red">停用</i></a> ';
                     }
-                    var g = '<a title="添加子科目" href="javascript:void(0);" data-toggle="modal" data-toggle="modal" data-target="#webAdd"><i class="glyphicon glyphicon-pencil" alt="添加子科目" style="color:green">添加子科目</i></a>';
+                    var g = '<a title="添加子科目" href="javascript:void(0);" data-toggle="modal" data-toggle="modal" data-target="#webAdd"><i class="glyphicon glyphicon-pencil" alt="添加子科目" onclick="return addSubject(\''+item.title+'\',\''+item.id+'\')" style="color:green">添加子科目</i></a>';
 
                     return e + d + f + g;
                 }
@@ -122,6 +127,10 @@ function queryParams(params) {
         pageIndex: this.pageNumber,
         searchVal: title
     }
+}
+function addSubject(name,id) {
+    $("#parentName").val(name);
+    $("#parent_id").val(id);
 }
 function del(cashSubjectid, status) {
     if (status == 0) {

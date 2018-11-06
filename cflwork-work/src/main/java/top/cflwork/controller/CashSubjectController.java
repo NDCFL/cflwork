@@ -49,6 +49,7 @@ public class CashSubjectController {
             cashSubjectService.save(cashSubject);
             return  Message.success("新增成功!");
         }catch (Exception E){
+            E.printStackTrace();
             return Message.fail("新增失败!");
         }
 

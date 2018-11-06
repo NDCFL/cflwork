@@ -30,7 +30,7 @@
                 <div class="panel-body form-group" style="margin-bottom:0px;">
                     <div id="toolbar" class="btn-group pull-right" style="margin-right: 20px;margin-bottom: 20px">
                         <button class="btn btn-default" type="button" onclick="refush()" title="刷新"><i class="glyphicon glyphicon-refresh icon-refresh"></i></button>
-                        <button id="btn_add" type="button"  class="btn btn-default"  data-toggle="modal"  data-target="#webAdd">
+                        <button id="btn_add" type="button"  class="btn btn-default"  data-toggle="modal"  data-target="#webAdd" onclick="return addSubject('父科目','0');">
                             <span class="glyphicon glyphicon-plus" aria-hidden="true" ></span>新增
                         </button>
                     </div>
@@ -55,6 +55,13 @@
             </div>
             <form class="form-horizontal" method="post" id="formadd">
                 <div class="modal-body">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">父科目：</label>
+                        <div class="col-sm-8">
+                            <input readonly id="parentName" minlength="2" maxlength="20" type="text" class="form-control" required="" aria-required="true">
+                            <input type="hidden" name="parentId" id="parent_id">
+                        </div>
+                    </div>
                     <div class="form-group">
                         <label class="col-sm-3 control-label">科目名称：</label>
                         <div class="col-sm-8">
