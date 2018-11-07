@@ -11,6 +11,7 @@
 		<result column="is_active" property="isActive"></result>
 		<result column="house_type" property="houseType"></result>
 		<result column="house_types" property="houseTypes"></result>
+		<result column="area" property="area"></result>
 		<association property="houseTypeVo" javaType="top.cflwork.vo.HouseTypeVo">
 			<id column="htId" property="id"></id>
 			<result column="title" property="title"></result>
@@ -83,7 +84,7 @@
 		<include refid="search"/>
 	</select>
 	<insert id="save" parameterType="userVo">
-		insert into t_house (card_title, type, description, hotel_id, house_status, is_active,company_id,create_time,house_types,house_type) values ( #{cardTitle}, #{type}, #{description}, #{hotelId}, #{houseStatus}, #{isActive},#{companyId},now(),#{houseTypes},#{houseType})
+		insert into t_house (card_title, type, description, hotel_id, house_status, is_active,company_id,create_time,house_types,house_type,area) values ( #{cardTitle}, #{type}, #{description}, #{hotelId}, #{houseStatus}, #{isActive},#{companyId},now(),#{houseTypes},#{houseType},#{area})
 	</insert>
 	<update id="updateStatus">
 		update t_house
@@ -96,7 +97,7 @@
 		 where id=#{id}
 	</update>
 	<update id="update">
-		update t_house set card_title=#{cardTitle},type=#{type},description=#{description},hotel_id=#{hotelId},house_status=#{houseStatus},house_type=#{houseType},house_types=#{houseTypes} where id = #{id}
+		update t_house set card_title=#{cardTitle},type=#{type},description=#{description},hotel_id=#{hotelId},house_status=#{houseStatus},house_type=#{houseType},house_types=#{houseTypes},area=#{area} where id = #{id}
 	</update>
 	<update id="updateHouseStatus">
 		update t_house set house_status=#{statusQuery.status},leave_time=#{leaveTime} where id=#{statusQuery.houseId} and hotel_id=#{statusQuery.hotelId}
