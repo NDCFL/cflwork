@@ -5,6 +5,7 @@ import top.cflwork.dao.ContractMasterDAO;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
 import top.cflwork.service.ContractMasterService;
+import top.cflwork.vo.BusinessManVo;
 import top.cflwork.vo.ContractMasterVo;
 import top.cflwork.vo.Select2Vo;
 
@@ -96,5 +97,10 @@ public class ContractMasterServiceImpl implements ContractMasterService {
     @Override
     public void updatePwd(String phone, String password) {
         contractMasterDAO.updatePwd(phone, password);
+    }
+
+    @Override
+    public ContractMasterVo findByOpenId(String openId) {
+        return contractMasterDAO.findByOpenId(openId);
     }
 }

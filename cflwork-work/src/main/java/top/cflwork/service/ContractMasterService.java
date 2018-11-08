@@ -1,6 +1,7 @@
 package top.cflwork.service;
 
 import top.cflwork.query.PageQuery;
+import top.cflwork.vo.BusinessManVo;
 import top.cflwork.vo.ContractMasterVo;
 import top.cflwork.vo.Select2Vo;
 
@@ -16,4 +17,5 @@ public interface ContractMasterService extends BaseService<ContractMasterVo> {
     int checkPhone(String phone);
     ContractMasterVo getInfo(String phone);
     void updatePwd(String phone, String password);
+    ContractMasterVo findByOpenId(String openId);
 }

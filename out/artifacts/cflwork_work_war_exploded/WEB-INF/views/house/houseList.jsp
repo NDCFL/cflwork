@@ -101,8 +101,19 @@
                         <label class="col-sm-3 control-label">经营状态：</label>
                         <div class="col-sm-8">
                             <select class="form-control"  id="status" required name="status">
+                                <option value="">全部</option>
                                 <option value="0">启用</option>
                                 <option value="1">停用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">所属模式：</label>
+                        <div class="col-sm-8">
+                            <select class="form-control"  id="house_typess" required name="houseTypes">
+                                <option value="">全部</option>
+                                <option value="0">分成模式</option>
+                                <option value="1">房租模式</option>
                             </select>
                         </div>
                         <input id="statusId" type="hidden" name="manyId" />
@@ -142,14 +153,14 @@
                 </div>
                 <div class="form-group">
                     <label class="col-sm-3 control-label">酒店房号：</label>
-                    <div class="col-sm-6">
+                    <div class="col-sm-6" style="width: 300px">
                         <input type="text" id="cardTitle" name="cardTitle" placeholder="请输入房号多个房号用','号分割" required class="form-control"> <span class="help-block m-b-none" id="card_title"></span>
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-3 control-label">房间类型：</label>
                     <div class="col-sm-6">
-                        <select class="form-control" id="type" name="type" onchange="getInfo(this.value);"  required>
+                        <select class="form-control" id="type" name="type" required>
                         </select>
                     </div>
                 </div>
@@ -163,6 +174,15 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-sm-3 control-label">所属模式：</label>
+                    <div class="col-sm-6">
+                        <select class="form-control" id="houseTypes" name="houseTypes" required>
+                            <option value="0">分成模式</option>
+                            <option value="1">房租模式</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-sm-3 control-label">房间描述：</label>
                     <div class="col-sm-6">
                         <textarea class="form-control" name="description" ></textarea>
@@ -170,7 +190,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-4 col-sm-offset-3">
-                        <button class="btn btn-primary"  type="submit">新增</button>
+                        <button class="btn btn-primary"  type="button" id="add" >新增</button>
                         <button class="btn btn-white" type="button" data-dismiss="modal">取消</button>
                     </div>
                 </div>
@@ -204,7 +224,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">房号</label>
+                    <label class="col-sm-3 control-label">房&nbsp;&nbsp;&nbsp;&nbsp;号：</label>
                     <div class="col-sm-6">
                         <input type="text" name="cardTitle" id="cardTitle_" required class="form-control"> <span
                             class="help-block m-b-none" id="card"></span>
@@ -213,7 +233,7 @@
                 <div class="form-group">
                     <label class="col-sm-3 control-label">房间类型：</label>
                     <div class="col-sm-6">
-                        <select class="form-control" name="type" id="house_Type" onchange="getInfo(this.value);"
+                        <select class="form-control" name="type" id="house_Type"
                                 required>
                         </select>
                     </div>
@@ -228,9 +248,12 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="col-sm-3 control-label">房间描述</label>
+                    <label class="col-sm-3 control-label">所属模式：</label>
                     <div class="col-sm-6">
-                        <textarea class="form-control" id="description" name="description" required></textarea>
+                        <select class="form-control" id="house_types" name="houseTypes" required>
+                            <option value="0">分成模式</option>
+                            <option value="1">房租模式</option>
+                        </select>
                     </div>
                 </div>
                 <div class="form-group">
@@ -243,8 +266,14 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-sm-3 control-label">房间描述</label>
+                    <div class="col-sm-6">
+                        <textarea class="form-control" id="description" name="description" required></textarea>
+                    </div>
+                </div>
+                <div class="form-group">
                     <div class="col-sm-4 col-sm-offset-3">
-                        <button class="btn btn-primary" type="submit">修改</button>
+                        <button class="btn btn-primary" type="button"  id="update">修改</button>
                         <button class="btn btn-white" type="button" data-dismiss="modal">取消</button>
                     </div>
                 </div>

@@ -12,10 +12,7 @@ import org.springframework.web.servlet.ModelAndView;
 import top.cflwork.query.UserAccountPasswordQuery;
 import top.cflwork.service.*;
 import top.cflwork.util.MsgInfo;
-import top.cflwork.vo.BusinessManVo;
-import top.cflwork.vo.HotelVo;
-import top.cflwork.vo.UserRoleVo;
-import top.cflwork.vo.UserVo;
+import top.cflwork.vo.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -43,6 +40,8 @@ public class IndexController {
     private PermissionService permissionService;
     @Resource
     private BusinessManService businessManService;
+    @Resource
+    private ContractMasterService contractMasterService;
     @RequestMapping(value = "index", method = RequestMethod.GET)
     public ModelAndView index(HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
@@ -66,6 +65,55 @@ public class IndexController {
             return modelAndView;
         }
     }
+    @RequestMapping(value = "logins", method = RequestMethod.GET)
+    public ModelAndView logins(String code, HttpSession session) {
+        ModelAndView modelAndView = new ModelAndView();
+        MsgInfo msgInfo = new MsgInfo();
+        String accessor = msgInfo.authLogin(code);
+        if (accessor != null) {
+            JSONObject accessorJSON = JSON.parseObject(accessor);
+            String accessToken = accessorJSON.getString("access_token");
+            if (accessToken != null) {
+                // 如果授权登录成功，则通过access_token和openid去获取用户信息
+                String openid = accessorJSON.getString("openid");
+                //通过openid去查询该微信是否被某个账号所绑定过
+                ContractMasterVo contractMasterVo = contractMasterService.findByOpenId(openid);
+                if(contractMasterVo!=null){
+                    modelAndView.addObject("id",contractMasterVo.getId());
+                }else{
+                    String userInfo = msgInfo.getUserInfo(accessToken, openid);
+                    try {
+                        userInfo = new String(userInfo.getBytes("ISO8859-1"), "utf-8"); // 转码
+                        JSONObject userInfoJSON = JSON.parseObject(userInfo);
+                        ContractMasterVo contractMasterVo1 = new ContractMasterVo();
+                        contractMasterVo1.setNickname(userInfoJSON.getString("nickname"));
+                        contractMasterVo1.setFaceImg(userInfoJSON.getString("headimgurl"));
+                        contractMasterVo1.setWxopenid(openid);
+                        contractMasterVo1.setIsActive((byte) 1);
+                        contractMasterVo1.setCreateTime(new Date());
+                        contractMasterService.save(contractMasterVo1);
+                        modelAndView.addObject("id",contractMasterVo1.getId());
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                        modelAndView.addObject("id",0);
+                    }
+                }
+            } else {
+                modelAndView.addObject("id",0);
+            }
+        } else {
+            modelAndView.addObject("id",0);
+        }
+        modelAndView.setViewName("house/contract");
+        return  modelAndView;
+    }
+
+    /**
+     * 报价系统的微信登录
+     * @param code
+     * @param session
+     * @return
+
     @RequestMapping(value = "logins", method = RequestMethod.GET)
     public ModelAndView logins(String code, HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
@@ -111,5 +159,5 @@ public class IndexController {
         }
         modelAndView.setViewName("business/baojia");
         return  modelAndView;
-    }
+    }*/
 }

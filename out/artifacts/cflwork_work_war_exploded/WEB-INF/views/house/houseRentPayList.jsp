@@ -203,7 +203,9 @@
                     </div>
                     <label class="col-sm-1 control-label">房号</label>
                     <div class="col-sm-2">
-                        <input type="text" class="form-control" id="houseName" name="houseName"/>
+                        <select class="form-control" id="houseName" required name="houseName">
+                            <option value="">全部</option>
+                        </select>
                     </div>
                     <label class="col-sm-1 control-label">签约年限</label>
                     <div class="col-sm-2">
@@ -350,8 +352,9 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">房间名称：</label>
                             <div class="col-sm-4">
-                                <input name="houseName" min="0" id="house_name" placeholder="房间名称" type="text" class="form-control"
-                                       required="" aria-required="true">
+                                <select class="form-control" name="houseName" min="0" id="house_name" required name="hotelId">
+
+                                </select>
                             </div>
                             <label class="col-sm-2 control-label">支付总金额：</label>
                             <div class="col-sm-4">
@@ -522,6 +525,7 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">房间名称：</label>
                             <div class="col-sm-4">
+
                                 <input name="houseName" min="0" placeholder="房间名称" type="text" class="form-control"
                                        required="" aria-required="true">
                             </div>
@@ -688,8 +692,9 @@
                             </div>
                             <label class="col-sm-2 control-label" >房间名称</label>
                             <div class="col-sm-2">
-                                <input name="houseName" min="0"  placeholder="房间名称" type="text" class="form-control"
-                                       required="" aria-required="true">
+                                <select class="form-control" name="houseName" min="0" id="house_names" required name="hotelId">
+
+                                </select>
                             </div>
                         </div>
                         <h4 class="modal-title">
@@ -941,6 +946,44 @@
                 $("#select2-hotelId-container").remove();
                 $("#select2-hotelId_-container").remove();
                 $("#select2-hid-container").remove();
+                $.post(
+                    "/house/getHouseList/1/"+data[0].id,
+                    function (data) {
+                        console.log(JSON.stringify(data));
+                        $("#houseName").select2({
+                            data: data
+                        })
+                        $("#house_name").select2({
+                            data: data
+                        })
+                        $("#house_names").select2({
+                            data: data
+                        })
+                        $("#select2-houseName-container").remove();
+                        $("#select2-house_name-container").remove();
+                        $("#select2-house_names-container").remove();
+                    },
+                    "json"
+                );
+            },
+            "json"
+        );
+        $.post(
+            "/house/getHouseList/1",
+            function (data) {
+                console.log(JSON.stringify(data));
+                $("#houseName").select2({
+                    data: data
+                })
+                $("#house_name").select2({
+                    data: data
+                })
+                $("#house_names").select2({
+                    data: data
+                })
+                $("#select2-houseName-container").remove();
+                $("#select2-house_name-container").remove();
+                $("#select2-house_names-container").remove();
             },
             "json"
         );

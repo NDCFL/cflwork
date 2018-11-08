@@ -10,6 +10,7 @@
 		<result column="create_time" property="createTime"></result>
 		<result column="is_active" property="isActive"></result>
 		<result column="house_type" property="houseType"></result>
+		<result column="house_types" property="houseTypes"></result>
 		<association property="houseTypeVo" javaType="top.cflwork.vo.HouseTypeVo">
 			<id column="htId" property="id"></id>
 			<result column="title" property="title"></result>
@@ -77,20 +78,30 @@
 		select GROUP_CONCAT(card_title) from t_house where hotel_id=#{companyId}
 	</select>
 	<select id="count" resultType="long">
-		select count(*)  from t_house t,t_house_type ht,t_hotel h where t.type=ht.id and t.hotel_id=h.id  and t.company_id=#{companyId}
+		select count(t.id)  from t_house t,t_house_type ht,t_hotel h where t.type=ht.id and t.hotel_id=h.id  and t.company_id=#{companyId}
 		<if test="hotelId!=null"> and t.hotel_id=#{hotelId}</if>
 		<include refid="search"/>
 	</select>
 	<insert id="save" parameterType="userVo">
-		insert into t_house (card_title, type, description, hotel_id, house_status, is_active,company_id) values ( #{cardTitle}, #{type}, #{description}, #{hotelId}, #{houseStatus}, #{isActive},#{companyId})
+		insert into t_house (card_title, type, description, hotel_id, house_status, is_active,company_id,create_time,house_types,house_type) values ( #{cardTitle}, #{type}, #{description}, #{hotelId}, #{houseStatus}, #{isActive},#{companyId},now(),#{houseTypes},#{houseType})
 	</insert>
 	<update id="updateStatus">
-		update t_house set is_active=#{status} where id=#{id}
+		update t_house
+		<set>
+			<if test="status != null and status!=''">is_active = #{status},
+			</if>
+			<if test="temp != null and temp!=''">house_types = #{temp},
+			</if>
+		</set>
+		 where id=#{id}
 	</update>
 	<update id="update">
-		update t_house set card_title=#{cardTitle},type=#{type},description=#{description},hotel_id=#{hotelId},house_status=#{houseStatus} where id = #{id}
+		update t_house set card_title=#{cardTitle},type=#{type},description=#{description},hotel_id=#{hotelId},house_status=#{houseStatus},house_type=#{houseType},house_types=#{houseTypes} where id = #{id}
 	</update>
 	<update id="updateHouseStatus">
 		update t_house set house_status=#{statusQuery.status},leave_time=#{leaveTime} where id=#{statusQuery.houseId} and hotel_id=#{statusQuery.hotelId}
 	</update>
+	<select id="getHouseList" resultMap="houseTypeMap">
+		select card_title as id,card_title as text,leave_time from t_house where is_active=0 and house_status=0 and  house_types=#{type} and (leave_time is null or now()>leave_time) and hotel_id=#{hotelId}
+	</select>
 </mapper>

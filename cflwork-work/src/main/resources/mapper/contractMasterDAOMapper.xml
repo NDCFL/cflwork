@@ -27,7 +27,10 @@
         select count(*) from t_contract_master where company_id=#{companyId} <include refid="search"/>
     </select>
     <insert id="save" parameterType="contractMasterVo">
-        insert into t_contract_master ( bank_name,bank_account_name,bank_account_no,is_active,company_id,phone,password,`identity`) values ( #{bankName},#{bankAccountName},#{bankAccountNo},#{isActive},#{companyId},#{phone},#{password},#{identity})
+        <selectKey keyProperty='id' resultType='long' order='AFTER'  >
+            select LAST_INSERT_ID();
+        </selectKey>
+        insert into t_contract_master ( bank_name,bank_account_name,bank_account_no,is_active,company_id,phone,password,`identity`,wxopenid,create_time,face_img,nickname) values ( #{bankName},#{bankAccountName},#{bankAccountNo},#{isActive},#{companyId},#{phone},#{password},#{identity},#{wxopenid},now(),#{faceImg},#{nickname})
     </insert>
     <update id="updateStatus">
         update t_contract_master set is_active=#{status} where id=#{id}
@@ -44,4 +47,7 @@
     <update id="updatePwd">
         update t_contract_master set password=#{password} where phone=#{phone}
     </update>
+    <select id="findByOpenId" parameterType="string" resultMap="contractMasterMap">
+        select * from t_contract_master where wxopenid=#{openId}
+    </select>
 </mapper>

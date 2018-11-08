@@ -54,6 +54,7 @@ public class ContractMasterController {
             contractMaster.setIsActive(0);
             contractMaster.setPassword(new Md5Hash(contractMaster.getPassword()).toString());
             contractMaster.setCompanyId(user.getCompanyId());
+            contractMaster.setNickname(contractMaster.getBankAccountName());
             contractMasterService.save(contractMaster);
             return  Message.success("新增成功!");
         }catch (Exception e){

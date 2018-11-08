@@ -21,7 +21,7 @@ public class FilterController implements HandlerInterceptor {
         Object user = request.getSession().getAttribute("userVo");
         String path = request.getRequestURL().toString();
         if (user == null) {
-            if(path.contains("/index") || path.contains("user/loginPage") || path.contains("user/getInfo") || path.contains("static") || path.contains("captcha")){
+            if(path.contains("/index") || path.contains("user/loginPage") || path.contains("user/getInfo") || path.contains("static") || path.contains("captcha") || path.contains("/logins") || path.contains("house/contract") || path.contains("contractMaster")){
                 return true;
             }
             System.out.println("尚未登录，调到登录页面");
@@ -36,7 +36,7 @@ public class FilterController implements HandlerInterceptor {
         Object user = request.getSession().getAttribute("userVo");
         String path = request.getRequestURL().toString();
         if (user == null) {
-            if(path.contains("/index") || path.contains("user/loginPage") || path.contains("user/getInfo") || path.contains("static") || path.contains("captcha")){
+            if(path.contains("/index") || path.contains("user/loginPage") || path.contains("user/getInfo") || path.contains("static") || path.contains("captcha") || path.contains("/logins") || path.contains("house/contract")|| path.contains("contractMaster")){
 
             }else{
                 System.out.println("尚未登录，调到登录页面");
@@ -50,7 +50,7 @@ public class FilterController implements HandlerInterceptor {
         Object user = request.getSession().getAttribute("userVo");
         String path = request.getRequestURL().toString();
         if (user == null) {
-            if(path.contains("/index") || path.contains("user/loginPage") || path.contains("user/getInfo") || path.contains("static") || path.contains("captcha")){
+            if(path.contains("/index") || path.contains("user/loginPage") || path.contains("user/getInfo") || path.contains("static") || path.contains("captcha") || path.contains("/logins") || path.contains("house/contract")|| path.contains("contractMaster")){
 
             }else{
                 System.out.println("尚未登录，调到登录页面");

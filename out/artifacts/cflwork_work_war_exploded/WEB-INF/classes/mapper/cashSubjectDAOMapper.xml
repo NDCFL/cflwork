@@ -28,7 +28,7 @@
         select count(id) from t_cash_subject where company_id=#{companyId} <include refid="search"/>
     </select>
     <insert id="save" parameterType="cashSubjectVo">
-        insert into t_cash_subject ( parent_id,title,description,is_active,company_id) values ( #{parentId},#{title},#{description},#{isActive},#{companyId})
+        insert into t_cash_subject ( parent_id,title,description,is_active,company_id,create_time) values ( #{parentId},#{title},#{description},#{isActive},#{companyId},now())
     </insert>
     <update id="updateStatus">
         update t_cash_subject set is_active=#{status} where id=#{id}
@@ -37,8 +37,6 @@
         update t_cash_subject set
 
                 title = #{title},
-
-                parent_id = #{parentId},
 
                 description = #{description}
 

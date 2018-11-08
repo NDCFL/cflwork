@@ -53,7 +53,7 @@ public class test1 {
         }*/
         String idcard = "020901356CD372F003";
         System.out.println();
-//        System.out.println(idcard.substring(idcard.lastIndexOf(4)+6,idcard.lastIndexOf(4)));
+       //        System.out.println(idcard.substring(idcard.lastIndexOf(4)+6,idcard.lastIndexOf(4)));
 
     }
 
