@@ -743,9 +743,9 @@
             function (data) {
                 $("#rentHouseCount").html(data.rentHouseCount);//房源总数
                 $("#rentHouseSumArea").html("￥" + data.rentHouseSumArea);//分成房源总面积
-                $("#money").html("￥" + data.money);//单平收益
+                $("#money").html("￥" + parseFloat(data.money).toFixed(2));//单平收益
                 $("#payMoneyHouse").html("￥" + data.payMoneyHouse);//待结算的房间
-                $("#sumMoney1").html("￥" + data.sumMoney);//总金额
+                $("#sumMoney1").html("￥" + parseFloat(data.sumMoney).toFixed(2));//总金额
             },
             "json"
         );

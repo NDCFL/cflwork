@@ -107,16 +107,20 @@
     </update>
     <select id="notHotelId" resultMap="rentMap">
         select
-        (select count(hotel_id) from t_house_rent_pay group by hotel_id) as 'rentHouseCount',
-        (select sum(area) from t_house where house_types=0  group by hotel_id) as 'rentHouseSumArea',
-        ((select sum(money) from t_income group by hotel_id)/((select sum(area) from t_house_rent_pay group by hotel_id)+(select sum(area) from t_rent_pay group by hotel_id))) as 'money'
+        (select count(hotel_id) from t_house_rent_pay) as 'rentHouseCount',
+        (select sum(area) from t_house where house_types=0) as 'rentHouseSumArea',
+        ((select sum(money) from t_income)/((select sum(area) from t_house_rent_pay)+(select sum(area) from t_house where house_types=0))) as 'money',
+        (select sum(id) from t_rent_pay where now()>=pay_period_end and is_cash=0) as 'payMoneyHouse',
+        (select sum(baodi_pay) from t_rent_pay where now()>=pay_period_end) as 'sumMoney'
         from t_house_rent_pay
     </select>
     <select id="haveHotelId" resultMap="rentMap" parameterType="long">
         select
-            (select count(hotel_id) from t_house_rent_pay where hotel_id=#{hotelId} group by hotel_id) as 'rentHouseCount',
-            (select sum(area) from t_house where hotel_id=#{hotelId} and house_types=1 group by hotel_id) as 'rentHouseSumArea',
-            ((select sum(money) from t_income where hotel_id=#{hotelId} group by hotel_id)/((select sum(area) from t_house_rent_pay where hotel_id=#{hotelId} group by hotel_id)+               (select sum(area) from t_rent_pay where hotel_id=#{hotelId} group by hotel_id))) as 'money'
+            (select count(hotel_id) from t_house_rent_pay where hotel_id=#{hotelId}) as 'rentHouseCount',
+            (select sum(area) from t_house where hotel_id=#{hotelId} and house_types=1) as 'rentHouseSumArea',
+            ((select sum(money) from t_income where hotel_id=#{hotelId})/((select sum(area) from t_house where hotel_id=#{hotelId} and house_types=1)+               (select sum(area) from t_rent_pay where hotel_id=#{hotelId} group by hotel_id))) as 'money'
+            (select sum(id) from t_rent_pay where now()>=pay_period_end and is_cash=0 and hotel_id=#{hotelId}) as 'payMoneyHouse',
+            (select sum(baodi_pay) from t_rent_pay where now()>=pay_period_end) as 'sumMoney'
         from t_house_rent_pay where hotel_id=#{hotelId}
     </select>
     <select id="getSubjectMoney" resultMap="rentPayMoneyMap">

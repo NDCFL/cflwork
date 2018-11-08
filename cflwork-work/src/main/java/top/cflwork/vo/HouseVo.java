@@ -36,6 +36,8 @@ public class HouseVo {
 
     private Integer houseTypes;
 
+    private Integer area;
+
 
 
 }

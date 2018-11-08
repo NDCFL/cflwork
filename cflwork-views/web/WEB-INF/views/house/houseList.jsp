@@ -183,6 +183,12 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-sm-3 control-label">酒店面积：</label>
+                    <div class="col-sm-6" style="width: 300px">
+                        <input type="text" id="area" name="area" placeholder="请输入房间面积" required class="form-control">
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-sm-3 control-label">房间描述：</label>
                     <div class="col-sm-6">
                         <textarea class="form-control" name="description" ></textarea>
@@ -263,6 +269,12 @@
                             <option value="0" id="status0">未入住</option>
                             <option value="1" id="status1">已入住</option>
                         </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">酒店面积：</label>
+                    <div class="col-sm-6" style="width: 300px">
+                        <input type="text" id="areas" name="area" placeholder="请输入房间面积" required class="form-control">
                     </div>
                 </div>
                 <div class="form-group">
