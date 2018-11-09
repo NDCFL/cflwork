@@ -22,4 +22,5 @@ public interface ContractMasterDAO extends  BaseDAO<ContractMasterVo> {
     void updatePwd(@Param("phone") String phone, @Param("password") String password);
     ContractMasterVo findByOpenId(String openId);
     void updateFaceImg(@Param("id") Long id, @Param("url") String url);
+    void changePhone(@Param("phone") String phone,@Param("id") Long id);
 }

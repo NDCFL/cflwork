@@ -20,4 +20,5 @@ public interface ContractMasterService extends BaseService<ContractMasterVo> {
     void updatePwd(String phone, String password);
     ContractMasterVo findByOpenId(String openId);
     void updateFaceImg(Long id,String url);
+    void changePhone(String phone,Long id);
 }

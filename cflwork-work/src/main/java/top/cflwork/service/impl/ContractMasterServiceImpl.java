@@ -90,6 +90,11 @@ public class ContractMasterServiceImpl implements ContractMasterService {
     }
 
     @Override
+    public void changePhone(String phone, Long id) {
+        contractMasterDAO.changePhone(phone,id);
+    }
+
+    @Override
     public ContractMasterVo getInfo(String phone) {
         return contractMasterDAO.getInfo(phone);
     }

@@ -223,6 +223,17 @@ public class ContractMasterController {
             return  Message.fail("修改失败");
         }
     }
+    @RequestMapping( "checkPhone")
+    @ResponseBody
+    public Message checkPhone(String phone,Long id) throws  Exception {
+        try{
+            contractMasterService.changePhone(phone, id);
+            return  Message.success("修改成功");
+        }catch (Exception e){
+            e.printStackTrace();
+            return  Message.fail("修改失败");
+        }
+    }
     private synchronized String getFileName(String filename) {
         int position = filename.lastIndexOf(".");
         String ext = filename.substring(position);

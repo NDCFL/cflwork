@@ -41,6 +41,9 @@
     <select id="checkPhone" resultType="int" parameterType="string">
         select count(id) from t_contract_master where phone=#{phone}
     </select>
+    <update id="changePhone">
+        update t_contract_master set phone = #{phone} where id=#{id}
+    </update>
     <select id="getInfo" resultMap="contractMasterMap" parameterType="string">
         select * from t_contract_master where phone = #{phone}
     </select>
