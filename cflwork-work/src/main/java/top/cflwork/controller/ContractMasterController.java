@@ -118,6 +118,24 @@ public class ContractMasterController {
             return  Message.fail("fail");
         }
     }
+    @RequestMapping("updatePassword")
+    @ResponseBody
+    public Message updatePassword(String srcPwd,String newPwd,Long id) throws  Exception{
+        try{
+            //加密
+            srcPwd = new Md5Hash(srcPwd).toString();
+            ContractMasterVo contractMasterVo = contractMasterService.getById(id);
+            if(srcPwd.equals(contractMasterVo.getPassword())){
+                //原密码输入正确
+                contractMasterService.updatePwd(contractMasterVo.getPhone(),new Md5Hash(newPwd).toString());
+                return Message.success("修改成功");
+            }else{
+                return Message.fail("原密码验证失败");
+            }
+        }catch (Exception e){
+            return  Message.fail("fail");
+        }
+    }
     @RequestMapping("findAll")
     @ResponseBody
     public List<Select2Vo> findAll(HttpSession session){
@@ -170,17 +188,24 @@ public class ContractMasterController {
                 if(!contractMasterVo1.getPassword().equals(new Md5Hash(contractMasterVo.getPassword()).toString())){
                     return  Message.fail("登录失败,密码输入错误!");
                 }else{
-                    if(contractMasterVo1.getBankName()!=null && !contractMasterVo1.getBankName().equals("") && contractMasterVo1.getBankAccountName()!=null && !contractMasterVo1.getBankAccountName().equals("")){
-                        return Message.success("完善!");
-                    }else{
-                        return Message.success("不完善");
-                    }
+                   return Message.success(""+contractMasterVo1.getId());
                 }
             }
         }catch (Exception E){
             E.printStackTrace();
             return Message.fail("登录失败，账号或密码错误!");
         }
+    }
+    @RequestMapping("updateImg")
+    @ResponseBody
+    public Message upload(Long id,String files) throws  Exception{
+        try{
+            contractMasterService.updateFaceImg(id,files);
+            return Message.success("修改成功");
+        }catch (Exception e){
+            return Message.fail("修改失败");
+        }
+
     }
     @RequestMapping( "getInfo")
     @ResponseBody

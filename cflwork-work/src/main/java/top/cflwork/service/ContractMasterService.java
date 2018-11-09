@@ -1,5 +1,6 @@
 package top.cflwork.service;
 
+import org.apache.ibatis.annotations.Param;
 import top.cflwork.query.PageQuery;
 import top.cflwork.vo.BusinessManVo;
 import top.cflwork.vo.ContractMasterVo;
@@ -18,4 +19,5 @@ public interface ContractMasterService extends BaseService<ContractMasterVo> {
     ContractMasterVo getInfo(String phone);
     void updatePwd(String phone, String password);
     ContractMasterVo findByOpenId(String openId);
+    void updateFaceImg(Long id,String url);
 }

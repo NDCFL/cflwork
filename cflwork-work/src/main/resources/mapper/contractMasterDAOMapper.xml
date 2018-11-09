@@ -47,6 +47,9 @@
     <update id="updatePwd">
         update t_contract_master set password=#{password} where phone=#{phone}
     </update>
+    <update id="updateFaceImg">
+        update t_contract_master set face_img=#{url} where id=#{id}
+    </update>
     <select id="findByOpenId" parameterType="string" resultMap="contractMasterMap">
         select * from t_contract_master where wxopenid=#{openId}
     </select>

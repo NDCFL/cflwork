@@ -103,4 +103,9 @@ public class ContractMasterServiceImpl implements ContractMasterService {
     public ContractMasterVo findByOpenId(String openId) {
         return contractMasterDAO.findByOpenId(openId);
     }
+
+    @Override
+    public void updateFaceImg(Long id, String url) {
+        contractMasterDAO.updateFaceImg(id, url);
+    }
 }
