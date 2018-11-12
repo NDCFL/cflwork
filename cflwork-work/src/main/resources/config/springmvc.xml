@@ -63,9 +63,22 @@
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
-            <mvc:mapping path="/index"/>
-            <mvc:mapping path="/user/loginPage"/>
-            <bean class="top.cflwork.controller.FilterController"></bean>
+            <mvc:exclude-mapping path="/index"/>
+            <mvc:exclude-mapping path="/user/loginPage"/>
+            <bean class="top.cflwork.controller.FilterController">
+                <property name="exceptUrls">
+                    <list>
+                        <value>/user/getInfo</value>
+                        <value>/static</value>
+                        <value>/captcha</value>
+                        <value>/logins</value>
+                        <value>/house/contract</value>
+                        <value>/contractMaster</value>
+                        <value>/file</value>
+                        <value>/upload</value>
+                    </list>
+                </property>
+            </bean>
         </mvc:interceptor>
     </mvc:interceptors>
     <aop:aspectj-autoproxy proxy-target-class="true"/>
