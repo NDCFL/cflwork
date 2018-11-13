@@ -6,6 +6,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import top.cflwork.common.Message;
@@ -13,9 +14,13 @@ import top.cflwork.common.PagingBean;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
 import top.cflwork.service.ContractMasterService;
+import top.cflwork.service.VerifcodeService;
+import top.cflwork.util.HttpClientUtil;
+import top.cflwork.util.MsgInfo;
 import top.cflwork.vo.ContractMasterVo;
 import top.cflwork.vo.Select2Vo;
 import top.cflwork.vo.UserVo;
+import top.cflwork.vo.Verifcode;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +30,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by chenfeilong on 2017/11/16.
@@ -35,6 +41,8 @@ public class ContractMasterController {
 
     @Resource
     private ContractMasterService contractMasterService;
+    @Resource
+    private VerifcodeService verifcodeService;
     @RequestMapping("contractMasterList")
     @ResponseBody
     public PagingBean contractMasterList(int pageSize, int pageIndex, HttpSession session,String searchVal) throws  Exception{
@@ -55,13 +63,13 @@ public class ContractMasterController {
             contractMaster.setPassword(new Md5Hash(contractMaster.getPassword()).toString());
             contractMaster.setCompanyId(user.getCompanyId());
             contractMaster.setNickname(contractMaster.getBankAccountName());
+            contractMaster.setFaceImg("/upload/face.gif");
             contractMasterService.save(contractMaster);
             return  Message.success("新增成功!");
         }catch (Exception e){
             e.printStackTrace();
             return Message.fail("新增失败!");
         }
-
     }
     @RequestMapping("/findContractMaster/{id}")
     @ResponseBody
@@ -131,6 +139,27 @@ public class ContractMasterController {
                 return Message.success("修改成功");
             }else{
                 return Message.fail("原密码验证失败");
+            }
+        }catch (Exception e){
+            return  Message.fail("fail");
+        }
+    }
+
+    /**
+     * 密码重置
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("resetPassword")
+    @ResponseBody
+    public Message resetPassword(Long id,String password) throws  Exception{
+        try{
+            if(password==null || "".equals(password)){
+                return Message.fail("密码为空");
+            }else{
+                contractMasterService.resetPwd(id,new Md5Hash(password).toString());
+                return Message.success("重置密码成功");
             }
         }catch (Exception e){
             return  Message.fail("fail");
@@ -223,15 +252,22 @@ public class ContractMasterController {
             return  Message.fail("修改失败");
         }
     }
-    @RequestMapping( "checkPhone")
+    @RequestMapping( "changePhone")
     @ResponseBody
-    public Message checkPhone(String phone,Long id) throws  Exception {
+    public Message checkPhone(String phone,Long id,String code) throws  Exception {
         try{
-            contractMasterService.changePhone(phone, id);
-            return  Message.success("修改成功");
+            Verifcode verifcode = verifcodeService.getVerifcode(phone);
+            if(code.equals(verifcode.getCode()) && verifcode.getStatus()==0){
+                contractMasterService.changePhone(phone, id);
+                //短信验证成功.修改短信状态
+                verifcodeService.updateCodeStatus(new StatusQuery(id,1));
+                return  Message.success("绑定成功");
+            }else{
+                return  Message.fail("验证码错误");
+            }
         }catch (Exception e){
             e.printStackTrace();
-            return  Message.fail("修改失败");
+            return  Message.fail("绑定失败");
         }
     }
     private synchronized String getFileName(String filename) {
@@ -270,7 +306,66 @@ public class ContractMasterController {
             return  Message.fail("上传失败，系统异常");
         }
     }
-
+    @RequestMapping("sendCode")
+    @ResponseBody
+    public Message addCode(Verifcode verifcode){
+        try{
+            int cnt = contractMasterService.checkPhone(verifcode.getMobile());
+            //查询改手机号在有效期5分钟之内是否还有未使用的短信，如果有则返回code如果没有则返回-1
+            String dbCode = verifcodeService.queryByCode(verifcode.getMobile());
+            Integer cnts = verifcodeService.cnt(verifcode.getMobile());
+            if(cnts>=10){
+                return Message.fail("今天操作过于频繁");
+            }
+            if(dbCode==null || dbCode.equals("")){
+                //生成6位数的验证码
+                int code = new Random().nextInt(888888)+100000;
+                //执行注册发送的验证码
+                if(verifcode.getCodeType().equals("register")){
+                    if(cnt!=0){
+                        return  Message.fail("账号已被注册!");
+                    }
+                    //保存到数据库中并且发送到手机上
+                    verifcode.setCode(code+"");
+                    verifcode.setMsg("【瑞蓝软件】注册验证码，你的验证码是："+code+"，请妥善保管5分钟内有效。");
+                    System.out.println(code+"====注册发送的验证码==>>>");
+                }else if(verifcode.getCodeType().equals("findPwd")){
+                    if(cnt==0){
+                        return  Message.fail("账号不存在!");
+                    }
+                    //保存到数据库中并且发送到手机上
+                    verifcode.setCode(code+"");
+                    verifcode.setMsg("【瑞蓝软件】找回密码，你的验证码是："+code+"，请妥善保管5分钟内有效。");
+                    System.out.println(code+"====修改手机号发送的验证码==>>>");
+                }
+                verifcodeService.save(verifcode);
+                HttpClientUtil client = HttpClientUtil.getInstance();
+                //UTF发送
+                int result = client.sendMsgUtf8(MsgInfo.UID, MsgInfo.KEY, verifcode.getMsg(), verifcode.getMobile());
+                if(result>0){
+                    return  Message.success("短信发送成功!");
+                }else{
+                    return  Message.fail(client.getErrorMsg(result));
+                }
+            }else{
+                //发送数据库原来就有的验证码dbcode
+                //模拟接收验证码
+                Verifcode verifcode1 = verifcodeService.getVerifcode(verifcode.getMobile());
+                System.out.println(dbCode+"====来自于数据库的验证码====>>>");
+                HttpClientUtil client = HttpClientUtil.getInstance();
+                //UTF发送
+                int result = client.sendMsgUtf8(MsgInfo.UID, MsgInfo.KEY, verifcode1.getMsg(), verifcode1.getMobile());
+                if(result>0){
+                    return  Message.success("短信发送成功!");
+                }else{
+                    return  Message.fail(client.getErrorMsg(result));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return  Message.success("验证码发送失败!");
+        }
+    }
     /**
      * Base64解码.
      */

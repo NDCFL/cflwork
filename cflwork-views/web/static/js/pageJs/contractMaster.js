@@ -36,6 +36,21 @@ $('#mytab').bootstrapTable({
             valign: 'middle'
         },
         {
+            title: '头像',
+            field: 'faceImg',
+            align: 'center',
+            sortable: true,
+            formatter: function (value, row, index) {
+                return '<img src="'+value+'" style="width: 80px;height: 80px;border-radius: 100%" onclick="lookImg(this.id);" id="lookImg'+index+'" />' ;
+            }
+        },
+        {
+            title: '昵称',
+            field: 'nickname',
+            align: 'center',
+            sortable: true
+        },
+        {
             title: '登录账号',
             field: 'phone',
             align: 'center',
@@ -92,10 +107,10 @@ $('#mytab').bootstrapTable({
             formatter: function (value, row, index) {
                 if (value == 0) {
                     //表示启用状态
-                    return '<i style="color: green">启用</i>';
+                    return '<span style="color: green">启用</span>';
                 } else {
                     //表示启用状态
-                    return '<i style="color: red;">停用</i>';
+                    return '<span style="color: red;">停用</span>';
                 }
             }
         }
@@ -105,16 +120,17 @@ $('#mytab').bootstrapTable({
             align: 'center',
             field: '',
             formatter: function (value, row, index) {
-                var e = '<a title="编辑" href="javascript:void(0);" id="contractMaster"  data-toggle="modal" data-id="\'' + row.id + '\'" data-target="#myModal" onclick="return edit(\'' + row.id + '\')"><i class="glyphicon glyphicon-pencil" alt="修改" style="color:green">修改</i></a> ';
-                var d = '<a title="删除" href="javascript:void(0);" onclick="del(' + row.id + ',' + row.isActive + ')"><i class="glyphicon glyphicon-trash" alt="删除" style="color:red">删除</i></a> ';
+                var e = '<a title="编辑" href="javascript:void(0);" id="contractMaster"  data-toggle="modal" data-id="\'' + row.id + '\'" data-target="#myModal" onclick="return edit(\'' + row.id + '\')"><span class="glyphicon glyphicon-pencil" alt="修改" style="color:green">修改</span></a> ';
+                var d = '<a title="删除" href="javascript:void(0);" onclick="del(' + row.id + ',' + row.isActive + ')"><span class="glyphicon glyphicon-trash" alt="删除" style="color:red">删除</span></a> ';
                 var f = '';
                 if (row.isActive == 1) {
-                    f = '<a title="启用" href="javascript:void(0);" onclick="updatestatus(' + row.id + ',' + 0 + ')"><i class="glyphicon glyphicon-ok-sign" style="color:green">启用</i></a> ';
+                    f = '<a title="启用" href="javascript:void(0);" onclick="updatestatus(' + row.id + ',' + 0 + ')"><span class="glyphicon glyphicon-ok-sign" style="color:green">启用</span></a> ';
                 } else if (row.isActive == 0) {
-                    f = '<a title="停用" href="javascript:void(0);" onclick="updatestatus(' + row.id + ',' + 1 + ')"><i class="glyphicon glyphicon-remove-sign"  style="color:red">停用</i></a> ';
+                    f = '<a title="停用" href="javascript:void(0);" onclick="updatestatus(' + row.id + ',' + 1 + ')"><span class="glyphicon glyphicon-remove-sign"  style="color:red">停用</span></a> ';
                 }
-                var g = '<a title="签约列表" class="J_menuItem" href="/contract/contractByMasterListPage/' + row.id + '\"><i class="glyphicon glyphicon-th-list" alt="签约列表" style="color:green"></i></a> ';
-                return e + d + f;
+                var g = '<a title="签约列表" class="J_menuItem" href="/contract/contractByMasterListPage/' + row.id + '\"><span class="glyphicon glyphicon-th-list" alt="签约列表" style="color:green">签约列表</span></a> ';
+                var t = '<a title="重置密码" href="javascript:void(0);"  onclick="reset(\'' + row.id + '\')"><span class="glyphicon glyphicon-pencil" alt="重置密码" style="color:green">重置密码</span></a> ';
+                return e + d + f +g +t;
             }
         }
     ],
@@ -152,6 +168,86 @@ function queryParams(params) {
         searchVal: title
     }
 }
+function reset(id) {
+    layer.open({
+        id:1,
+        type: 1,
+        title:'修改密码',
+        skin:'demo-class',
+        area:['450px', 'auto'],
+
+        content: ' <div class="row" style="width: 420px;  margin-left:7px; margin-top:10px;">'
+        +'<div class="col-sm-12">'
+        +'<div class="input-group">'
+        +'<span class="input-group-addon"> 密 码   :</span>'
+        +'<input id="firstpwd" type="password" class="form-control" placeholder="请输入密码">'
+        +'</div>'
+        +'</div>'
+        +'</div>'
+        ,
+        btn:['确认','取消'],
+        btn1: function (index,layero) {
+            var pwd = $("#firstpwd").val();
+            if(pwd){
+                //询问框
+                layer.confirm('确认重置用户密码？', {
+                    btn: ['确认','取消'] //按钮
+                }, function(){
+                    $.post("/contractMaster/resetPassword",
+                        {
+                            "id":id,
+                            "password":pwd
+                        },
+                        function (data) {
+                            if(data.result=="success"){
+                                layer.msg('重置成功', {icon: 1});
+                                layer.close(index);
+                            }else{
+                                layer.msg('重置失败', {icon: 2});
+                                layer.close(index);
+                            }
+                        },
+                        "json"
+                    );
+                }, function(){
+                    layer.close(index);
+                });
+            }else{
+                layer.msg("请输入密码");
+            }
+
+        },
+        btn2:function (index,layero) {
+            layer.close(index);
+        }
+
+    });
+}
+function lookImg(id) {
+    var imgSrc=$("#"+id).attr('src');
+    layer.open({
+        type:1
+        ,title:false
+        ,closeBtn:2
+        ,skin:'layui-layer-nobg'
+        ,shadeClose:true
+        ,content:'<img src="'+imgSrc+'" style="max-height:600px;max-width:100%;">'
+        ,scrollbar:true
+    })
+}
+$('#lookImg').click(function(){
+    console.log($(this).attr('src'))
+    var imgSrc=$(this).attr('src')
+    layer.open({
+        type:1
+        ,title:false
+        ,closeBtn:0
+        ,skin:'layui-layer-nobg'
+        ,shadeClose:true
+        ,content:'<img src="'+imgSrc+'" style="max-height:600px;max-width:100%;">'
+        ,scrollbar:false
+    })
+});
 function del(contractMasterid, status) {
     layer.confirm('确认要删除吗？', function (index) {
         $.ajax({

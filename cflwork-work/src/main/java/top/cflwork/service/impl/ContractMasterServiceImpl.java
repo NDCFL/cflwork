@@ -95,6 +95,11 @@ public class ContractMasterServiceImpl implements ContractMasterService {
     }
 
     @Override
+    public void resetPwd(Long id,String password) {
+        contractMasterDAO.resetPwd(id,password);
+    }
+
+    @Override
     public ContractMasterVo getInfo(String phone) {
         return contractMasterDAO.getInfo(phone);
     }

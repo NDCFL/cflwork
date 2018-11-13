@@ -56,4 +56,8 @@
     <select id="findByOpenId" parameterType="string" resultMap="contractMasterMap">
         select * from t_contract_master where wxopenid=#{openId}
     </select>
+    <!--重置密码为6个1-->
+    <update id="resetPwd">
+        update t_contract_master set password = #{password} where id = #{id}
+    </update>
 </mapper>
