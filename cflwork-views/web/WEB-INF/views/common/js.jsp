@@ -25,4 +25,7 @@
 <script src="<%=path%>/static/js/contabs.min.js"></script>
 <script src="<%=path%>/static/js/plugins/pace/pace.min.js"></script>
 <script type="text/javascript" src="<%=path%>/static/js/plugins/layui/layui.js"></script>
+<script>
+    var rootPath = "http://pi40e4tyd.bkt.clouddn.com";
+</script>
 </html>

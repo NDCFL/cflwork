@@ -20,6 +20,7 @@ import top.cflwork.service.RoleService;
 import top.cflwork.service.UserRoleService;
 import top.cflwork.service.UserService;
 import top.cflwork.util.Log;
+import top.cflwork.util.QiniuUtil;
 import top.cflwork.vo.*;
 
 import javax.annotation.Resource;
@@ -282,29 +283,18 @@ public class UserController {
     public FileVo fileUp(MultipartFile file, HttpServletRequest request,HttpSession session){
         FileVo fileVo = new FileVo();
         try{
-            //使用原始文件名称
-            String fileName = file.getOriginalFilename();
-            //重新格式化文件名称
-            //String fileName = getFileName(file.getOriginalFilename());
-            String path = request.getSession().getServletContext().getRealPath("upload");
             UserVo userVo1 = (UserVo) session.getAttribute("userVo");
-            String names = getFileName(fileName);
-            File dir = new File(path,names);
-            if(!dir.exists()){
-                dir.mkdirs();
-            }
-            file.transferTo(dir);
+            String url = QiniuUtil.uploadImage(file, "upload/faceImg");
             Map<String,String> data = new HashMap<String, String>();
-            data.put("src","/upload/"+names);
+            data.put("src",url);
             fileVo.setData(data);
-            System.out.println("保存到数据库的图片地址:/upload/"+names);
+            System.out.println("保存到数据库的图片地址:"+url);
             fileVo.setCode(0);
             //如果修改了头像择删除原来的头像
-            File file1 = new File(path+userVo1.getHeadicon());
-            file1.delete();
+            QiniuUtil.deleteFile(userVo1.getHeadicon());
             UserVo userVo = new UserVo();
             userVo.setId(userVo1.getId());
-            userVo.setHeadicon("/upload/"+names);
+            userVo.setHeadicon(url);
             userService.updateHeadIcon(userVo);//保存头像
         }catch (Exception e){
             e.printStackTrace();

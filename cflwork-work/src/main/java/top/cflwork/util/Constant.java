@@ -18,7 +18,6 @@ public class Constant {
     //缓存方式
     public static String CACHE_TYPE_REDIS ="redis";
 
-    public static String LOG_ERROR = "error";
-
-    
+    public  String UPLOAD_AVATAR="upload/avatar";
+    static String RES_PRE="http://mykefang.com";
 }

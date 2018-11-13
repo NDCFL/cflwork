@@ -272,6 +272,12 @@
             <artifactId>jetcache-redis</artifactId>
             <version>2.4.4</version>
         </dependency>
+        <!-- 七牛云存储 -->
+        <dependency>
+            <groupId>com.qiniu</groupId>
+            <artifactId>qiniu-java-sdk</artifactId>
+            <version>7.2.17</version>
+        </dependency>
         <!--jetcache缓存-->
     </dependencies>
 </project>
