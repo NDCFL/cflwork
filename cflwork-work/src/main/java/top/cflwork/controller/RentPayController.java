@@ -4,6 +4,7 @@ import com.xiaoleilu.hutool.date.DateUtil;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +15,7 @@ import top.cflwork.common.PagingBean;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
 import top.cflwork.service.HouseFactPayService;
+import top.cflwork.service.HouseService;
 import top.cflwork.service.RentPayService;
 import top.cflwork.vo.*;
 
@@ -37,7 +39,8 @@ public class RentPayController {
     private RentPayService rentPayService;
     @Resource
     private HouseFactPayService houseFactPayService;
-
+    @Resource
+    private HouseService houseService;
     @RequestMapping("rentPayList")
     @ResponseBody
     public PagingBean houseList(int pageSize, int pageIndex, String searchVal, HttpSession session) throws Exception {
@@ -101,6 +104,7 @@ public class RentPayController {
 
     @RequestMapping("/rentPayAddSave")
     @ResponseBody
+    @Transactional
     public Message addSaveRentPay(RentPayVo rentPayVo, HttpSession session) throws Exception {
         try {
             UserVo userVo = (UserVo) session.getAttribute("userVo");
@@ -112,6 +116,8 @@ public class RentPayController {
             //保存合同的最后一天
             rentPayVo.setFactPayTimeEnd(DateUtil.offsetMonth(rentPayVo.getFactPayTimeStart(),rentPayVo.getPayTime()*12));
             rentPayVo.setBaodiPay(BigDecimal.valueOf(0));
+            HouseVo houseVo = houseService.getById(rentPayVo.getHotelId());
+            rentPayVo.setArea(houseVo.getArea());
             rentPayService.save(rentPayVo);
             return Message.success("新增成功!");
         } catch (Exception E) {

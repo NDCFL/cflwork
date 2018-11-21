@@ -441,14 +441,6 @@
                                 <option value="1">已结算</option>
                             </select>
                         </div>
-                        <label class="col-sm-2 control-label">房间面积：</label>
-                        <div class="col-sm-4">
-                            <input name="area" min="0" placeholder="房间面积" max="100" type="text" class="form-control"
-                                   required="" aria-required="true">
-                        </div>
-                    </div>
-                    <div class="form-group">
-
                         <label class="col-sm-2 control-label">分成比例</label>
                         <div class="col-sm-4">
                             <input name="payProportion" min="0" placeholder="分成比例" max="1" type="number"
@@ -559,14 +551,6 @@
                                 <option value="1">已结算</option>
                             </select>
                         </div>
-                        <label class="col-sm-2 control-label">房间面积：</label>
-                        <div class="col-sm-4">
-                            <input name="area" min="0" placeholder="房间面积" max="100" type="text" class="form-control"
-                                   required="" aria-required="true">
-                        </div>
-                    </div>
-                    <div class="form-group">
-
                         <label class="col-sm-2 control-label">分成比例</label>
                         <div class="col-sm-4">
                             <input name="payProportion" min="0" placeholder="分成比例" max="1" type="number"

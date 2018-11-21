@@ -6,6 +6,7 @@ import top.cflwork.query.PageQuery;
 import top.cflwork.vo.BusinessManVo;
 import top.cflwork.vo.ContractMasterVo;
 import top.cflwork.vo.Select2Vo;
+import top.cflwork.vo.TodayPayVo;
 
 import java.util.List;
 
@@ -24,4 +25,5 @@ public interface ContractMasterDAO extends  BaseDAO<ContractMasterVo> {
     void updateFaceImg(@Param("id") Long id, @Param("url") String url);
     void changePhone(@Param("phone") String phone,@Param("id") Long id);
     void resetPwd(@Param("id") Long id,@Param("password") String password);
+    TodayPayVo getPayInfo(@Param("id") Long id,@Param("time") String time);
 }

@@ -3,6 +3,7 @@
 <mapper namespace="top.cflwork.dao.ContractMasterDAO">
     <resultMap id="contractMasterMap" type="contractMasterVo"></resultMap>
     <resultMap id="select2Map" type="select2Vo"></resultMap>
+    <resultMap id="todayPayMap" type="top.cflwork.vo.TodayPayVo"></resultMap>
     <sql id="search">
         <if test="#{pageQuery.searchVal!=null} and #{pageQuery.searchVal!=''}">
             and (bank_name like concat('%${pageQuery.searchVal}%') or bank_account_name like concat ('%${pageQuery.searchVal}%') or bank_account_no like concat ('%${pageQuery.searchVal}%') or is_active like concat ('%${pageQuery.searchVal}%') or company_id like concat ('%${pageQuery.searchVal}%') or create_time like concat ('%${pageQuery.searchVal}%'))
@@ -60,4 +61,19 @@
     <update id="resetPwd">
         update t_contract_master set password = #{password} where id = #{id}
     </update>
+    <select id="getPayInfo" resultMap="todayPayMap">
+        select
+            (select ifnull(sum(money),0) from t_income where DATE_FORMAT(create_time,'%Y-%m-%d') = DATE_FORMAT(#{time},'%Y-%m-%d')) as 'inMoney',
+            (select ifnull(sum(money),0) from t_outcome where DATE_FORMAT(create_time,'%Y-%m-%d') = DATE_FORMAT(#{time},'%Y-%m-%d')) as 'outMoney',
+            (select ifnull(sum(money),0) from t_income) as 'allInMoney',
+            (select ifnull(sum(money),0) from t_outcome) as 'allOutMoney',
+            (select ifnull(sum(area),0) from t_house) as 'sumArea',
+            (select ifnull(sum(area),0) from t_house where id in(select house_id from t_rent_pay where master_id=#{id})) as 'area',
+            (select ifnull(scale,0) from t_contract_master where id=#{id}) as 'rentPayScale',
+            (select fact_pay_time_start from t_rent_pay where master_id=#{id} limit 1) as 'startTime',
+            (select count(id) from t_rent_pay where master_id=#{id}) as 'cnt',
+            DATE_FORMAT(#{time},'%Y年%m月%d日') as 'nowTime'
+
+        from  t_rent_pay;
+    </select>
 </mapper>

@@ -274,6 +274,9 @@
                             <li>
                                 <a class="J_menuItem" href="<%=path%>/outcome/outcomePage">酒店支出管理</a>
                             </li>
+                            <li>
+                                <a class="J_menuItem" href="<%=path%>/contracmasterMsg/contracmasterMsgPage">消息中心</a>
+                            </li>
                         </ul>
                     </li>
                     <li>

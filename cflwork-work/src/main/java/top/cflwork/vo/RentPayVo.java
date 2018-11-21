@@ -52,7 +52,7 @@ public class RentPayVo implements Serializable {
 
     private HotelVo hotelVo;//酒店组件
 
-    private Double area;//房间面积
+    private Integer area;//房间面积
 
     private HouseVo houseVo;//房间组件
 

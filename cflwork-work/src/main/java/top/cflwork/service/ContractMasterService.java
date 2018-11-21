@@ -5,6 +5,7 @@ import top.cflwork.query.PageQuery;
 import top.cflwork.vo.BusinessManVo;
 import top.cflwork.vo.ContractMasterVo;
 import top.cflwork.vo.Select2Vo;
+import top.cflwork.vo.TodayPayVo;
 
 import java.util.List;
 
@@ -22,4 +23,5 @@ public interface ContractMasterService extends BaseService<ContractMasterVo> {
     void updateFaceImg(Long id,String url);
     void changePhone(String phone,Long id);
     void resetPwd(Long id,String password);
+    TodayPayVo getPayInfo(Long id,String time);
 }

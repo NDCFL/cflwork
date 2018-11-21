@@ -56,7 +56,7 @@ public class IndexController {
                 session.setAttribute("hotelVo",hotelVo);
             }
             session.setAttribute("userRole",userRoleVo);
-            modelAndView.addObject("permissionList",permissionService.listPermissionTree(user.getId()));
+//            modelAndView.addObject("permissionList",permissionService.listPermissionTree(user.getId()));
             modelAndView.setViewName("index");
             return modelAndView;
         }catch (Exception e){

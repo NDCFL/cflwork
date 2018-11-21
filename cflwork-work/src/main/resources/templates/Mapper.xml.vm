@@ -11,7 +11,7 @@
     </sql>
     <select id="getById" resultMap="${classname}Map" parameterType="long">
         select #foreach($column in $columns) t.$column.columnName #if($velocityCount != $columns.size()),#end#end
-        from ${tableName} t where t.${pk.columnName} = #{value}
+        from ${tableName} t where t.${pk.columnName} = #{id}
     </select>
     <select id="listPage" resultMap="${classname}Map">
         select #foreach($column in $columns) t.$column.columnName #if($velocityCount != $columns.size()),#end#end from ${tableName} t where t.company_id = #{companyId} <include refid="search"></include> order by t.create_time desc limit #{pageNo}, #{pageSize}

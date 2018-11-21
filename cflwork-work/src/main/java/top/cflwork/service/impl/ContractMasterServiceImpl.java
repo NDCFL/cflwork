@@ -8,6 +8,7 @@ import top.cflwork.service.ContractMasterService;
 import top.cflwork.vo.BusinessManVo;
 import top.cflwork.vo.ContractMasterVo;
 import top.cflwork.vo.Select2Vo;
+import top.cflwork.vo.TodayPayVo;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -98,6 +99,12 @@ public class ContractMasterServiceImpl implements ContractMasterService {
     public void resetPwd(Long id,String password) {
         contractMasterDAO.resetPwd(id,password);
     }
+
+    @Override
+    public TodayPayVo getPayInfo(Long id,String time) {
+        return contractMasterDAO.getPayInfo(id,time);
+    }
+
 
     @Override
     public ContractMasterVo getInfo(String phone) {

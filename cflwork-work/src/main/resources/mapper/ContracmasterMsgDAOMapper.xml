@@ -1,0 +1,125 @@
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="top.cflwork.dao.ContracmasterMsgDAO">
+    <resultMap id="contracmasterMsgMap" type="top.cflwork.vo.ContracmasterMsgVo"></resultMap>
+    <sql id="search">
+        <if test="#{searchVal!=null} and #{searchVal!=''}">
+            and (t.id like concat('%${searchVal}%'))
+        </if>
+    </sql>
+    <select id="getById" resultMap="contracmasterMsgMap" parameterType="long">
+        select  t.id , t.master_id , t.send_id , t.name , t.content , t.create_time , t.is_active from t_contract_master_msg t where t.id = #{id}
+    </select>
+    <select id="listPage" resultMap="contracmasterMsgMap">
+        select t.id , t.master_id , t.send_id , t.name , t.content , t.create_time , t.is_active from t_contract_master_msg t where 1=1 <include refid="search"></include> order by t.create_time desc limit #{pageNo}, #{pageSize}
+    </select>
+    <select id="count" resultType="long">
+        select count(t.id) from t_contract_master_msg t where 1=1  <include refid="search"></include> order by t.create_time desc
+    </select>
+
+    <select id="listPages" resultMap="contracmasterMsgMap">
+        select t.id , t.master_id , t.send_id , t.name , t.content , t.create_time , t.is_active from
+        t_contract_master_msg t
+        <where>
+            <if test="contracmasterMsgVo.id != null and contracmasterMsgVo.id != ''">
+                and t.id = #{contracmasterMsgVo.id}
+            </if>
+            <if test="contracmasterMsgVo.masterId != null and contracmasterMsgVo.masterId != ''">
+                and t.master_id = #{contracmasterMsgVo.masterId}
+            </if>
+            <if test="contracmasterMsgVo.sendId != null and contracmasterMsgVo.sendId != ''">
+                and t.send_id = #{contracmasterMsgVo.sendId}
+            </if>
+            <if test="contracmasterMsgVo.name != null and contracmasterMsgVo.name != ''">
+                and t.name = #{contracmasterMsgVo.name}
+            </if>
+            <if test="contracmasterMsgVo.content != null and contracmasterMsgVo.content != ''">
+                and t.content = #{contracmasterMsgVo.content}
+            </if>
+            <if test="contracmasterMsgVo.createTime != null and contracmasterMsgVo.createTime != ''">
+                and t.create_time = #{contracmasterMsgVo.createTime}
+            </if>
+            <if test="contracmasterMsgVo.isActive != null and contracmasterMsgVo.isActive != ''">
+                and t.is_active = #{contracmasterMsgVo.isActive}
+            </if>
+            <include refid="search"></include>
+        </where>
+        <choose>
+            <when test="contracmasterMsgVo.sort != null and contracmasterMsgVo.sort.trim() != ''">
+                order by t.${contracmasterMsgVo.sort} t.${contracmasterMsgVo.order}
+            </when>
+            <otherwise>
+                order by t.id desc
+            </otherwise>
+        </choose>
+        <if test="pageQuery.pageNo != null and pageQuery.pageSize != null">
+            limit #{pageQuery.pageNo}, #{pageQuery.pageSize}
+        </if>
+    </select>
+    <select id="listAll" resultMap="contracmasterMsgMap">
+        select * from t_contract_master_msg
+    </select>
+    <select id="counts" resultType="long">
+        select count(t.id) from t_contract_master_msg t
+        <where>
+            <if test="contracmasterMsgVo.id != null and contracmasterMsgVo.id != ''">
+                and t.id = #{contracmasterMsgVo.id}
+            </if>
+            <if test="contracmasterMsgVo.masterId != null and contracmasterMsgVo.masterId != ''">
+                and t.master_id = #{contracmasterMsgVo.masterId}
+            </if>
+            <if test="contracmasterMsgVo.sendId != null and contracmasterMsgVo.sendId != ''">
+                and t.send_id = #{contracmasterMsgVo.sendId}
+            </if>
+            <if test="contracmasterMsgVo.name != null and contracmasterMsgVo.name != ''">
+                and t.name = #{contracmasterMsgVo.name}
+            </if>
+            <if test="contracmasterMsgVo.content != null and contracmasterMsgVo.content != ''">
+                and t.content = #{contracmasterMsgVo.content}
+            </if>
+            <if test="contracmasterMsgVo.createTime != null and contracmasterMsgVo.createTime != ''">
+                and t.create_time = #{contracmasterMsgVo.createTime}
+            </if>
+            <if test="contracmasterMsgVo.isActive != null and contracmasterMsgVo.isActive != ''">
+                and t.is_active = #{contracmasterMsgVo.isActive}
+            </if>
+            <include refid="search"></include>
+        </where>
+        <choose>
+            <when test="contracmasterMsgVo.sort != null and contracmasterMsgVo.sort.trim() != ''">
+                order by t.${contracmasterMsgVo.sort} ${contracmasterMsgVo.order}
+            </when>
+            <otherwise>
+                order by t.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="save" parameterType="top.cflwork.vo.ContracmasterMsgVo">
+        insert into t_contract_master_msg ( master_id ,send_id ,name ,content ,create_time ,is_active) values ( #{masterId}, #{sendId}, #{name}, #{content}, now(), #{isActive})
+    </insert>
+    <update id="update" parameterType="top.cflwork.vo.ContracmasterMsgVo">
+        update t_contract_master_msg
+        <set>
+            <if test="masterId != null">master_id = #{masterId},</if>
+            <if test="sendId != null">send_id = #{sendId},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="isActive != null">is_active = #{isActive}</if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateStatus">
+        update t_contract_master_msg set is_active=#{status} where id=#{id}
+    </update>
+    <delete id="removeById" parameterType="long">
+        delete from t_contract_master_msg where id = #{value}
+    </delete>
+    <delete id="removeMany">
+        delete from t_contract_master_msg where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

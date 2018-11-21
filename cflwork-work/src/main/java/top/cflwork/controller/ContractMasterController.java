@@ -1,5 +1,6 @@
 package top.cflwork.controller;
 
+import com.xiaoleilu.hutool.date.DateUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.ibatis.annotations.Param;
@@ -28,9 +29,7 @@ import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by chenfeilong on 2017/11/16.
@@ -76,6 +75,17 @@ public class ContractMasterController {
     public ContractMasterVo findcontractMaster(@PathVariable("id") long id){
         ContractMasterVo contractMaster = contractMasterService.getById(id);
         return contractMaster;
+    }
+    @RequestMapping("/getContractMaster")
+    @ResponseBody
+    public Map<Integer,Object> getContractMaster(long id,String time){
+        if(time==null || "".equals(time)){
+            time = DateUtil.now();
+        }
+        Map<Integer,Object> map = new HashMap<>();
+        map.put(1,contractMasterService.getById(id));
+        map.put(2,contractMasterService.getPayInfo(id,time));
+        return map;
     }
     @RequestMapping("/contractMasterUpdateSave")
     @ResponseBody
