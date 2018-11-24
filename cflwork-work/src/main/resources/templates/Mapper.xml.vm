@@ -29,7 +29,6 @@
                     and t.$column.columnName = #{${classname}Vo.$column.attrname}
                 </if>
             #end
-            <include refid="search"></include>
         </where>
         <choose>
             <when test="${classname}Vo.sort != null and ${classname}Vo.sort.trim() != ''">
@@ -54,7 +53,6 @@
                     and t.$column.columnName = #{${classname}Vo.$column.attrname}
                 </if>
             #end
-            <include refid="search"></include>
         </where>
         <choose>
             <when test="${classname}Vo.sort != null and ${classname}Vo.sort.trim() != ''">

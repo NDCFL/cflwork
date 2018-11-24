@@ -18,10 +18,7 @@ import top.cflwork.service.ContractMasterService;
 import top.cflwork.service.VerifcodeService;
 import top.cflwork.util.HttpClientUtil;
 import top.cflwork.util.MsgInfo;
-import top.cflwork.vo.ContractMasterVo;
-import top.cflwork.vo.Select2Vo;
-import top.cflwork.vo.UserVo;
-import top.cflwork.vo.Verifcode;
+import top.cflwork.vo.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -280,6 +277,47 @@ public class ContractMasterController {
             return  Message.fail("绑定失败");
         }
     }
+
+    /**
+     * 获取当前业主的所有的酒店
+     * @param id
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping( "getHotelList/{id}")
+    @ResponseBody
+    public List<Select2Vo> getHotelList(@PathVariable("id")Long id) throws  Exception {
+        return contractMasterService.getHotelList(id);
+    }
+    /**
+     * 获取当前业主的所有的酒店
+     * @param statusQuery
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping( "getHotelInfo/{id}/{hotelId}")
+    @ResponseBody
+    public ContractHouseListVo getHotelInfo(StatusQuery statusQuery) throws  Exception {
+        ContractHouseListVo contractHouseListVo = new ContractHouseListVo();
+        contractHouseListVo = contractMasterService.getHotelInfo(statusQuery);
+        contractHouseListVo.setHouseVoList(contractMasterService.getHouseList(statusQuery));
+        return contractHouseListVo;
+    }
+    /**
+     * 获取当前业主的所有的酒店
+     * @param statusQuery
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping( "getRentPayList/{id}")
+    @ResponseBody
+    public ContractHouseListVo getRentPayList(StatusQuery statusQuery) throws  Exception {
+        statusQuery.setHotelId(null);
+        ContractHouseListVo contractHouseListVo = new ContractHouseListVo();
+        contractHouseListVo = contractMasterService.getHotelInfo(statusQuery);
+        contractHouseListVo.setRentPayVoList(contractMasterService.getRentPayList(statusQuery.getId()));
+        return contractHouseListVo;
+    }
     private synchronized String getFileName(String filename) {
         int position = filename.lastIndexOf(".");
         String ext = filename.substring(position);
@@ -376,6 +414,7 @@ public class ContractMasterController {
             return  Message.success("验证码发送失败!");
         }
     }
+
     /**
      * Base64解码.
      */

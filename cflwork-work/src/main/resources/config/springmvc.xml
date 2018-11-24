@@ -81,6 +81,7 @@
                         <value>/file</value>
                         <value>/upload</value>
                         <value>/jsp/controller.jsp</value>
+                        <value>/contracmasterMsg/**</value>
                     </list>
                 </property>
             </bean>

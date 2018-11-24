@@ -34,7 +34,7 @@
                     <div class="panel-body form-group" style="margin-bottom:0px;">
                         <label class="col-sm-1 control-label">消息标题</label>
                         <div class="col-sm-11">
-                            <input id="name" name="name" type="text" class="form-control" required="" aria-required="true">
+                            <input id="name" name="name" type="text" maxlength="30"  class="form-control" required="" aria-required="true">
                         </div>
                     </div>
                     <div class="panel-body form-group" style="margin-bottom:0px;">

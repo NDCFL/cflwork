@@ -76,7 +76,6 @@ public class ContracmasterMsgController {
             pagingBean.setCurrentPage(pageIndex);
             //赋值给pagequery对象
             PageQuery pageQuery = new PageQuery();
-            pageQuery.setCompanyId(userVo.getCompanyId());
             pageQuery.setPageSize(pagingBean.getPageSize());
             pageQuery.setPageNo(pagingBean.getStartIndex());
             pagingBean.setTotal(contracmasterMsgService.counts(pageQuery,contracmasterMsgVo));
@@ -119,6 +118,7 @@ public class ContracmasterMsgController {
     @ResponseBody
     public ContracmasterMsgVo findContracmasterMsg(@PathVariable("id") long id){
 		ContracmasterMsgVo contracmasterMsgVo = contracmasterMsgService.getById(id);
+		contracmasterMsgService.updateStatus(new StatusQuery(contracmasterMsgVo.getId(),1));
         return contracmasterMsgVo;
     }
 

@@ -10,7 +10,7 @@
         </if>
     </sql>
     <select id="getById" resultMap="contractMasterMap" parameterType="long">
-        select * from t_contract_master where id = #{id}
+        select *,(select count(id) from t_contract_master_msg where t_contract_master_msg.is_active=0) as 'msg' from t_contract_master where id = #{id}
     </select>
     <delete id="removeById" parameterType="long">
         delete from t_contract_master where id = #{id}
@@ -75,5 +75,20 @@
             DATE_FORMAT(#{time},'%Y年%m月%d日') as 'nowTime'
 
         from  t_rent_pay;
+    </select>
+    <select id="getHotelList" resultType="top.cflwork.vo.Select2Vo">
+        select  h.title as text,h.id from  t_rent_pay t left join t_hotel h on h.id=t.hotel_id where t.master_id=#{id}
+    </select>
+    <select id="getHotelInfo" resultType="top.cflwork.vo.ContractHouseListVo">
+        select
+        (select count(house_id) from t_rent_pay where master_id=#{id} <if test="hotelId!=null">and hotel_id=#{hotelId}</if>) as 'houseCount',
+        (select sum(area) from t_rent_pay where master_id=#{id} <if test="hotelId!=null">and hotel_id=#{hotelId}</if>) as 'sumArea'
+        from t_rent_pay where 1=1 <if test="hotelId!=null">and hotel_id=#{hotelId}</if>
+    </select>
+    <select id="getHouseList" resultType="top.cflwork.vo.HouseVo">
+        select card_title,area from t_house where id = (select house_id from t_rent_pay where master_id=#{id} and hotel_id=#{hotelId})
+    </select>
+    <select id="getRentPayList" resultType="top.cflwork.vo.RentPayVo">
+        select t.pay_type,t.fact_pay_time_start,t.fact_pay_time_end,h.card_title  as 'houseName',DATE_FORMAT(t.pay_period_start,'%d') as 'payDay' from t_rent_pay t left join t_house h on t.house_id=h.id where t.master_id=#{id}
     </select>
 </mapper>

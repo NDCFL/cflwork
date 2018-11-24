@@ -2,10 +2,8 @@ package top.cflwork.service;
 
 import org.apache.ibatis.annotations.Param;
 import top.cflwork.query.PageQuery;
-import top.cflwork.vo.BusinessManVo;
-import top.cflwork.vo.ContractMasterVo;
-import top.cflwork.vo.Select2Vo;
-import top.cflwork.vo.TodayPayVo;
+import top.cflwork.query.StatusQuery;
+import top.cflwork.vo.*;
 
 import java.util.List;
 
@@ -24,4 +22,9 @@ public interface ContractMasterService extends BaseService<ContractMasterVo> {
     void changePhone(String phone,Long id);
     void resetPwd(Long id,String password);
     TodayPayVo getPayInfo(Long id,String time);
+    List<Select2Vo> getHotelList(Long id);
+    ContractHouseListVo getHotelInfo(StatusQuery statusQuery);
+    List<HouseVo> getHouseList(StatusQuery statusQuery);
+    List<RentPayVo> getRentPayList(Long id);
+
 }

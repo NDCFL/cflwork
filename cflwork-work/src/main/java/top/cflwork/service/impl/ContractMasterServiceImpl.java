@@ -5,10 +5,7 @@ import top.cflwork.dao.ContractMasterDAO;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
 import top.cflwork.service.ContractMasterService;
-import top.cflwork.vo.BusinessManVo;
-import top.cflwork.vo.ContractMasterVo;
-import top.cflwork.vo.Select2Vo;
-import top.cflwork.vo.TodayPayVo;
+import top.cflwork.vo.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -103,6 +100,26 @@ public class ContractMasterServiceImpl implements ContractMasterService {
     @Override
     public TodayPayVo getPayInfo(Long id,String time) {
         return contractMasterDAO.getPayInfo(id,time);
+    }
+
+    @Override
+    public List<Select2Vo> getHotelList(Long id) {
+        return contractMasterDAO.getHotelList(id);
+    }
+
+    @Override
+    public ContractHouseListVo getHotelInfo(StatusQuery statusQuery) {
+        return contractMasterDAO.getHotelInfo(statusQuery);
+    }
+
+    @Override
+    public List<HouseVo> getHouseList(StatusQuery statusQuery) {
+        return contractMasterDAO.getHouseList(statusQuery);
+    }
+
+    @Override
+    public List<RentPayVo> getRentPayList(Long id) {
+        return contractMasterDAO.getRentPayList(id);
     }
 
 

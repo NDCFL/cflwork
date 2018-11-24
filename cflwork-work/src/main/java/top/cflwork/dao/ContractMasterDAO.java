@@ -3,10 +3,8 @@ package top.cflwork.dao;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 import top.cflwork.query.PageQuery;
-import top.cflwork.vo.BusinessManVo;
-import top.cflwork.vo.ContractMasterVo;
-import top.cflwork.vo.Select2Vo;
-import top.cflwork.vo.TodayPayVo;
+import top.cflwork.query.StatusQuery;
+import top.cflwork.vo.*;
 
 import java.util.List;
 
@@ -26,4 +24,8 @@ public interface ContractMasterDAO extends  BaseDAO<ContractMasterVo> {
     void changePhone(@Param("phone") String phone,@Param("id") Long id);
     void resetPwd(@Param("id") Long id,@Param("password") String password);
     TodayPayVo getPayInfo(@Param("id") Long id,@Param("time") String time);
+    List<Select2Vo> getHotelList(Long id);
+    ContractHouseListVo getHotelInfo(StatusQuery statusQuery);
+    List<HouseVo> getHouseList(StatusQuery statusQuery);
+    List<RentPayVo> getRentPayList(Long id);
 }

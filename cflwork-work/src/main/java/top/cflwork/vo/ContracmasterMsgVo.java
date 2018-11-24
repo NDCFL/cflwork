@@ -34,5 +34,9 @@ public class ContracmasterMsgVo implements Serializable {
     private Date createTime;
     //状态,0：已读状态，1：未读状态
     private Byte isActive;
+    //关联业主
+    private String contractMasterName;
+    //关联当前用户
+    private String sendName;
 
 }

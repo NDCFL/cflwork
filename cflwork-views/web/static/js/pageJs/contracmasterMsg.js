@@ -35,20 +35,14 @@ $('#mytab').bootstrapTable({
             valign: 'middle'
         },
         {
-            field: 'id',
-            title: '业主消息编号',
+            field: 'contractMasterName',
+            title: '业主昵称',
             align: 'center',
             sortable: true
         },
         {
-            field: 'masterId',
-            title: '业主编号',
-            align: 'center',
-            sortable: true
-        },
-        {
-            field: 'sendId',
-            title: '发送者编号',
+            field: 'sendName',
+            title: '发送者',
             align: 'center',
             sortable: true
         },
@@ -62,13 +56,19 @@ $('#mytab').bootstrapTable({
             field: 'content',
             title: '消息内容',
             align: 'center',
-            sortable: true
+            sortable: true,
+            formatter: function (value, row, index) {
+                return '<a title="点击查看详情"  id="contracmasterMsg" href="/contracmasterMsg/update/'+row.id+'" style="color: #0d8ddb">点击查看详情</a>';
+            }
         },
         {
             field: 'createTime',
             title: '创建时间',
             align: 'center',
-            sortable: true
+            sortable: true,
+            formatter: function (value, row, index) {
+                    return formattimes(value);
+            }
         },
         {
             field: 'isActive',

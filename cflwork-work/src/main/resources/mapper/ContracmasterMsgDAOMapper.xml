@@ -8,18 +8,19 @@
         </if>
     </sql>
     <select id="getById" resultMap="contracmasterMsgMap" parameterType="long">
-        select  t.id , t.master_id , t.send_id , t.name , t.content , t.create_time , t.is_active from t_contract_master_msg t where t.id = #{id}
+        select  t.id , t.master_id , t.send_id , t.name , t.content , t.create_time , t.is_active,
+        t1.nickname as 'contractMasterName',u.nickname as 'sendName' from t_contract_master_msg t left join t_contract_master t1 on t1.id=t.master_id
+        left join t_user u on u.id = t.send_id  where t.id = #{id}
     </select>
     <select id="listPage" resultMap="contracmasterMsgMap">
-        select t.id , t.master_id , t.send_id , t.name , t.content , t.create_time , t.is_active from t_contract_master_msg t where 1=1 <include refid="search"></include> order by t.create_time desc limit #{pageNo}, #{pageSize}
+        select t.id , t.master_id , t.send_id , t.name , t.content , t.create_time , t.is_active ,t1.nickname as 'contractMasterName',u.nickname as 'sendName' from t_contract_master_msg t left join t_contract_master t1 on t1.id=t.master_id left join t_user u on u.id = t.send_id where 1=1 <include refid="search"></include> order by t.create_time desc limit #{pageNo}, #{pageSize}
     </select>
     <select id="count" resultType="long">
-        select count(t.id) from t_contract_master_msg t where 1=1  <include refid="search"></include> order by t.create_time desc
+        select count(t.id)  from t_contract_master_msg t left join t_contract_master t1 on t1.id=t.master_id left join t_user u on u.id = t.send_id where 1=1  <include refid="search"></include> order by t.create_time desc
     </select>
 
     <select id="listPages" resultMap="contracmasterMsgMap">
-        select t.id , t.master_id , t.send_id , t.name , t.content , t.create_time , t.is_active from
-        t_contract_master_msg t
+        select t.id , t.master_id , t.send_id , t.name , t.content , t.create_time , t.is_active ,t1.nickname as 'contractMasterName',u.nickname as 'sendName' from t_contract_master_msg t left join t_contract_master t1 on t1.id=t.master_id left join t_user u on u.id = t.send_id
         <where>
             <if test="contracmasterMsgVo.id != null and contracmasterMsgVo.id != ''">
                 and t.id = #{contracmasterMsgVo.id}
@@ -31,10 +32,10 @@
                 and t.send_id = #{contracmasterMsgVo.sendId}
             </if>
             <if test="contracmasterMsgVo.name != null and contracmasterMsgVo.name != ''">
-                and t.name = #{contracmasterMsgVo.name}
+                and t.name like concat('%${contracmasterMsgVo.name}%')
             </if>
             <if test="contracmasterMsgVo.content != null and contracmasterMsgVo.content != ''">
-                and t.content = #{contracmasterMsgVo.content}
+                and t.content  concat('%${contracmasterMsgVo.content}%')
             </if>
             <if test="contracmasterMsgVo.createTime != null and contracmasterMsgVo.createTime != ''">
                 and t.create_time = #{contracmasterMsgVo.createTime}
@@ -42,7 +43,6 @@
             <if test="contracmasterMsgVo.isActive != null and contracmasterMsgVo.isActive != ''">
                 and t.is_active = #{contracmasterMsgVo.isActive}
             </if>
-            <include refid="search"></include>
         </where>
         <choose>
             <when test="contracmasterMsgVo.sort != null and contracmasterMsgVo.sort.trim() != ''">
@@ -60,7 +60,7 @@
         select * from t_contract_master_msg
     </select>
     <select id="counts" resultType="long">
-        select count(t.id) from t_contract_master_msg t
+        select count(t.id)  from t_contract_master_msg t left join t_contract_master t1 on t1.id=t.master_id left join t_user u on u.id = t.send_id
         <where>
             <if test="contracmasterMsgVo.id != null and contracmasterMsgVo.id != ''">
                 and t.id = #{contracmasterMsgVo.id}
@@ -72,10 +72,10 @@
                 and t.send_id = #{contracmasterMsgVo.sendId}
             </if>
             <if test="contracmasterMsgVo.name != null and contracmasterMsgVo.name != ''">
-                and t.name = #{contracmasterMsgVo.name}
+                and t.name like concat('%${contracmasterMsgVo.name}%')
             </if>
             <if test="contracmasterMsgVo.content != null and contracmasterMsgVo.content != ''">
-                and t.content = #{contracmasterMsgVo.content}
+                and t.content  concat('%${contracmasterMsgVo.content}%')
             </if>
             <if test="contracmasterMsgVo.createTime != null and contracmasterMsgVo.createTime != ''">
                 and t.create_time = #{contracmasterMsgVo.createTime}
@@ -83,7 +83,6 @@
             <if test="contracmasterMsgVo.isActive != null and contracmasterMsgVo.isActive != ''">
                 and t.is_active = #{contracmasterMsgVo.isActive}
             </if>
-            <include refid="search"></include>
         </where>
         <choose>
             <when test="contracmasterMsgVo.sort != null and contracmasterMsgVo.sort.trim() != ''">

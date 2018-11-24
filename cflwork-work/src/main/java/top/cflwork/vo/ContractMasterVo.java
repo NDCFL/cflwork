@@ -23,5 +23,6 @@ public class ContractMasterVo{
     private String wxopenid;//'微信的openid',
     private String faceImg = "/upload/face.gif"  ;
     private String nickname;
+    private Integer msg;
 
 }
