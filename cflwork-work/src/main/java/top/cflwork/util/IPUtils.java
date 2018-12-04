@@ -2,9 +2,10 @@ package top.cflwork.util;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-
+@Component
 public class IPUtils {
 	private static Logger logger = LoggerFactory.getLogger(IPUtils.class);
 

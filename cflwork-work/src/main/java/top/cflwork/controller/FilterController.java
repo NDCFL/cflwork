@@ -1,9 +1,12 @@
 package top.cflwork.controller;
 
 
+import io.jsonwebtoken.Claims;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+import top.cflwork.util.JwtUtil;
 import top.cflwork.vo.UserVo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -56,6 +59,25 @@ public class FilterController implements HandlerInterceptor {
             response.sendRedirect("/user/loginPage");
             return false;
         } else {
+//            String tocken = request.getHeader("tocken");
+//            if(tocken==null){
+//                return false;
+//            }else {
+//                Claims claims = null;
+//                try {
+//                    claims = JwtUtil.parseJWT(tocken);
+//                } catch (Exception e) {
+//                    System.out.println("解析token失败:");
+//                    System.out.println(e.getMessage());
+//                    return false;
+//                }
+//                if(claims!=null){
+//                    String id = claims.getId();
+//                    if(id==null){
+//                        return  false;
+//                    }
+//                }
+//            }
             return true;
         }
     }

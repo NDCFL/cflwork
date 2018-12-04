@@ -279,5 +279,17 @@
             <version>7.2.17</version>
         </dependency>
         <!--jetcache缓存-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.littlenb/snowflake -->
+        <dependency>
+            <groupId>com.littlenb</groupId>
+            <artifactId>snowflake</artifactId>
+            <version>1.0.2</version>
+        </dependency>
+
     </dependencies>
 </project>

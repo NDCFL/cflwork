@@ -10,7 +10,7 @@
         </if>
     </sql>
     <select id="getById" resultMap="contractMasterMap" parameterType="long">
-        select *,(select count(id) from t_contract_master_msg where t_contract_master_msg.is_active=0) as 'msg' from t_contract_master where id = #{id}
+        select *,(select count(id) from t_contract_master_msg where t_contract_master_msg.is_active=0 and master_id=#{id}) as 'msg' from t_contract_master where id = #{id}
     </select>
     <delete id="removeById" parameterType="long">
         delete from t_contract_master where id = #{id}

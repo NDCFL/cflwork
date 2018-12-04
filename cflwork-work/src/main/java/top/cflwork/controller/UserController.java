@@ -19,6 +19,7 @@ import top.cflwork.query.UserAccountPasswordQuery;
 import top.cflwork.service.RoleService;
 import top.cflwork.service.UserRoleService;
 import top.cflwork.service.UserService;
+import top.cflwork.util.JwtUtil;
 import top.cflwork.util.Log;
 import top.cflwork.util.QiniuUtil;
 import top.cflwork.vo.*;
@@ -130,7 +131,8 @@ public class UserController {
                 subject.login(new UsernamePasswordToken(phone, new Md5Hash(password).toString()));
                 Session session = subject.getSession();
                 session.setAttribute("userVo", userVo);
-                return  Message.success("验证成功");
+                String token = JwtUtil.createJWT(phone, "{}", null, 15552000000L);
+                return  Message.success(token);
             }else{
                 return  Message.fail("账号或密码输入有误,或已被禁用");
             }
