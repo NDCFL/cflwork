@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import top.cflwork.common.Message;
+import top.cflwork.config.QiniuConfig;
 import top.cflwork.query.StatusQuery;
 import top.cflwork.query.UserAccountPasswordQuery;
 import top.cflwork.service.RoleService;

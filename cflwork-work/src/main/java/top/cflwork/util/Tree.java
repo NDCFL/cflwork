@@ -125,7 +125,7 @@ public class Tree<T> {
 	}
 
 	public Tree(String id, String text, Map<String, Object> state, boolean checked, Map<String, Object> attributes,
-                List<Tree<T>> children, boolean isParent, boolean isChildren, String parentID) {
+				 List<Tree<T>> children, boolean isParent, boolean isChildren, String parentID) {
 		super();
 		this.id = id;
 		this.text = text;

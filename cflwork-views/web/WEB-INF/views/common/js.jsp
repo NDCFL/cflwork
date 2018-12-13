@@ -26,6 +26,6 @@
 <script src="<%=path%>/static/js/plugins/pace/pace.min.js"></script>
 <script type="text/javascript" src="<%=path%>/static/js/plugins/layui/layui.js"></script>
 <script>
-    var rootPath = "http://pi40e4tyd.bkt.clouddn.com";
+    var rootPath = "http://pjo4e6qjr.bkt.clouddn.com";
 </script>
 </html>

@@ -136,11 +136,11 @@
                     password:loginpassword
                 },
                 function(data) {
-                    $(".tip-error").html(data.message);
-                    if(data.message=="success"){
+                    if(data.result=="success"){
                         layer.close(load);
                         location.href="<%=path%>/index";
                     }else{
+                        $(".tip-error").html(data.message);
                         vaptchaObj.reset();
                         $("#loginphone").val("");
                         $("#loginpassword").val("");
