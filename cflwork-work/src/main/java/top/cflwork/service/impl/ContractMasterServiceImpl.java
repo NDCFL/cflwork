@@ -83,23 +83,18 @@ public class ContractMasterServiceImpl implements ContractMasterService {
     }
 
     @Override
-    public int checkPhone(String phone) {
-        return contractMasterDAO.checkPhone(phone);
-    }
-
-    @Override
-    public void changePhone(String phone, Long id) {
-        contractMasterDAO.changePhone(phone,id);
-    }
-
-    @Override
-    public void resetPwd(Long id,String password) {
-        contractMasterDAO.resetPwd(id,password);
+    public ContractMasterVo findContractMaster(ContractMasterVo contractMasterVo) {
+        return contractMasterDAO.findContractMaster(contractMasterVo);
     }
 
     @Override
     public TodayPayVo getPayInfo(Long id,String time) {
         return contractMasterDAO.getPayInfo(id,time);
+    }
+
+    @Override
+    public int checkPhone(String phone) {
+        return contractMasterDAO.checkPhone(phone);
     }
 
     @Override
@@ -122,24 +117,4 @@ public class ContractMasterServiceImpl implements ContractMasterService {
         return contractMasterDAO.getRentPayList(id);
     }
 
-
-    @Override
-    public ContractMasterVo getInfo(String phone) {
-        return contractMasterDAO.getInfo(phone);
-    }
-
-    @Override
-    public void updatePwd(String phone, String password) {
-        contractMasterDAO.updatePwd(phone, password);
-    }
-
-    @Override
-    public ContractMasterVo findByOpenId(String openId) {
-        return contractMasterDAO.findByOpenId(openId);
-    }
-
-    @Override
-    public void updateFaceImg(Long id, String url) {
-        contractMasterDAO.updateFaceImg(id, url);
-    }
 }

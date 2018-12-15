@@ -289,7 +289,7 @@ public class CashAccountsController {
                     cashAccounts.setIsCash((byte)0);
                 }
                 cashAccounts.setHander(user.getId());
-                cashAccountsService.updateCashStatus(cashAccounts);
+                cashAccountsService.update(cashAccounts);
                 return  Message.success("审核成功!");
             }
 
@@ -338,7 +338,7 @@ public class CashAccountsController {
     @ResponseBody
     public Message cashAccountsUpdateRemark(CashAccountsVo cashAccounts) throws  Exception{
         try{
-            cashAccountsService.updateRemark(cashAccounts);
+            cashAccountsService.update(cashAccounts);
             return  Message.success("批注成功!");
         }catch (Exception e){
             e.printStackTrace();

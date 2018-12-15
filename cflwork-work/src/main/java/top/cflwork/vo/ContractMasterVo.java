@@ -24,5 +24,6 @@ public class ContractMasterVo{
     private String faceImg = "/upload/face.gif"  ;
     private String nickname;
     private Integer msg;
+    private String code;//验证码
 
 }

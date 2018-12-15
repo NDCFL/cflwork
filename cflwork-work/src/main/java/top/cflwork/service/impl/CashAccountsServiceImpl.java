@@ -71,22 +71,13 @@ public class CashAccountsServiceImpl implements CashAccountsService{
         cashAccountsDAO.removeMany(id);
     }
 
-    @Override
-    public void updateCashStatus(CashAccountsVo cashAccountsVo) {
-        cashAccountsDAO.updateCashStatus(cashAccountsVo);
-    }
 
     @Override
     public List<Select2Vo> getSubject(Long companyId) {
         return cashAccountsDAO.getSubject(companyId);
     }
 
-    @Override
-    public void updateRemark(CashAccountsVo cashAccountsVo) {
-        cashAccountsDAO.updateRemark(cashAccountsVo);
-    }
-
-    @Override
+        @Override
     public void checkerManyCashAccount(List<CashAccountsVo> cashAccountsVoList) {
         cashAccountsDAO.checkerManyCashAccount(cashAccountsVoList);
     }

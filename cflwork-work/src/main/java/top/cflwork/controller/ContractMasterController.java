@@ -141,8 +141,9 @@ public class ContractMasterController {
             srcPwd = new Md5Hash(srcPwd).toString();
             ContractMasterVo contractMasterVo = contractMasterService.getById(id);
             if(srcPwd.equals(contractMasterVo.getPassword())){
+                contractMasterVo.setPassword(new Md5Hash(newPwd).toString());
                 //原密码输入正确
-                contractMasterService.updatePwd(contractMasterVo.getPhone(),new Md5Hash(newPwd).toString());
+                contractMasterService.update(contractMasterVo);
                 return Message.success("修改成功");
             }else{
                 return Message.fail("原密码验证失败");
@@ -154,18 +155,19 @@ public class ContractMasterController {
 
     /**
      * 密码重置
-     * @param id
+     * @param contractMasterVo
      * @return
      * @throws Exception
      */
     @RequestMapping("resetPassword")
     @ResponseBody
-    public Message resetPassword(Long id,String password) throws  Exception{
+    public Message resetPassword(ContractMasterVo contractMasterVo) throws  Exception{
         try{
-            if(password==null || "".equals(password)){
+            if(contractMasterVo.getPassword()==null || "".equals(contractMasterVo.getPassword())){
                 return Message.fail("密码为空");
             }else{
-                contractMasterService.resetPwd(id,new Md5Hash(password).toString());
+                contractMasterVo.setPassword(new Md5Hash(contractMasterVo.getPassword()).toString());
+                contractMasterService.update(contractMasterVo);
                 return Message.success("重置密码成功");
             }
         }catch (Exception e){
@@ -197,7 +199,7 @@ public class ContractMasterController {
                 return Message.success("注册成功!");
             } else {
                 if (contractMasterVo.getCodeType().equals("findPwd")) {
-                    contractMasterService.updatePwd(contractMasterVo.getPhone(),contractMasterVo.getPassword());
+                    contractMasterService.update(contractMasterVo);
                     return Message.success("修改密码成功");
                 } else {
                     return Message.fail("注册失败,账号已存在");
@@ -220,7 +222,7 @@ public class ContractMasterController {
             if(cnt==0){
                 return  Message.fail("登录失败,账号不存在!");
             }else{
-                ContractMasterVo contractMasterVo1 = contractMasterService.getInfo(contractMasterVo.getPhone());
+                ContractMasterVo contractMasterVo1 = contractMasterService.findContractMaster(contractMasterVo);
                 if(!contractMasterVo1.getPassword().equals(new Md5Hash(contractMasterVo.getPassword()).toString())){
                     return  Message.fail("登录失败,密码输入错误!");
                 }else{
@@ -234,9 +236,9 @@ public class ContractMasterController {
     }
     @RequestMapping("updateImg")
     @ResponseBody
-    public Message upload(Long id,String files) throws  Exception{
+    public Message upload(ContractMasterVo contractMasterVo) throws  Exception{
         try{
-            contractMasterService.updateFaceImg(id,files);
+            contractMasterService.update(contractMasterVo);
             return Message.success("修改成功");
         }catch (Exception e){
             return Message.fail("修改失败");
@@ -245,8 +247,8 @@ public class ContractMasterController {
     }
     @RequestMapping( "getInfo")
     @ResponseBody
-    public ContractMasterVo getInfo(String mobile) throws  Exception {
-        return  contractMasterService.getInfo(mobile);
+    public ContractMasterVo getInfo(ContractMasterVo contractMasterVo) throws  Exception {
+        return  contractMasterService.findContractMaster(contractMasterVo);
     }
     @RequestMapping( "updateInfo")
     @ResponseBody
@@ -261,13 +263,13 @@ public class ContractMasterController {
     }
     @RequestMapping( "changePhone")
     @ResponseBody
-    public Message checkPhone(String phone,Long id,String code) throws  Exception {
+    public Message checkPhone(ContractMasterVo contractMasterVo) throws  Exception {
         try{
-            Verifcode verifcode = verifcodeService.getVerifcode(phone);
-            if(code.equals(verifcode.getCode()) && verifcode.getStatus()==0){
-                contractMasterService.changePhone(phone, id);
+            Verifcode verifcode = verifcodeService.getVerifcode(contractMasterVo.getPhone());
+            if(contractMasterVo.getCode().equals(verifcode.getCode()) && verifcode.getStatus()==0){
+                contractMasterService.update(contractMasterVo);
                 //短信验证成功.修改短信状态
-                verifcodeService.updateCodeStatus(new StatusQuery(id,1));
+                verifcodeService.updateCodeStatus(new StatusQuery(verifcode.getId(),1));
                 return  Message.success("绑定成功");
             }else{
                 return  Message.fail("验证码错误");
@@ -313,8 +315,7 @@ public class ContractMasterController {
     @ResponseBody
     public ContractHouseListVo getRentPayList(StatusQuery statusQuery) throws  Exception {
         statusQuery.setHotelId(null);
-        ContractHouseListVo contractHouseListVo = new ContractHouseListVo();
-        contractHouseListVo = contractMasterService.getHotelInfo(statusQuery);
+        ContractHouseListVo contractHouseListVo  = contractMasterService.getHotelInfo(statusQuery);
         contractHouseListVo.setRentPayVoList(contractMasterService.getRentPayList(statusQuery.getId()));
         return contractHouseListVo;
     }
