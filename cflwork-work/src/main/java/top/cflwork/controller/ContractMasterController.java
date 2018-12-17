@@ -1,13 +1,16 @@
 package top.cflwork.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.xiaoleilu.hutool.date.DateUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.ibatis.annotations.Param;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import top.cflwork.common.Message;
@@ -33,13 +36,16 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("contractMaster")
+@Api(value = "contractMaster", description = "业主")
 public class ContractMasterController {
 
     @Resource
     private ContractMasterService contractMasterService;
     @Resource
     private VerifcodeService verifcodeService;
-    @RequestMapping("contractMasterList")
+    @Resource
+    private MsgInfo msgInfo;
+    @PostMapping("contractMasterList")
     @ResponseBody
     public PagingBean contractMasterList(int pageSize, int pageIndex, HttpSession session,String searchVal) throws  Exception{
         UserVo user = (UserVo) session.getAttribute("userVo");
@@ -50,7 +56,7 @@ public class ContractMasterController {
         pagingBean.setrows(contractMasterService.listPages(new PageQuery(pagingBean.getStartIndex(),pagingBean.getPageSize(),searchVal),user.getCompanyId()));
         return pagingBean;
     }
-    @RequestMapping("/contractMasterAddSave")
+    @PostMapping("/contractMasterAddSave")
     @ResponseBody
     public Message addSaveContractMaster(ContractMasterVo contractMaster, HttpSession session) throws  Exception {
         try{
@@ -67,13 +73,13 @@ public class ContractMasterController {
             return Message.fail("新增失败!");
         }
     }
-    @RequestMapping("/findContractMaster/{id}")
+    @PostMapping("/findContractMaster/{id}")
     @ResponseBody
     public ContractMasterVo findcontractMaster(@PathVariable("id") long id){
         ContractMasterVo contractMaster = contractMasterService.getById(id);
         return contractMaster;
     }
-    @RequestMapping("/getContractMaster")
+    @PostMapping("/getContractMaster")
     @ResponseBody
     public Map<Integer,Object> getContractMaster(long id,String time){
         if(time==null || "".equals(time)){
@@ -84,7 +90,7 @@ public class ContractMasterController {
         map.put(2,contractMasterService.getPayInfo(id,time));
         return map;
     }
-    @RequestMapping("/contractMasterUpdateSave")
+    @PostMapping("/contractMasterUpdateSave")
     @ResponseBody
     public Message updatecontractMaster(ContractMasterVo contractMaster) throws  Exception{
         try{
@@ -94,7 +100,7 @@ public class ContractMasterController {
             return Message.fail("修改失败!");
         }
     }
-    @RequestMapping("/deleteManyContractMaster")
+    @PostMapping("/deleteManyContractMaster")
     @ResponseBody
     public Message deleteManycontractMaster(@Param("manyId") String manyId,Integer status) throws  Exception{
         try{
@@ -108,7 +114,7 @@ public class ContractMasterController {
             return  Message.fail("批量修改状态失败!");
         }
     }
-    @RequestMapping("/deleteContractMaster/{id}")
+    @PostMapping("/deleteContractMaster/{id}")
     @ResponseBody
     public Message deletecontractMaster(@PathVariable("id") long id) throws  Exception{
         try{
@@ -119,11 +125,11 @@ public class ContractMasterController {
             return Message.fail("删除失败!");
         }
     }
-    @RequestMapping("/contractMasterListPage")
+    @PostMapping("/contractMasterListPage")
     public String table() throws  Exception{
         return "house/contractMasterList";
     }
-    @RequestMapping("updateStatus/{id}/{status}")
+    @PostMapping("updateStatus/{id}/{status}")
     @ResponseBody
     public Message updateStatus(@PathVariable("id") long id,@PathVariable("status") int status) throws  Exception{
         try{
@@ -133,7 +139,7 @@ public class ContractMasterController {
             return  Message.fail("fail");
         }
     }
-    @RequestMapping("updatePassword")
+    @PostMapping("updatePassword")
     @ResponseBody
     public Message updatePassword(String srcPwd,String newPwd,Long id) throws  Exception{
         try{
@@ -159,7 +165,7 @@ public class ContractMasterController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("resetPassword")
+    @PostMapping("resetPassword")
     @ResponseBody
     public Message resetPassword(ContractMasterVo contractMasterVo) throws  Exception{
         try{
@@ -174,7 +180,7 @@ public class ContractMasterController {
             return  Message.fail("fail");
         }
     }
-    @RequestMapping("findAll")
+    @PostMapping("findAll")
     @ResponseBody
     public List<Select2Vo> findAll(HttpSession session){
         UserVo user = (UserVo) session.getAttribute("userVo");
@@ -188,7 +194,7 @@ public class ContractMasterController {
         dateFormat.setLenient(false);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
     }
-    @RequestMapping( "register")
+    @PostMapping( "register")
     @ResponseBody
     public Message register(ContractMasterVo contractMasterVo) throws  Exception {
         try {
@@ -214,8 +220,9 @@ public class ContractMasterController {
             }
         }
     }
-    @RequestMapping( "login")
+    @PostMapping( "login")
     @ResponseBody
+    @ApiOperation(value = "测试专用")
     public Message login(ContractMasterVo contractMasterVo) throws  Exception {
         try{
             int cnt = contractMasterService.checkPhone(contractMasterVo.getPhone());
@@ -234,7 +241,35 @@ public class ContractMasterController {
             return Message.fail("登录失败，账号或密码错误!");
         }
     }
-    @RequestMapping("updateImg")
+    @PostMapping( "wxlogin")
+    @ResponseBody
+    public Message wxlogin(ContractMasterVo contractMasterVo) throws  Exception {
+        if(contractMasterVo.getCode()==null || "".equals(contractMasterVo.getCode())){
+            return Message.fail("授权失败");
+        }
+        String accessor = msgInfo.authWxxcxLogin(contractMasterVo.getCode());
+        System.out.println(accessor+"=========================");
+        if (accessor != null) {
+            JSONObject accessorJSON = JSON.parseObject(accessor);
+            String openid = accessorJSON.getString("openid");
+            System.out.println(openid+"==========================");
+            if("".equals(openid) || openid==null){
+                return Message.fail("授权失败");
+            }
+            contractMasterVo.setWxopenid(openid);
+            ContractMasterVo contractMasterVo1 = contractMasterService.findContractMaster(contractMasterVo);
+            if(contractMasterVo1==null){
+                //注册
+                contractMasterService.save(contractMasterVo);
+                return Message.success(contractMasterService.findContractMaster(contractMasterVo)+"");
+            }else{
+                return Message.success(contractMasterService.findContractMaster(contractMasterVo)+"");
+            }
+        }else{
+            return Message.fail("授权失败");
+        }
+    }
+    @PostMapping("updateImg")
     @ResponseBody
     public Message upload(ContractMasterVo contractMasterVo) throws  Exception{
         try{
@@ -245,12 +280,12 @@ public class ContractMasterController {
         }
 
     }
-    @RequestMapping( "getInfo")
+    @PostMapping( "getInfo")
     @ResponseBody
     public ContractMasterVo getInfo(ContractMasterVo contractMasterVo) throws  Exception {
         return  contractMasterService.findContractMaster(contractMasterVo);
     }
-    @RequestMapping( "updateInfo")
+    @PostMapping( "updateInfo")
     @ResponseBody
     public Message updateInfo(ContractMasterVo contractMasterVo, HttpServletRequest request) throws  Exception {
         try{
@@ -261,7 +296,7 @@ public class ContractMasterController {
             return  Message.fail("修改失败");
         }
     }
-    @RequestMapping( "changePhone")
+    @PostMapping( "changePhone")
     @ResponseBody
     public Message checkPhone(ContractMasterVo contractMasterVo) throws  Exception {
         try{
@@ -286,7 +321,7 @@ public class ContractMasterController {
      * @return
      * @throws Exception
      */
-    @RequestMapping( "getHotelList/{id}")
+    @PostMapping( "getHotelList/{id}")
     @ResponseBody
     public List<Select2Vo> getHotelList(@PathVariable("id")Long id) throws  Exception {
         return contractMasterService.getHotelList(id);
@@ -297,7 +332,7 @@ public class ContractMasterController {
      * @return
      * @throws Exception
      */
-    @RequestMapping( "getHotelInfo/{id}/{hotelId}")
+    @PostMapping( "getHotelInfo/{id}/{hotelId}")
     @ResponseBody
     public ContractHouseListVo getHotelInfo(StatusQuery statusQuery) throws  Exception {
         ContractHouseListVo contractHouseListVo = new ContractHouseListVo();
@@ -311,7 +346,7 @@ public class ContractMasterController {
      * @return
      * @throws Exception
      */
-    @RequestMapping( "getRentPayList/{id}")
+    @PostMapping( "getRentPayList/{id}")
     @ResponseBody
     public ContractHouseListVo getRentPayList(StatusQuery statusQuery) throws  Exception {
         statusQuery.setHotelId(null);
@@ -325,7 +360,7 @@ public class ContractMasterController {
         return System.nanoTime() + ext;
     }
     @ResponseBody
-    @RequestMapping( value = "/save")
+    @PostMapping( value = "/save")
     public Message imgUpload(@RequestParam String imgBase64Data, HttpServletRequest request){
         try {
             if(imgBase64Data == null || "".equals(imgBase64Data)){
@@ -355,7 +390,7 @@ public class ContractMasterController {
             return  Message.fail("上传失败，系统异常");
         }
     }
-    @RequestMapping("sendCode")
+    @PostMapping("sendCode")
     @ResponseBody
     public Message addCode(Verifcode verifcode){
         try{

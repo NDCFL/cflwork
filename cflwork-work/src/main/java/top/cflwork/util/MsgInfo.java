@@ -16,6 +16,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -27,13 +28,15 @@ import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
-
+@Component
 public class  MsgInfo {
     public static final String UID = "絮落锦乡";
     public static final String KEY = "7dc6e6e7cf7ca510a6a4";
     public static final String REDIRECT_URL = "http://mykefang.com/logins";
     public static final String APP_ID = "wx3d80de020b39cdb4";
     public static final String APP_KEY = "baf9310251a3beaadfcd1b6541c7dd92";
+    public static final String APP_ID_XCX = "wx35f309fc073be5be";//小程序appid
+    public static final String APP_KEY_XCX = "7e5bbab603b8f606e3178addae46057c";//小程序key
     public static final String ACCESS_LOGIN_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" + APP_ID + "&redirect_uri=" + MsgInfo.encodeUrl(REDIRECT_URL) + "&response_type=code&scope=snsapi_userinfo&state=access#wechat_redirect";
     public static final String GET_ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=" + APP_ID + "&secret=" + APP_KEY + "&code={CODE}&grant_type=authorization_code";
     public static final String GET_USER_INFO = "https://api.weixin.qq.com/sns/userinfo?access_token={ACCESS_TOKEN}&openid={OPENID}&lang=zh_CN";
@@ -49,7 +52,9 @@ public class  MsgInfo {
             "  <return_code><![CDATA[SUCCESS]]></return_code>" +
             "  <return_msg><![CDATA[OK]]></return_msg>" +
             "</xml>";
-
+    //微信小程序接口
+    public static final String WXXCX_LOGIN = "https://api.weixin.qq.com/sns/jscode2session?appid=" + APP_ID_XCX + "&secret=" + APP_KEY_XCX +"&js_code={CODE}&grant_type=authorization_code";
+    //https://api.weixin.qq.com/sns/jscode2session?appid=wx35f309fc073be5be&secret=7e5bbab603b8f606e3178addae46057c&js_code=wx35f309fc073be5be&grant_type=authorization_code
     /**
      * 微信授权登录
      *
@@ -60,6 +65,26 @@ public class  MsgInfo {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         // 微信授权登录API
         HttpGet httpGet = new HttpGet(MsgInfo.GET_ACCESS_TOKEN_URL.replace("{CODE}", code));
+        String accessor = null;
+        try {
+            accessor = httpclient.execute(httpGet, responseHandler);
+            httpclient.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return accessor;
+    }
+    /**
+     * 微信小程序授权登录
+     *
+     * @param code
+     * @return
+     */
+    public String authWxxcxLogin(String code) {
+        System.out.println(code+"============================");
+        CloseableHttpClient httpclient = HttpClients.createDefault();
+        // 微信授权登录API
+        HttpGet httpGet = new HttpGet(MsgInfo.WXXCX_LOGIN.replace("{CODE}", code));
         String accessor = null;
         try {
             accessor = httpclient.execute(httpGet, responseHandler);

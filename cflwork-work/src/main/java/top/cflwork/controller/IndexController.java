@@ -77,7 +77,9 @@ public class IndexController {
                 // 如果授权登录成功，则通过access_token和openid去获取用户信息
                 String openid = accessorJSON.getString("openid");
                 //通过openid去查询该微信是否被某个账号所绑定过
-                ContractMasterVo contractMasterVo = contractMasterService.findByOpenId(openid);
+                ContractMasterVo contractMasterVo2 = new ContractMasterVo();
+                contractMasterVo2.setWxopenid(openid);
+                ContractMasterVo contractMasterVo = contractMasterService.findContractMaster(contractMasterVo2);
                 if(contractMasterVo!=null){
                     modelAndView.addObject("id",contractMasterVo.getId());
                 }else{

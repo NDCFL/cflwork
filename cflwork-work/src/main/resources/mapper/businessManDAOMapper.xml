@@ -16,7 +16,51 @@
         select * from t_businessman
     </select>
     <select id="count" resultType="java.lang.Long">
-        select count(*) from t_businessman
+        select count(id) from t_businessman
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null">
+                and name = #{name}
+            </if>
+            <if test="businessmanVo.phone != null and businessmanVo.phone != ''">
+                and t.phone = #{businessmanVo.phone}
+            </if>
+            <if test="businessmanVo.tel != null and businessmanVo.tel != ''">
+                and t.tel = #{businessmanVo.tel}
+            </if>
+            <if test="businessmanVo.nickname != null and businessmanVo.nickname != ''">
+                and t.nickname = #{businessmanVo.nickname}
+            </if>
+            <if test="businessmanVo.hotelSinName != null and businessmanVo.hotelSinName != ''">
+                and t.hotel_sin_name = #{businessmanVo.hotelSinName}
+            </if>
+            <if test="businessmanVo.hotelName != null and businessmanVo.hotelName != ''">
+                and t.hotel_name = #{businessmanVo.hotelName}
+            </if>
+            <if test="businessmanVo.wxopenid != null and businessmanVo.wxopenid != ''">
+                and t.wxopenid = #{businessmanVo.wxopenid}
+            </if>
+            <if test="businessmanVo.remark != null and businessmanVo.remark != ''">
+                and t.remark = #{businessmanVo.remark}
+            </if>
+            <if test="businessmanVo.isActive != null and businessmanVo.isActive != ''">
+                and t.is_active = #{businessmanVo.isActive}
+            </if>
+            <if test="businessmanVo.createTime != null and businessmanVo.createTime != ''">
+                and t.create_time = #{businessmanVo.createTime}
+            </if>
+            <if test="businessmanVo.type != null and businessmanVo.type != ''">
+                and t.type = #{businessmanVo.type}
+            </if>
+            <if test="businessmanVo.password != null and businessmanVo.password != ''">
+                and t.password = #{businessmanVo.password}
+            </if>
+            <if test="businessmanVo.faceImg != null and businessmanVo.faceImg != ''">
+                and t.face_img = #{businessmanVo.faceImg}
+            </if>
+        </where>
     </select>
     <select id="businessManList" resultMap="select2VoMap">
         select id,hotel_sin_name as text from t_businessman where is_active=0
@@ -48,6 +92,7 @@
         </selectKey>
         insert into t_businessman (password,name, phone, tel, nickname, hotel_sin_name, hotel_name, wxopenid, remark, is_active,type,face_img) values ( #{password},#{name}, #{phone}, #{tel}, #{nickname}, #{hotelSinName}, #{hotelName}, #{wxopenid}, #{remark}, #{isActive},#{type},#{faceImg} )
     </insert>
+
     <update id="updateStatus">
         update t_businessman set is_active=#{status} where id=#{id}
     </update>
@@ -59,13 +104,27 @@
     </update>
     <update id="update">
         update t_businessman set
+        <set>
+            <if test="name!=null ">
                 name = #{name},
+            </if>
+            <if test="phone!=null ">
                 phone = #{phone},
+            </if>
+            <if test="tel!=null ">
                 tel = #{tel},
+            </if>
+            <if test="hotelSinName!=null ">
                 hotel_sin_name = #{hotelSinName},
+            </if>
+            <if test="hotelName!=null ">
                 hotel_name=#{hotelName},
+            </if>
+            <if test="remark!=null ">
                 remark = #{remark}
-        where id = #{id}
+            </if>
+        </set>
+        where id=#{id}
     </update>
     <select id="getByAccountPassword" resultMap="businessManMap">
         select * from t_businessman where phone=#{phone} and password=#{password} and is_active=0

@@ -1,5 +1,6 @@
 package top.cflwork.vo;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.Date;
@@ -9,6 +10,7 @@ import java.util.Date;
  */
 @Data
 public class ContractMasterVo{
+    @ApiModelProperty(value = "编号", required = true)
     private long id;
     private String bankName;
     private String bankAccountName;
@@ -21,9 +23,8 @@ public class ContractMasterVo{
     private String identity;
     private long companyId;
     private String wxopenid;//'微信的openid',
-    private String faceImg = "/upload/face.gif"  ;
+    private String faceImg;
     private String nickname;
     private Integer msg;
     private String code;//验证码
-
 }

@@ -35,7 +35,7 @@
             <ul class="nav" id="side-menu">
                 <li class="nav-header">
                     <div class="dropdown profile-element" style="text-align: center">
-                        <span><img alt="image" id="updateHeadIcon" class="img-circle" src="${userVo.headicon}" style="width: 60px;height: 60px" /></span>
+                        <span ><img alt="image" id="updateHeadIcon" class="img-circle" src="${userVo.headicon}" style="width: 60px;height: 60px" /></span>
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                                 <span class="clear">
                                <span class="block m-t-xs">${userRole.roleVo.title}</span>

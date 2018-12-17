@@ -97,7 +97,7 @@
     <select id="findContractMaster" resultMap="contractMasterMap">
         select * from t_contract_master
         <where>
-            <if test="wxopenid!=null">and wxopenid=#{openId}</if>
+            <if test="wxopenid!=null">and wxopenid=#{wxopenid}</if>
             <if test="id!=null">and id=#{id}</if>
             <if test="phone!=null">and phone = #{phone}</if>
         </where>
