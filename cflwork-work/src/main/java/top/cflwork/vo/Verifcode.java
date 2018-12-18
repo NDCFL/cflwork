@@ -1,5 +1,7 @@
 package top.cflwork.vo;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -11,6 +13,7 @@ public class Verifcode implements Serializable{
     private Date addtime=new Date();
     private int status=0;//0 未验证
     private Date createTime = new Date();
+    @ApiModelProperty(value = "短信类型",dataType = "String")
     private String codeType;
     private String password;
     public Long getId() {

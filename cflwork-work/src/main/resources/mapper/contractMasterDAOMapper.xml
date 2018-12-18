@@ -95,7 +95,7 @@
     </select>
 
     <select id="findContractMaster" resultMap="contractMasterMap">
-        select * from t_contract_master
+        select id,bank_name,bank_account_name,bank_account_no,is_active,company_id,phone,`identity`,wxopenid,create_time,face_img,nickname from t_contract_master
         <where>
             <if test="wxopenid!=null">and wxopenid=#{wxopenid}</if>
             <if test="id!=null">and id=#{id}</if>

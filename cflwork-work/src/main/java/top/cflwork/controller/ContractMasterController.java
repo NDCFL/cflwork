@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xiaoleilu.hutool.date.DateUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.ibatis.annotations.Param;
@@ -36,7 +37,7 @@ import java.util.*;
  */
 @Controller
 @RequestMapping("contractMaster")
-@Api(value = "contractMaster", description = "业主")
+@Api(value = "contractMaster", description = "业主模块")
 public class ContractMasterController {
 
     @Resource
@@ -75,13 +76,19 @@ public class ContractMasterController {
     }
     @PostMapping("/findContractMaster/{id}")
     @ResponseBody
-    public ContractMasterVo findcontractMaster(@PathVariable("id") long id){
+    @ApiOperation(value = "根据id获取到业主的基本信息", notes = "返回响应对象")
+    public ContractMasterVo findcontractMaster(
+            @ApiParam(value = "参数是id，长整型", required = true)
+            @PathVariable("id") long id){
         ContractMasterVo contractMaster = contractMasterService.getById(id);
         return contractMaster;
     }
     @PostMapping("/getContractMaster")
     @ResponseBody
-    public Map<Integer,Object> getContractMaster(long id,String time){
+    @ApiOperation(value = "根据id，时间，获取到当前编号的业主的基本信息，包括当前的收入，支出，等也就是小程序首页参数", notes = "返回响应对象")
+    public Map<Integer,Object> getContractMaster(
+            @ApiParam(value = "参数是id，time,time是标准的8位数，例如2018-12-12", required = true)
+            long id,String time){
         if(time==null || "".equals(time)){
             time = DateUtil.now();
         }
@@ -92,7 +99,10 @@ public class ContractMasterController {
     }
     @PostMapping("/contractMasterUpdateSave")
     @ResponseBody
-    public Message updatecontractMaster(ContractMasterVo contractMaster) throws  Exception{
+    @ApiOperation(value = "修改业主的基本信息，传了参数就修改，没传就不修改", notes = "返回响应对象")
+    public Message updatecontractMaster(
+            @ApiParam(value = "参数是contractMasterVo对象", required = true)
+            ContractMasterVo contractMaster) throws  Exception{
         try{
             contractMasterService.update(contractMaster);
             return  Message.success("修改成功!");
@@ -243,6 +253,7 @@ public class ContractMasterController {
     }
     @PostMapping( "wxlogin")
     @ResponseBody
+    @ApiOperation(value = "业主端的微信登录，只需要传入一个code即可，如果登录成功，则在消息体内有整个对象", notes = "返回响应对象")
     public Message wxlogin(ContractMasterVo contractMasterVo) throws  Exception {
         if(contractMasterVo.getCode()==null || "".equals(contractMasterVo.getCode())){
             return Message.fail("授权失败");
@@ -282,11 +293,13 @@ public class ContractMasterController {
     }
     @PostMapping( "getInfo")
     @ResponseBody
+    @ApiOperation(value = "获取用户的基本信息，可以通过id，wxopenid,phone三个参数查询", notes = "返回响应对象")
     public ContractMasterVo getInfo(ContractMasterVo contractMasterVo) throws  Exception {
         return  contractMasterService.findContractMaster(contractMasterVo);
     }
     @PostMapping( "updateInfo")
     @ResponseBody
+    @ApiOperation(value = "修改用户的信息", notes = "返回响应对象")
     public Message updateInfo(ContractMasterVo contractMasterVo, HttpServletRequest request) throws  Exception {
         try{
             contractMasterService.update(contractMasterVo);
@@ -298,6 +311,7 @@ public class ContractMasterController {
     }
     @PostMapping( "changePhone")
     @ResponseBody
+    @ApiOperation(value = "更换手机号", notes = "返回响应对象")
     public Message checkPhone(ContractMasterVo contractMasterVo) throws  Exception {
         try{
             Verifcode verifcode = verifcodeService.getVerifcode(contractMasterVo.getPhone());
@@ -392,7 +406,8 @@ public class ContractMasterController {
     }
     @PostMapping("sendCode")
     @ResponseBody
-    public Message addCode(Verifcode verifcode){
+    @ApiOperation(value = "发送验证码，只需要传入一个mobile参数", notes = "返回响应对象")
+    public Message addCode(@ApiParam(value = "参数是mobile", required = true)Verifcode verifcode){
         try{
             int cnt = contractMasterService.checkPhone(verifcode.getMobile());
             //查询改手机号在有效期5分钟之内是否还有未使用的短信，如果有则返回code如果没有则返回-1
@@ -404,24 +419,13 @@ public class ContractMasterController {
             if(dbCode==null || dbCode.equals("")){
                 //生成6位数的验证码
                 int code = new Random().nextInt(888888)+100000;
-                //执行注册发送的验证码
-                if(verifcode.getCodeType().equals("register")){
-                    if(cnt!=0){
-                        return  Message.fail("账号已被注册!");
-                    }
-                    //保存到数据库中并且发送到手机上
-                    verifcode.setCode(code+"");
-                    verifcode.setMsg("【瑞蓝软件】注册验证码，你的验证码是："+code+"，请妥善保管5分钟内有效。");
-                    System.out.println(code+"====注册发送的验证码==>>>");
-                }else if(verifcode.getCodeType().equals("findPwd")){
-                    if(cnt==0){
-                        return  Message.fail("账号不存在!");
-                    }
-                    //保存到数据库中并且发送到手机上
-                    verifcode.setCode(code+"");
-                    verifcode.setMsg("【瑞蓝软件】找回密码，你的验证码是："+code+"，请妥善保管5分钟内有效。");
-                    System.out.println(code+"====修改手机号发送的验证码==>>>");
+                if(cnt==0){
+                    return  Message.fail("账号不存在!");
                 }
+                //保存到数据库中并且发送到手机上
+                verifcode.setCode(code+"");
+                verifcode.setMsg("【瑞蓝软件】你的验证码是："+code+"，请妥善保管5分钟内有效。");
+                System.out.println(code+"====修改手机号发送的验证码==>>>");
                 verifcodeService.save(verifcode);
                 HttpClientUtil client = HttpClientUtil.getInstance();
                 //UTF发送
