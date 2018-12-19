@@ -21,5 +21,5 @@ public interface ContractMasterService extends BaseService<ContractMasterVo> {
     ContractHouseListVo getHotelInfo(StatusQuery statusQuery);
     List<HouseVo> getHouseList(StatusQuery statusQuery);
     List<RentPayVo> getRentPayList(Long id);
-
+    Long checkPhones(ContractMasterVo contractMasterVo);
 }

@@ -3,6 +3,7 @@ package top.cflwork.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xiaoleilu.hutool.date.DateUtil;
+import com.xiaoleilu.hutool.json.JSONUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -74,7 +75,7 @@ public class ContractMasterController {
             return Message.fail("新增失败!");
         }
     }
-    @PostMapping("/findContractMaster/{id}")
+    @GetMapping("/findContractMaster/{id}")
     @ResponseBody
     @ApiOperation(value = "根据id获取到业主的基本信息", notes = "返回响应对象")
     public ContractMasterVo findcontractMaster(
@@ -112,7 +113,7 @@ public class ContractMasterController {
     }
     @PostMapping("/deleteManyContractMaster")
     @ResponseBody
-    public Message deleteManycontractMaster(@Param("manyId") String manyId,Integer status) throws  Exception{
+    public Message deleteManycontractMaster(String manyId,Integer status) throws  Exception{
         try{
             String str[] = manyId.split(",");
             for (String s: str) {
@@ -124,7 +125,7 @@ public class ContractMasterController {
             return  Message.fail("批量修改状态失败!");
         }
     }
-    @PostMapping("/deleteContractMaster/{id}")
+    @GetMapping("/deleteContractMaster/{id}")
     @ResponseBody
     public Message deletecontractMaster(@PathVariable("id") long id) throws  Exception{
         try{
@@ -139,7 +140,7 @@ public class ContractMasterController {
     public String table() throws  Exception{
         return "house/contractMasterList";
     }
-    @PostMapping("updateStatus/{id}/{status}")
+    @GetMapping("updateStatus/{id}/{status}")
     @ResponseBody
     public Message updateStatus(@PathVariable("id") long id,@PathVariable("status") int status) throws  Exception{
         try{
@@ -254,11 +255,12 @@ public class ContractMasterController {
     @PostMapping( "wxlogin")
     @ResponseBody
     @ApiOperation(value = "业主端的微信登录，只需要传入一个code即可，如果登录成功，则在消息体内有整个对象", notes = "返回响应对象")
-    public Message wxlogin(ContractMasterVo contractMasterVo) throws  Exception {
-        if(contractMasterVo.getCode()==null || "".equals(contractMasterVo.getCode())){
+    public Message wxlogin(String code) throws  Exception {
+        ContractMasterVo contractMasterVo = new ContractMasterVo();
+        if(code==null || "".equals(code)){
             return Message.fail("授权失败");
         }
-        String accessor = msgInfo.authWxxcxLogin(contractMasterVo.getCode());
+        String accessor = msgInfo.authWxxcxLogin(code);
         System.out.println(accessor+"=========================");
         if (accessor != null) {
             JSONObject accessorJSON = JSON.parseObject(accessor);
@@ -268,13 +270,13 @@ public class ContractMasterController {
                 return Message.fail("授权失败");
             }
             contractMasterVo.setWxopenid(openid);
-            ContractMasterVo contractMasterVo1 = contractMasterService.findContractMaster(contractMasterVo);
-            if(contractMasterVo1==null){
+            Long id = contractMasterService.checkPhones(contractMasterVo);
+            if(id==null){
                 //注册
                 contractMasterService.save(contractMasterVo);
-                return Message.success(contractMasterService.findContractMaster(contractMasterVo)+"");
+                return Message.success(String.valueOf(contractMasterVo.getId()));
             }else{
-                return Message.success(contractMasterService.findContractMaster(contractMasterVo)+"");
+                return Message.success(String.valueOf(id));
             }
         }else{
             return Message.fail("授权失败");
@@ -335,7 +337,7 @@ public class ContractMasterController {
      * @return
      * @throws Exception
      */
-    @PostMapping( "getHotelList/{id}")
+    @GetMapping( "getHotelList/{id}")
     @ResponseBody
     public List<Select2Vo> getHotelList(@PathVariable("id")Long id) throws  Exception {
         return contractMasterService.getHotelList(id);
@@ -346,7 +348,7 @@ public class ContractMasterController {
      * @return
      * @throws Exception
      */
-    @PostMapping( "getHotelInfo/{id}/{hotelId}")
+    @GetMapping( "getHotelInfo/{id}/{hotelId}")
     @ResponseBody
     public ContractHouseListVo getHotelInfo(StatusQuery statusQuery) throws  Exception {
         ContractHouseListVo contractHouseListVo = new ContractHouseListVo();
@@ -360,7 +362,7 @@ public class ContractMasterController {
      * @return
      * @throws Exception
      */
-    @PostMapping( "getRentPayList/{id}")
+    @GetMapping( "getRentPayList/{id}")
     @ResponseBody
     public ContractHouseListVo getRentPayList(StatusQuery statusQuery) throws  Exception {
         statusQuery.setHotelId(null);

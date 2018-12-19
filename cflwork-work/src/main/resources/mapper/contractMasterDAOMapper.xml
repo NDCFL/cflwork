@@ -102,6 +102,13 @@
             <if test="phone!=null">and phone = #{phone}</if>
         </where>
     </select>
+    <select id="checkPhones" resultType="long">
+        select id from t_contract_master
+        <where>
+            <if test="wxopenid!=null">and wxopenid=#{wxopenid}</if>
+            <if test="phone!=null">and phone = #{phone}</if>
+        </where>
+    </select>
     <!--重置密码为6个1-->
     <update id="resetPwd">
         update t_contract_master set password = #{password} where id = #{id}

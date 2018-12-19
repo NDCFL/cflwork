@@ -117,4 +117,9 @@ public class ContractMasterServiceImpl implements ContractMasterService {
         return contractMasterDAO.getRentPayList(id);
     }
 
+    @Override
+    public Long checkPhones(ContractMasterVo contractMasterVo) {
+        return contractMasterDAO.checkPhones(contractMasterVo);
+    }
+
 }
