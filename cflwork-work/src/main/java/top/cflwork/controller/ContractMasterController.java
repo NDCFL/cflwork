@@ -236,20 +236,16 @@ public class ContractMasterController {
     @ApiOperation(value = "测试专用")
     public Message login(ContractMasterVo contractMasterVo) throws  Exception {
         try{
-            int cnt = contractMasterService.checkPhone(contractMasterVo.getPhone());
-            if(cnt==0){
-                return  Message.fail("登录失败,账号不存在!");
+            contractMasterVo.setPassword(new Md5Hash(contractMasterVo.getPassword()).toString());
+            ContractMasterVo contractMasterVo1 = contractMasterService.findContractMaster(contractMasterVo);
+            if(contractMasterVo1==null){
+                return  Message.fail("账户名密码有误!");
             }else{
-                ContractMasterVo contractMasterVo1 = contractMasterService.findContractMaster(contractMasterVo);
-                if(!contractMasterVo1.getPassword().equals(new Md5Hash(contractMasterVo.getPassword()).toString())){
-                    return  Message.fail("登录失败,密码输入错误!");
-                }else{
-                   return Message.success(""+contractMasterVo1.getId());
-                }
+                return Message.success(String.valueOf(contractMasterVo1.getId()));
             }
         }catch (Exception E){
             E.printStackTrace();
-            return Message.fail("登录失败，账号或密码错误!");
+            return Message.fail("账户名密码有误!");
         }
     }
     @PostMapping( "wxlogin")
