@@ -1,5 +1,7 @@
 package top.cflwork.vo;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -8,21 +10,37 @@ import java.util.Date;
 
 @Data
 public class TodayPayVo implements Serializable {
+    @ApiModelProperty(value = "今日的酒店总收入--当日营业额",dataType = "Double")
     private Double inMoney;//今日的酒店总收入
+    @ApiModelProperty(value = "今日的酒店总支出",dataType = "Double")
     private Double outMoney;//今日的酒店总支出
+    @ApiModelProperty(value = "业主当日营业额",dataType = "Double")
     private Double nowInMoney;//业主当日营业额
+    @ApiModelProperty(value = "业主当日成本",dataType = "Double")
     private Double nowOutMoney;//业主当日成本
+    @ApiModelProperty(value = "当前业主总面积--合计面积",dataType = "Integer")
     private Integer area;//当前业主总面积
+    @ApiModelProperty(value = "当前总面积",dataType = "Integer")
     private Integer sumArea;//当前总面积
+    @ApiModelProperty(value = "分成比例",dataType = "Float")
     private Float rentPayScale;//分成比例
+    @ApiModelProperty(value = "业主当日收益--当日收益",dataType = "Double")
     private Double nowPayMoney;//业主当日收益
+    @ApiModelProperty(value = "合同起的酒店总收入",dataType = "Double")
     private Double allInMoney;//合同起的酒店总收入
+    @ApiModelProperty(value = "合同起的酒店总支出",dataType = "Double")
     private Double allOutMoney;//合同起的酒店总支出
+    @ApiModelProperty(value = "业主总营业额",dataType = "Double")
     private Double allNowInMoney;//业主总营业额
+    @ApiModelProperty(value = "业主总支出",dataType = "Double")
     private Double allNowOutMoney;//业主总支出
+    @ApiModelProperty(value = "业主累计收入",dataType = "Double")
     private Double allNowPayMoney;//业主累计收入
+    @ApiModelProperty(value = "起始时间",dataType = "Double")
     private Date startTime;//起始时间
+    @ApiModelProperty(value = "房源套数--房源",dataType = "Integer")
     private Integer cnt;//房源套数
+    @ApiModelProperty(value = "当前查询的时间",dataType = "String")
     private String nowTime;//当前查询的时间
     /**
      * <==    Columns: inMoney, outMoney, allInMoney, allOutMoney, area, sumArea, rentPayScale, startTime
