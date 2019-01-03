@@ -10,4 +10,7 @@ public interface Constant {
     interface Redis {
         String OSP_TEACHER_ID_HEADER = "adminLogin";
     }
+    interface Upload{
+        String ZC_QRCODE="qrcode/qrcode";
+    }
 }

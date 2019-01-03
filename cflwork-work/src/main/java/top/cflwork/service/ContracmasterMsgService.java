@@ -1,5 +1,6 @@
 package top.cflwork.service;
 
+import top.cflwork.query.StatusQuery;
 import top.cflwork.vo.ContracmasterMsgVo;
 import top.cflwork.query.PageQuery;
 import java.util.List;
@@ -15,4 +16,5 @@ import java.util.Map;
 public interface ContracmasterMsgService  extends BaseService<ContracmasterMsgVo>{
     List<ContracmasterMsgVo> listPages(PageQuery pageQuery, ContracmasterMsgVo contracmasterMsgVo);
     long counts(PageQuery pageQuery, ContracmasterMsgVo contracmasterMsgVo);
+    long cnt(StatusQuery statusQuery);
 }

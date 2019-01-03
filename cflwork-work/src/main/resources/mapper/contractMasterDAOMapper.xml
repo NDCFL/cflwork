@@ -78,9 +78,6 @@
             <if test="nickname != null">nickname = #{nickname
                     },
             </if>
-            <if test="scale != null">scale = #{scale
-                    },
-            </if>
             <if test="isActive != null">is_active = #{isActive
                     },
             </if>

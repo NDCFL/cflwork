@@ -74,4 +74,9 @@ public class ContracmasterMsgServiceImpl implements ContracmasterMsgService {
     public long counts(PageQuery pageQuery, ContracmasterMsgVo contracmasterMsgVo) {
         return  contracmasterMsgDAO.counts(pageQuery, contracmasterMsgVo);
     }
+
+    @Override
+    public long cnt(StatusQuery statusQuery) {
+        return contracmasterMsgDAO.cnt(statusQuery);
+    }
 }

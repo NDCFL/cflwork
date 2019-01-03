@@ -16,7 +16,7 @@ public class PagingBean<T> implements Serializable{
 	//当前页数
 	private int currentPage;
 	private List<T> rows;
-
+	private Long temp;
 	public PagingBean() {
 	}
 
@@ -64,5 +64,13 @@ public class PagingBean<T> implements Serializable{
 	}
 	public int getStartIndex(){
 		return (currentPage-1)*pageSize;
+	}
+
+	public Long getTemp() {
+		return temp;
+	}
+
+	public void setTemp(Long temp) {
+		this.temp = temp;
 	}
 }

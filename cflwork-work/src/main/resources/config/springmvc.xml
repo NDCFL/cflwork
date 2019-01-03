@@ -79,7 +79,7 @@
                         <value>/upload</value>
                         <value>/jsp/controller.jsp</value>
                         <value>/contracmasterMsg/**</value>
-                        <value>/null/**</value>
+                        <value>/null/*/*/**</value>
                     </list>
                 </property>
             </bean>

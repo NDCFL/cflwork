@@ -80,6 +80,8 @@ public class ContracmasterMsgController {
             pageQuery.setPageNo(pagingBean.getStartIndex());
             pagingBean.setTotal(contracmasterMsgService.counts(pageQuery,contracmasterMsgVo));
             pagingBean.setrows(contracmasterMsgService.listPages(pageQuery,contracmasterMsgVo));
+            //获取未读数量
+            pagingBean.setTemp(contracmasterMsgService.cnt(new StatusQuery(contracmasterMsgVo.getMasterId(),0)));
             return pagingBean;
         }catch (Exception e){
             e.printStackTrace();

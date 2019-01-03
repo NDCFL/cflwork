@@ -102,12 +102,13 @@ public class ContractMasterController {
     @ResponseBody
     @ApiOperation(value = "修改业主的基本信息，传了参数就修改，没传就不修改", notes = "返回响应对象")
     public Message updatecontractMaster(
-            @ApiParam(value = "参数是contractMasterVo对象", required = true)
+            @ApiParam(value = "参数是contractMasterVo对象")
             ContractMasterVo contractMaster) throws  Exception{
         try{
             contractMasterService.update(contractMaster);
             return  Message.success("修改成功!");
         }catch (Exception e){
+            e.printStackTrace();
             return Message.fail("修改失败!");
         }
     }

@@ -1,5 +1,6 @@
 package top.cflwork.dao;
 
+import top.cflwork.query.StatusQuery;
 import top.cflwork.vo.ContracmasterMsgVo;
 
 import java.util.List;
@@ -20,4 +21,5 @@ import top.cflwork.dao.BaseDAO;
 public interface ContracmasterMsgDAO extends BaseDAO<ContracmasterMsgVo>{
     List<ContracmasterMsgVo> listPages(@Param("pageQuery") PageQuery pageQuery, @Param("contracmasterMsgVo") ContracmasterMsgVo contracmasterMsgVo);
     long counts(@Param("pageQuery") PageQuery pageQuery, @Param("contracmasterMsgVo") ContracmasterMsgVo contracmasterMsgVo);
+    long cnt(StatusQuery statusQuery);
 }

@@ -186,6 +186,12 @@ public class QiniuUtil {
             return ex.response;
         }
     }
-
+    public static String commonUploadFile(File file, String suffix) {
+        String newName =  newName()+".png";
+        Date date = new Date();
+        String suffixDatePath = suffix + "/" + new SimpleDateFormat("yyyy/").format(date)+ new SimpleDateFormat("MMdd").format(date);
+        String key = suffixDatePath + "/"+ newName;
+        return commonUploadFileForKey(file,key);
+    }
 
 }

@@ -121,4 +121,7 @@
             #{id}
         </foreach>
     </delete>
+    <select id="cnt" resultType="long">
+        select count(id) from t_contract_master_msg where master_id=#{id} and is_active=#{status}
+    </select>
 </mapper>
