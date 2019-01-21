@@ -1,5 +1,6 @@
 package top.cflwork.vo;
 
+import com.xiaoleilu.hutool.date.DateUtil;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -38,5 +39,4 @@ public class ContracmasterMsgVo implements Serializable {
     private String contractMasterName;
     //关联当前用户
     private String sendName;
-
 }

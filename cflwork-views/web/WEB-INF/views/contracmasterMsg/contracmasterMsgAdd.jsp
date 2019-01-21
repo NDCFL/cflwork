@@ -50,7 +50,7 @@
                             <textarea  name="content" id="editor"  style="height: 400px" required="" aria-required="true"></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer" style="margin-bottom:0px;">
+                    <div class="modal-footer" style="margin-bottom:0px;border-top: none">
                         <button type="button" class="btn btn-default" onclick="window.history.go(-1); ">关闭
                         </button>
                         <button type="button" id="add" class="btn btn-primary" >
