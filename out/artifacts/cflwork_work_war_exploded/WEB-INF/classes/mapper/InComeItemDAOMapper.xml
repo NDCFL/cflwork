@@ -1,0 +1,130 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="top.cflwork.dao.InComeItemDAO">
+    <resultMap id="inComeItemMap" type="top.cflwork.vo.InComeItemVo"></resultMap>
+    <sql id="search">
+        <if test="#{searchVal!=null} and #{searchVal!=''}">
+            and (t.id like concat('%${searchVal}%'))
+        </if>
+    </sql>
+    <select id="getById" resultMap="inComeItemMap" parameterType="long">
+        select  t.id , t.income_id , t.subject_name , t.time , t.money         from t_in_come_item t where t.id = #{id}
+    </select>
+    <select id="listPage" resultMap="inComeItemMap">
+        select t.id , t.income_id , t.subject_name , t.time , t.money from t_in_come_item t where 1=1 <include refid="search"></include> order by t.create_time desc limit #{pageNo}, #{pageSize}
+    </select>
+    <select id="count" resultType="long">
+        select count(t.id) from t_in_come_item t where 1=1  <include refid="search"></include> order
+        by t.create_time desc
+    </select>
+
+    <select id="listPages" resultMap="inComeItemMap">
+        select t.id , t.income_id , t.subject_name , t.time , t.money from t_in_come_item t
+        <where>
+            <if test="inComeItemVo.id != null and inComeItemVo.id != ''">
+                and t.id = #{inComeItemVo.id}
+            </if>
+            <if test="inComeItemVo.incomeId != null and inComeItemVo.incomeId != ''">
+                and t.income_id = #{inComeItemVo.incomeId}
+            </if>
+            <if test="inComeItemVo.subjectName != null and inComeItemVo.subjectName != ''">
+                and t.subject_name = #{inComeItemVo.subjectName}
+            </if>
+            <if test="inComeItemVo.time != null and inComeItemVo.time != ''">
+                and t.time = #{inComeItemVo.time}
+            </if>
+            <if test="inComeItemVo.money != null and inComeItemVo.money != ''">
+                and t.money = #{inComeItemVo.money}
+            </if>
+        </where>
+        <choose>
+            <when test="inComeItemVo.sort != null and inComeItemVo.sort.trim() != ''">
+                order by t.${inComeItemVo.sort} t.${inComeItemVo.order}
+            </when>
+            <otherwise>
+                order by t.id desc
+            </otherwise>
+        </choose>
+        <if test="pageQuery.pageNo != null and pageQuery.pageSize != null">
+            limit #{pageQuery.pageNo}, #{pageQuery.pageSize}
+        </if>
+    </select>
+    <select id="listAll" resultMap="inComeItemMap">
+        select * from t_in_come_item where company_id=#{companyId}
+    </select>
+    <select id="counts" resultType="long">
+        select count(t.id) from t_in_come_item t
+        <where>
+            <if test="inComeItemVo.id != null and inComeItemVo.id != ''">
+                and t.id = #{inComeItemVo.id}
+            </if>
+            <if test="inComeItemVo.incomeId != null and inComeItemVo.incomeId != ''">
+                and t.income_id = #{inComeItemVo.incomeId}
+            </if>
+            <if test="inComeItemVo.subjectName != null and inComeItemVo.subjectName != ''">
+                and t.subject_name = #{inComeItemVo.subjectName}
+            </if>
+            <if test="inComeItemVo.time != null and inComeItemVo.time != ''">
+                and t.time = #{inComeItemVo.time}
+            </if>
+            <if test="inComeItemVo.money != null and inComeItemVo.money != ''">
+                and t.money = #{inComeItemVo.money}
+            </if>
+        </where>
+        <choose>
+            <when test="inComeItemVo.sort != null and inComeItemVo.sort.trim() != ''">
+                order by t.${inComeItemVo.sort} ${inComeItemVo.order}
+            </when>
+            <otherwise>
+                order by t.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="save" parameterType="top.cflwork.vo.InComeItemVo" useGeneratedKeys="true" keyProperty="id">
+        insert into t_in_come_item (income_id ,subject_name ,time ,money) values (#{incomeId}, #{subjectName}, #{time}, #{money})
+    </insert>
+
+    <update id="update" parameterType="top.cflwork.vo.InComeItemVo">
+        update t_in_come_item
+        <set>
+            <if test="incomeId != null">income_id = #{incomeId
+                    },
+            </if>
+            <if test="subjectName != null">subject_name = #{subjectName
+                    },
+            </if>
+            <if test="time != null">time = #{time
+                    },
+            </if>
+            <if test="money != null">money = #{money
+                    }
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateStatus">
+        update t_in_come_item set is_active=#{status} where id=#{id}
+    </update>
+    <delete id="removeById" parameterType="long">
+        delete from t_in_come_item where id = #{value}
+    </delete>
+    <delete id="removeMany">
+        delete from t_in_come_item where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <insert id="batchSave" parameterType="top.cflwork.vo.InComeItemVo" useGeneratedKeys="true" keyProperty="id">
+        insert into t_in_come_item ( income_id ,subject_name ,time ,money) values
+        <foreach collection="list" item="inComeItem" separator=",">
+            (#{inComeItem.incomeId}, #{inComeItem.subjectName}, #{inComeItem.time}, #{inComeItem.money})
+        </foreach>
+    </insert>
+    <delete id="deleteByIncomeId" parameterType="long">
+        delete from t_in_come_item where income_id= #{id}
+    </delete>
+</mapper>

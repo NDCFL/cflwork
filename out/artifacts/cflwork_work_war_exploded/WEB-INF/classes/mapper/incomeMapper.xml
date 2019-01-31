@@ -30,7 +30,7 @@
         </if>
     </sql>
     <select id="getById" resultMap="IncomeMap" parameterType="long">
-        select t.id,t.company_id,t.hotel_id,t.subject_id,t.incomme_name,t.remark,t.start_time,t.end_time,t.money,t.day_money,t.income_status,t.is_active,t.create_time        from t_income t where t.id = #{value}
+        select t.id,t.company_id,t.hotel_id,t.subject_id,t.incomme_name,t.remark,t.start_time,t.end_time,t.money,t.day_money,t.income_status,t.is_active,t.create_time,c.title  from t_income t, t_cash_subject c where t.subject_id=c.id and t.id = #{value}
     </select>
     <select id="listPage" resultMap="IncomeMap">
         select
@@ -130,7 +130,7 @@
 
     <insert id="save" parameterType="top.cflwork.vo.IncomeVo" useGeneratedKeys="true" keyProperty="id">
         insert into t_income (
-        company_id,                                                                 hotel_id,                                                                 subject_id,                                                                 incomme_name,                                                                 remark,                                                                 start_time,                                                                 end_time,                                                                 money,                                                                 day_money,                                                                 income_status,                                                                 is_active,                                                                 create_time                                  ) values (
+        company_id,                                                                 hotel_id,                                                                 subject_id,                                                                 incomme_name,                                                                 remark,                                                                 start_time,                                                                 end_time,                                                                 money,                                                                 day_money,                                                                 income_status,                                                                 is_active,                                                                 create_time,order_status                                  ) values (
         #{companyId},
         #{hotelId},
         #{subjectId},
@@ -142,7 +142,8 @@
         #{dayMoney},
         #{incomeStatus},
         #{isActive},
-        now()
+        now(),
+        0
         )
     </insert>
 
@@ -180,6 +181,9 @@
                     },
             </if>
             <if test="isActive != null">is_active = #{isActive
+                    },
+            </if>
+            <if test="orderStatus != null">order_status = #{orderStatus
                     },
             </if>
         </set>

@@ -30,7 +30,7 @@
         </if>
     </sql>
     <select id="getById" resultMap="IncomeMap" parameterType="long">
-        select t.id,t.company_id,t.hotel_id,t.subject_id,t.incomme_name,t.remark,t.start_time,t.end_time,t.money,t.day_money,t.income_status,t.is_active,t.create_time        from t_income t where t.id = #{value}
+        select t.id,t.company_id,t.hotel_id,t.subject_id,t.incomme_name,t.remark,t.start_time,t.end_time,t.money,t.day_money,t.income_status,t.is_active,t.create_time  from t_income t where t.id = #{value}
     </select>
     <select id="listPage" resultMap="IncomeMap">
         select

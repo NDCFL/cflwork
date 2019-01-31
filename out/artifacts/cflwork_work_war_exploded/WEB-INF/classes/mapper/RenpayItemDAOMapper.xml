@@ -1,0 +1,210 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="top.cflwork.dao.RenpayItemDAO">
+    <resultMap id="renpayItemMap" type="top.cflwork.vo.RenpayItemVo"></resultMap>
+    <sql id="search">
+        <if test="#{searchVal!=null} and #{searchVal!=''}">
+            and (t.id like concat('%${searchVal}%'))
+        </if>
+    </sql>
+    <select id="getById" resultMap="renpayItemMap" parameterType="long">
+        select  t.id , t.rent_pay_id , t.pay_time , t.reality_pay_time , t.is_active , t.out_money , t.in_money , t.pay_money , t.out_time , t.in_time , t.pay_proportion , t.description , t.create_time         from t_rent_pay_item t where t.id = #{id}
+    </select>
+    <select id="listPage" resultMap="renpayItemMap">
+        select t.id , t.rent_pay_id , t.pay_time , t.reality_pay_time , t.is_active , t.out_money , t.in_money ,
+        t.pay_money , t.out_time , t.in_time , t.pay_proportion , t.description , t.create_time from t_rent_pay_item t
+        where 1=1 <include refid="search"></include> order by t.create_time desc limit
+        #{pageNo}, #{pageSize}
+    </select>
+    <select id="count" resultType="long">
+        select count(t.id) from t_rent_pay_item t where 1=1  <include refid="search"></include> order
+        by t.create_time desc
+    </select>
+
+    <select id="listPages" resultMap="renpayItemMap">
+        select t.id , t.rent_pay_id , t.pay_time , t.reality_pay_time , t.is_active , t.out_money , t.in_money ,
+        t.pay_money , t.out_time , t.in_time , t.pay_proportion , t.description , t.create_time from t_rent_pay_item t
+        <where>
+            <if test="renpayItemVo.id != null and renpayItemVo.id != ''">
+                and t.id = #{renpayItemVo.id}
+            </if>
+            <if test="renpayItemVo.rentPayId != null and renpayItemVo.rentPayId != ''">
+                and t.rent_pay_id = #{renpayItemVo.rentPayId}
+            </if>
+            <if test="renpayItemVo.payTime != null and renpayItemVo.payTime != ''">
+                and t.pay_time = #{renpayItemVo.payTime}
+            </if>
+            <if test="renpayItemVo.realityPayTime != null and renpayItemVo.realityPayTime != ''">
+                and t.reality_pay_time = #{renpayItemVo.realityPayTime}
+            </if>
+            <if test="renpayItemVo.isActive != null and renpayItemVo.isActive != ''">
+                and t.is_active = #{renpayItemVo.isActive}
+            </if>
+            <if test="renpayItemVo.outMoney != null and renpayItemVo.outMoney != ''">
+                and t.out_money = #{renpayItemVo.outMoney}
+            </if>
+            <if test="renpayItemVo.inMoney != null and renpayItemVo.inMoney != ''">
+                and t.in_money = #{renpayItemVo.inMoney}
+            </if>
+            <if test="renpayItemVo.payMoney != null and renpayItemVo.payMoney != ''">
+                and t.pay_money = #{renpayItemVo.payMoney}
+            </if>
+            <if test="renpayItemVo.outTime != null and renpayItemVo.outTime != ''">
+                and t.out_time = #{renpayItemVo.outTime}
+            </if>
+            <if test="renpayItemVo.inTime != null and renpayItemVo.inTime != ''">
+                and t.in_time = #{renpayItemVo.inTime}
+            </if>
+            <if test="renpayItemVo.payProportion != null and renpayItemVo.payProportion != ''">
+                and t.pay_proportion = #{renpayItemVo.payProportion}
+            </if>
+            <if test="renpayItemVo.description != null and renpayItemVo.description != ''">
+                and t.description = #{renpayItemVo.description}
+            </if>
+            <if test="renpayItemVo.createTime != null and renpayItemVo.createTime != ''">
+                and t.create_time = #{renpayItemVo.createTime}
+            </if>
+        </where>
+        <choose>
+            <when test="renpayItemVo.sort != null and renpayItemVo.sort.trim() != ''">
+                order by t.${renpayItemVo.sort} t.${renpayItemVo.order}
+            </when>
+            <otherwise>
+                order by t.id desc
+            </otherwise>
+        </choose>
+        <if test="pageQuery.pageNo != null and pageQuery.pageSize != null">
+            limit #{pageQuery.pageNo}, #{pageQuery.pageSize}
+        </if>
+    </select>
+    <select id="listAll" resultMap="renpayItemMap">
+        select * from t_rent_pay_item where company_id=#{companyId}
+    </select>
+    <select id="counts" resultType="long">
+        select count(t.id) from t_rent_pay_item t
+        <where>
+            <if test="renpayItemVo.id != null and renpayItemVo.id != ''">
+                and t.id = #{renpayItemVo.id}
+            </if>
+            <if test="renpayItemVo.rentPayId != null and renpayItemVo.rentPayId != ''">
+                and t.rent_pay_id = #{renpayItemVo.rentPayId}
+            </if>
+            <if test="renpayItemVo.payTime != null and renpayItemVo.payTime != ''">
+                and t.pay_time = #{renpayItemVo.payTime}
+            </if>
+            <if test="renpayItemVo.realityPayTime != null and renpayItemVo.realityPayTime != ''">
+                and t.reality_pay_time = #{renpayItemVo.realityPayTime}
+            </if>
+            <if test="renpayItemVo.isActive != null and renpayItemVo.isActive != ''">
+                and t.is_active = #{renpayItemVo.isActive}
+            </if>
+            <if test="renpayItemVo.outMoney != null and renpayItemVo.outMoney != ''">
+                and t.out_money = #{renpayItemVo.outMoney}
+            </if>
+            <if test="renpayItemVo.inMoney != null and renpayItemVo.inMoney != ''">
+                and t.in_money = #{renpayItemVo.inMoney}
+            </if>
+            <if test="renpayItemVo.payMoney != null and renpayItemVo.payMoney != ''">
+                and t.pay_money = #{renpayItemVo.payMoney}
+            </if>
+            <if test="renpayItemVo.outTime != null and renpayItemVo.outTime != ''">
+                and t.out_time = #{renpayItemVo.outTime}
+            </if>
+            <if test="renpayItemVo.inTime != null and renpayItemVo.inTime != ''">
+                and t.in_time = #{renpayItemVo.inTime}
+            </if>
+            <if test="renpayItemVo.payProportion != null and renpayItemVo.payProportion != ''">
+                and t.pay_proportion = #{renpayItemVo.payProportion}
+            </if>
+            <if test="renpayItemVo.description != null and renpayItemVo.description != ''">
+                and t.description = #{renpayItemVo.description}
+            </if>
+            <if test="renpayItemVo.createTime != null and renpayItemVo.createTime != ''">
+                and t.create_time = #{renpayItemVo.createTime}
+            </if>
+        </where>
+        <choose>
+            <when test="renpayItemVo.sort != null and renpayItemVo.sort.trim() != ''">
+                order by t.${renpayItemVo.sort} ${renpayItemVo.order}
+            </when>
+            <otherwise>
+                order by t.id desc
+            </otherwise>
+        </choose>
+    </select>
+
+    <insert id="save" parameterType="top.cflwork.vo.RenpayItemVo" useGeneratedKeys="true" keyProperty="id">
+        insert into t_rent_pay_item (
+                                                                             rent_pay_id ,                                                                  pay_time ,                                                                  reality_pay_time ,                                                                  is_active ,                                                                  out_money ,                                                                  in_money ,                                                                  pay_money ,                                                                  out_time ,                                                                  in_time ,                                                                  pay_proportion ,                                                                  description ,                                                                  create_time                                   ) values (
+                                                                            #{rentPayId}, 
+                                                                #{payTime}, 
+                                                                #{realityPayTime}, 
+                                                                #{isActive}, 
+                                                                #{outMoney}, 
+                                                                #{inMoney}, 
+                                                                #{payMoney}, 
+                                                                #{outTime}, 
+                                                                #{inTime}, 
+                                                                #{payProportion}, 
+                                                                #{description}, 
+                                                                #{createTime}
+                                    )
+    </insert>
+
+    <update id="update" parameterType="top.cflwork.vo.RenpayItemVo">
+        update t_rent_pay_item
+        <set>
+            <if test="rentPayId != null">rent_pay_id = #{rentPayId
+                    },
+            </if>
+            <if test="payTime != null">pay_time = #{payTime
+                    },
+            </if>
+            <if test="realityPayTime != null">reality_pay_time = #{realityPayTime
+                    },
+            </if>
+            <if test="isActive != null">is_active = #{isActive
+                    },
+            </if>
+            <if test="outMoney != null">out_money = #{outMoney
+                    },
+            </if>
+            <if test="inMoney != null">in_money = #{inMoney
+                    },
+            </if>
+            <if test="payMoney != null">pay_money = #{payMoney
+                    },
+            </if>
+            <if test="outTime != null">out_time = #{outTime
+                    },
+            </if>
+            <if test="inTime != null">in_time = #{inTime
+                    },
+            </if>
+            <if test="payProportion != null">pay_proportion = #{payProportion
+                    },
+            </if>
+            <if test="description != null">description = #{description
+                    },
+            </if>
+            <if test="createTime != null">create_time = #{createTime
+                    }
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+    <update id="updateStatus">
+        update t_rent_pay_item set is_active=#{status} where id=#{id}
+    </update>
+    <delete id="removeById" parameterType="long">
+        delete from t_rent_pay_item where id = #{value}
+    </delete>
+    <delete id="removeMany">
+        delete from t_rent_pay_item where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

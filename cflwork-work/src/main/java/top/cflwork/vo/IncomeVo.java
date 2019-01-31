@@ -57,6 +57,6 @@ public class IncomeVo implements Serializable {
     private CashSubjectVo cashSubjectVo;
     @NotNull
     private String temp;
-
+    private  Byte orderStatus;
 
 }

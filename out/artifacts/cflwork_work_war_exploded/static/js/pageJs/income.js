@@ -140,8 +140,8 @@ $('#mytab').bootstrapTable({
                 } else if (row.isActive == 0) {
                     f = '<a title="停用" href="javascript:void(0);" onclick="updatestatus(' + row.id + ',' + 1 + ')"><i class="glyphicon glyphicon-remove-sign"  style="color:red">停用</i></a> ';
                 }
-
-                return e + d + f;
+                var p = '<a title="生成明细" href="javascript:void(0);" onclick="generateOrder(' + row.id +')"><i class="glyphicon glyphicon-remove-sign"  style="color:green">生成明细</i></a>';
+                return e + d + f+p;
             }
         }
     ],
@@ -224,7 +224,18 @@ function del(id, status) {
         });
     });
 }
-
+function generateOrder(id) {
+    $.post("/inComeItem/generateOrder/" + id,
+        function (data) {
+            if (data.result == 'success') {
+                layer.alert(data.message, {icon: 1});
+            } else {
+                layer.alert(data.message, {icon: 2});
+            }
+        },
+        "json"
+    );
+}
 function edit(name) {
     $.post("/income/findIncome/" + name,
         function (data) {
