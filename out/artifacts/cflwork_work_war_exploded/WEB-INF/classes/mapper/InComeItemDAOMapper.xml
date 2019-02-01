@@ -127,4 +127,7 @@
     <delete id="deleteByIncomeId" parameterType="long">
         delete from t_in_come_item where income_id= #{id}
     </delete>
+    <select id="findList" resultMap="inComeItemMap" parameterType="top.cflwork.vo.InComeItemVo">
+        select * from t_in_come_item where income_id = #{id}
+    </select>
 </mapper>

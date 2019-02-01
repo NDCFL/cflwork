@@ -14,8 +14,8 @@ import top.cflwork.common.Message;
 import top.cflwork.common.PagingBean;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
-import top.cflwork.service.OucomeItemService;
-import top.cflwork.vo.OucomeItemVo;
+import top.cflwork.service.OutComeItemService;
+import top.cflwork.vo.OutComeItemVo;
 import top.cflwork.vo.UserVo;
 
 import javax.annotation.Resource;
@@ -23,6 +23,7 @@ import javax.servlet.http.HttpSession;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 成本支出明细
@@ -33,10 +34,10 @@ import java.util.Date;
  */
 
 @Controller
-@RequestMapping("/oucomeItem")
-public class OucomeItemController {
+@RequestMapping("/outComeItem")
+public class OutComeItemController {
 	@Resource
-	private OucomeItemService oucomeItemService;
+	private OutComeItemService outComeItemService;
 
     /**
     *
@@ -47,20 +48,20 @@ public class OucomeItemController {
 	* @return  返回分页结果
 	* @throws Exception
 	*/
-    @RequestMapping("oucomeItemList")
+    @RequestMapping("outComeItemList")
     @ResponseBody
-    @ApiOperation(value = "分页获取数据列表", notes = "返回响应对象", response = OucomeItemVo.class)
-    public PagingBean oucomeItemList(
+    @ApiOperation(value = "分页获取数据列表", notes = "返回响应对象", response = OutComeItemVo.class)
+    public PagingBean outComeItemList(
             @ApiParam(value = "每页记录数", required = true)int pageSize,
             @ApiParam(value = "当前页", required = true)int pageIndex,
             @ApiParam(value = "搜索参数")String searchVal,
             HttpSession session) throws  Exception{
         UserVo userVo = (UserVo) session.getAttribute("userVo");
         PagingBean pagingBean = new PagingBean();
-        pagingBean.setTotal(oucomeItemService.count(new PageQuery(searchVal,userVo.getCompanyId())));
+        pagingBean.setTotal(outComeItemService.count(new PageQuery(searchVal,userVo.getCompanyId())));
         pagingBean.setPageSize(pageSize);
         pagingBean.setCurrentPage(pageIndex);
-        pagingBean.setrows(oucomeItemService.listPage(new PageQuery(pagingBean.getStartIndex(),pagingBean.getPageSize(),searchVal,userVo.getCompanyId())));
+        pagingBean.setrows(outComeItemService.listPage(new PageQuery(pagingBean.getStartIndex(),pagingBean.getPageSize(),searchVal,userVo.getCompanyId())));
         return pagingBean;
     }
     /**
@@ -72,14 +73,14 @@ public class OucomeItemController {
         * @return  返回分页结果
         * @throws Exception
         */
-    @RequestMapping("findOucomeItemList")
+    @RequestMapping("findOutComeItemList")
     @ResponseBody
-    @ApiOperation(value = "分页并搜索获取数据列表", notes = "返回响应对象", response = OucomeItemVo.class)
-    public PagingBean findOucomeItemList(
+    @ApiOperation(value = "分页并搜索获取数据列表", notes = "返回响应对象", response = OutComeItemVo.class)
+    public PagingBean findOutComeItemList(
             @ApiParam(value = "每页记录数", required = true)int pageSize,
             @ApiParam(value = "当前页", required = true)int pageIndex,
             HttpSession session,
-            @ApiParam(value = "参数对象")OucomeItemVo oucomeItemVo) throws  Exception{
+            @ApiParam(value = "参数对象")OutComeItemVo outComeItemVo) throws  Exception{
         try{
             UserVo userVo = (UserVo) session.getAttribute("userVo");
             //分页参数
@@ -91,8 +92,8 @@ public class OucomeItemController {
             pageQuery.setCompanyId(userVo.getCompanyId());
             pageQuery.setPageSize(pagingBean.getPageSize());
             pageQuery.setPageNo(pagingBean.getStartIndex());
-            pagingBean.setTotal(oucomeItemService.counts(pageQuery,oucomeItemVo));
-            pagingBean.setrows(oucomeItemService.listPages(pageQuery,oucomeItemVo));
+            pagingBean.setTotal(outComeItemService.counts(pageQuery,outComeItemVo));
+            pagingBean.setrows(outComeItemService.listPages(pageQuery,outComeItemVo));
             return pagingBean;
         }catch (Exception e){
             e.printStackTrace();
@@ -106,15 +107,15 @@ public class OucomeItemController {
 	* @return  返回操作结果
 	* @throws Exception
 	*/
-    @RequestMapping("/oucomeItemAddSave")
+    @RequestMapping("/outComeItemAddSave")
     @ResponseBody
-    @ApiOperation(value = "保存数据", notes = "返回响应对象", response = OucomeItemVo.class)
-    public Message oucomeItemAddSave(
-            @ApiParam(value = "参数对象", required = true)OucomeItemVo oucomeItemVo,
+    @ApiOperation(value = "保存数据", notes = "返回响应对象", response = OutComeItemVo.class)
+    public Message outComeItemAddSave(
+            @ApiParam(value = "参数对象", required = true)OutComeItemVo outComeItemVo,
             HttpSession session) throws  Exception {
         try{
             UserVo userVo = (UserVo) session.getAttribute("userVo");
-			oucomeItemService.save(oucomeItemVo);
+			outComeItemService.save(outComeItemVo);
             return  Message.success("新增成功!");
         }catch (Exception E){
             return Message.fail("新增失败!");
@@ -128,11 +129,11 @@ public class OucomeItemController {
 	* @return  返回更新结果集
 	* @throws Exception
 	*/
-    @RequestMapping("/oucomeItemUpdateSave")
+    @RequestMapping("/outComeItemUpdateSave")
     @ResponseBody
-    public Message oucomeItemUpdateSave(OucomeItemVo oucomeItemVo) throws  Exception{
+    public Message outComeItemUpdateSave(OutComeItemVo outComeItemVo) throws  Exception{
         try{
-			oucomeItemService.update(oucomeItemVo);
+			outComeItemService.update(outComeItemVo);
             return  Message.success("修改成功!");
         }catch (Exception e){
             return Message.fail("修改失败!");
@@ -146,13 +147,13 @@ public class OucomeItemController {
 	* @return  返回删除的结果集
 	* @throws Exception
 	*/
-    @RequestMapping("/deleteManyOucomeItem")
+    @RequestMapping("/deleteManyOutComeItem")
     @ResponseBody
-    public Message deleteManyOucomeItem(@Param("manyId") String manyId,Integer status) throws  Exception{
+    public Message deleteManyOutComeItem(@Param("manyId") String manyId,Integer status) throws  Exception{
         try{
             String str[] = manyId.split(",");
             for (String s: str) {
-				oucomeItemService.updateStatus(new StatusQuery(Long.parseLong(s),status));
+				outComeItemService.updateStatus(new StatusQuery(Long.parseLong(s),status));
             }
             return Message.success("批量修改状态成功!");
         }catch (Exception e){
@@ -166,13 +167,13 @@ public class OucomeItemController {
 	* @param id 编号
 	* @return  返回查询结果
 	*/
-    @RequestMapping("/findOucomeItem/{id}")
+    @RequestMapping("/findOutComeItem/{id}")
     @ResponseBody
-    @ApiOperation(value = "根据编号获取对象记录", notes = "返回响应对象", response = OucomeItemVo.class)
-    public OucomeItemVo findOucomeItem(
+    @ApiOperation(value = "根据编号获取对象记录", notes = "返回响应对象", response = OutComeItemVo.class)
+    public OutComeItemVo findOutComeItem(
             @ApiParam(value = "编号", required = true)@PathVariable("id") long id){
-            OucomeItemVo oucomeItemVo = oucomeItemService.getById(id);
-        return oucomeItemVo;
+            OutComeItemVo outComeItemVo = outComeItemService.getById(id);
+        return outComeItemVo;
     }
 
     /**
@@ -181,13 +182,13 @@ public class OucomeItemController {
 	* @return 返回删除的结果集
 	* @throws Exception
 	*/
-    @RequestMapping("/deleteOucomeItem/{id}")
+    @RequestMapping("/deleteOutComeItem/{id}")
     @ResponseBody
-    @ApiOperation(value = "根据编号删除对象记录", notes = "返回响应对象", response = OucomeItemVo.class)
-    public Message deleteOucomeItem(
+    @ApiOperation(value = "根据编号删除对象记录", notes = "返回响应对象", response = OutComeItemVo.class)
+    public Message deleteOutComeItem(
             @ApiParam(value = "参数编号", required = true)@PathVariable("id") long id) throws  Exception{
         try{
-			oucomeItemService.removeById(id);
+			outComeItemService.removeById(id);
             return Message.success("删除成功!");
         }catch (Exception e){
             e.printStackTrace();
@@ -200,9 +201,9 @@ public class OucomeItemController {
 	* @return 文件地址
 	* @throws Exception
 	*/
-    @RequestMapping("/oucomeItemPage")
+    @RequestMapping("/outComeItemPage")
     public String table() throws  Exception{
-        return "oucomeItem/oucomeItemList";
+        return "outComeItem/outComeItemList";
     }
 
     /**
@@ -214,17 +215,55 @@ public class OucomeItemController {
 	*/
     @RequestMapping("updateStatus/{id}/{status}")
     @ResponseBody
-    @ApiOperation(value = "根据编号状态修改对象的状态", notes = "返回响应对象", response = OucomeItemVo.class)
+    @ApiOperation(value = "根据编号状态修改对象的状态", notes = "返回响应对象", response = OutComeItemVo.class)
     public Message updateStatus(
             @ApiParam(value = "参数编号", required = true)@PathVariable("id") long id,
             @ApiParam(value = "对象", required = true)@PathVariable("status") int status) throws  Exception{
         try{
-			oucomeItemService.updateStatus(new StatusQuery(id,status));
+			outComeItemService.updateStatus(new StatusQuery(id,status));
             return Message.success("ok");
         }catch (Exception e){
             return  Message.fail("fail");
         }
     }
+
+    /**
+     * 生成订单
+     *
+     * @param id 编号
+     * @return 返回删除的结果集
+     * @throws Exception
+     */
+    @RequestMapping("/generateOrder/{id}")
+    @ResponseBody
+    @ApiOperation(value = "根据订单编号生成订单明细记录", notes = "返回响应对象", response = OutComeItemVo.class)
+    public Message GenerateOrder(
+            @ApiParam(value = "参数编号", required = true) @PathVariable("id") long id) throws Exception {
+        try {
+            outComeItemService.generateOrder(id);
+            return Message.success("订单生成成功!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Message.fail("订单生成失败!");
+        }
+    }
+    /**
+     * @return 返回分页结果
+     * @throws Exception
+     */
+    @RequestMapping("outComeItemLists/{id}")
+    @ResponseBody
+    @ApiOperation(value = "根据订单编号，获取订单详情", notes = "返回响应对象", response = OutComeItemVo.class)
+    public List<OutComeItemVo> inComeItemLists(@ApiParam(value = "编号") @PathVariable("id")Long id) throws Exception {
+        try {
+            List<OutComeItemVo> orderItemsVos = outComeItemService.findList(id);
+            return orderItemsVos;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -182,8 +182,17 @@ $('#mytab').bootstrapTable({
                 } else if (row.isActive == 0) {
                     f = '<a title="停用" href="javascript:void(0);" onclick="updatestatus(' + row.id + ',' + 1 + ')"><i class="glyphicon glyphicon-remove-sign"  style="color:red">停用</i></a> ';
                 }
-                var p = '<a title="付款" href="javascript:void(0);"  data-toggle="modal" data-id="\\\'\' + row.id + \'\\\'" data-target="#fukuan" onclick="fukuan(' + row.id + ',' +row.firstPay + ')"><i class="glyphicon glyphicon-euro" alt="付款" style="color:red">付款</i></a> ';
-                return p+e + d + f;
+                var s = '<a title="付款" href="javascript:void(0);"  data-toggle="modal" data-id="\\\'\' + row.id + \'\\\'" data-target="#fukuan" onclick="fukuan(' + row.id + ',' +row.firstPay + ')"><i class="glyphicon glyphicon-euro" alt="付款" style="color:red">付款</i></a> ';
+                var p = '<a title="生成明细" href="javascript:void(0);" onclick="generateOrder(' + row.id +')"><i class="glyphicon glyphicon-th-list"  style="color:#9aff9c">生成明细</i></a>';
+                var t = '<a title="查看明细" data-toggle="modal" data-id="' + row.id + '" data-target="#order_item_list" onclick="return orderItem(' + row.id +')"><i class="glyphicon glyphicon-th-large"  style="color:#56caff">查看明细</i></a>';
+                if(row.orderStatus==0){
+                    return e + d + f+p+s;
+                }else if(row.orderStatus==1){
+                    return e + d + f+t+s;
+                }else{
+                    return e + d + f+s
+                }
+                return p+e + d + f+s;
             }
         }
     ],
@@ -419,4 +428,212 @@ function  formattimes(value) {
     var ss = date.getSeconds();
     return y + '-' + (m<10?"0"+m:m) + '-' + (d<10?"0"+d:d) ;
 
+}
+function generateOrder(id) {
+    $.post("/rentPayItem/generateOrder/" + id,
+        function (data) {
+            if (data.result == 'success') {
+                layer.alert(data.message, {icon: 1});
+                refush();
+            } else {
+                refush();
+                layer.alert(data.message, {icon: 2});
+            }
+        },
+        "json"
+    );
+}
+function orderItem(id) {
+    orders(id);
+
+}
+function pay(id) {
+    $.post(
+        "/rentPay/deleteManyCashSubject",
+        {
+            "manyId": $("#deleteId").val()
+        },
+        function (data) {
+            if (data.message == "删除成功!") {
+                layer.alert(data.message, {icon: 6});
+                refush();
+            } else {
+                layer.alert(data.message, {icon: 6});
+                refush();
+            }
+        }, "json"
+    );
+
+
+}
+function orders(id) {
+    //生成用户数据
+    $('#mytab2').bootstrapTable({
+        method: 'post',
+        contentType: "application/x-www-form-urlencoded",//必须要有！！！！
+        url: "/rentPayItem/rentPayItemLists/"+id,//要请求数据的文件路径
+        toolbar: '#toolbar1',//指定工具栏
+        striped: true, //是否显示行间隔色
+        dataField: "res",
+        sortable: true, //是否启用排序 sortOrder: "ID asc",
+        sortOrder: "ID asc",
+        pagination: true,//是否分页
+        queryParamsType: 'limit',//查询参数组织方式
+        queryParams: queryParams,//请求服务器时所传的参数
+        sidePagination: 'client',//指定服务器端分页
+        pageNumber: 1, //初始化加载第一页，默认第一页
+        pageSize: 10,//单页记录数
+        pageList: [10, 20, 30, 40, 50, 60, 70, 80, 90, 100],//分页步进值
+        showRefresh: true,//刷新按钮
+        showColumns: true,
+        clickToSelect: true,//是否启用点击选中行
+        toolbarAlign: 'right',//工具栏对齐方式
+        buttonsAlign: 'right',//按钮对齐方式
+        toolbar: '#toolbar1', search: true,
+        uniqueId: "id",                     //每一行的唯一标识，一般为主键列
+        showExport: true,
+        exportDataType: 'all',
+        columns: [
+            {
+                title: '全选',
+                field: 'select',
+                //复选框
+                checkbox: true,
+                width: 25,
+                align: 'center',
+                valign: 'middle'
+            },
+            {
+                field: 'payTime',
+                title: '约定付款时间',
+                align: 'center',
+                sortable: true,
+                formatter: function (value, row, index) {
+                    return formattimes(value);
+                }
+            },
+            {
+                field: 'realityPayTime',
+                title: '实际付款时间',
+                align: 'center',
+                sortable: true,
+                formatter: function (value, row, index) {
+                    if(!value){
+                        return '未付款';
+                    }else{
+                        return formattime(value);
+                    }
+                }
+            },
+            {
+                field: 'isActive',
+                title: '付款状态',
+                align: 'center',
+                sortable: true,
+                formatter: function (value, row, index) {
+                    if (value == 0) {
+                        //表示启用状态
+                        return '<span style="color: #0d8ddb" >待付款</span>';
+                    } else {
+                        //表示启用状态
+                        return '<span style="color: red">已付款</i>';
+                    }
+                }
+            },
+            {
+                field: 'outMoney',
+                title: '本期成本支出',
+                align: 'center',
+                sortable: true,
+                formatter: function (value, row, index) {
+                    if(!value){
+                        return '未出账';
+                    }else{
+                        return value;
+                    }
+                }
+            },
+            {
+                field: 'inMoney',
+                title: '本期营业收入',
+                align: 'center',
+                sortable: true,
+                formatter: function (value, row, index) {
+                    if(!value){
+                        return '未出账';
+                    }else{
+                        return value;
+                    }
+                }
+            },
+            {
+                field: 'payMoney',
+                title: '支付金额',
+                align: 'center',
+                sortable: true,
+                formatter: function (value, row, index) {
+                    if(!value){
+                        return '未出账';
+                    }else{
+                        return value;
+                    }
+                }
+            },
+            {
+                field: 'outTime',
+                title: '本期成本支出时间范围',
+                align: 'center',
+                sortable: true,
+                formatter: function (value, row, index) {
+                    if(!value){
+                        return '未统计';
+                    }else{
+                        return value;
+                    }
+                }
+            },
+            {
+                field: 'inTime',
+                title: '本期营业收入时间范围',
+                align: 'center',
+                sortable: true,
+                formatter: function (value, row, index) {
+                    if(!value){
+                        return '未统计';
+                    }else{
+                        return value;
+                    }
+                }
+            },
+            {
+                field: 'payProportion',
+                title: '分成比例',
+                align: 'center',
+                sortable: true,
+                formatter: function (value, row, index) {
+                    return parseFloat(value)*100+"%";
+                }
+            },
+            {
+                field: 'createTime',
+                title: '创建时间',
+                align: 'center',
+                sortable: true,
+                formatter: function (value, row, index) {
+                    return formattime(value);
+                }
+            },
+            {
+                title: '操作',
+                align: 'center',
+                field: '',
+                formatter: function (value, row, index) {
+                    var e = '<a title="付款" href="javascript:void(0);" id="rentPayItem" onclick="pay(\'' + row.id + '\')">付款</a> ';
+                    return e;
+                }
+            }
+        ],
+        locale: 'zh-CN',//中文支持,
+
+    })
 }

@@ -118,6 +118,7 @@ public class RentPayController {
             rentPayVo.setBaodiPay(BigDecimal.valueOf(0));
             HouseVo houseVo = houseService.getById(rentPayVo.getHotelId());
             rentPayVo.setArea(houseVo.getArea());
+            rentPayVo.setOrderStatus((byte)0);
             rentPayService.save(rentPayVo);
             return Message.success("新增成功!");
         } catch (Exception E) {

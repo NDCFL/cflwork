@@ -6,7 +6,7 @@ package top.cflwork.config;
 public class QiniuConfig {
     public static final String accessKey="Kv1HUylImK4UQ1mTOMc7NSOOBAORucO47rWpky9J";
     public static final String secretKey="1BwQkRk2pLVDfACFE3B2pTHd627KheH5PS5wNTsg";
-    public static final String bucket="hotels";
-    public static final String path = "http://plzcbsxqn.bkt.clouddn.com";
+    public static final String bucket="hotel";
+    public static final String path = "http://plzvo69ik.bkt.clouddn.com";
 
 }

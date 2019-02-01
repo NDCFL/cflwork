@@ -32,8 +32,8 @@ import org.springframework.web.bind.annotation.InitBinder;
 @Controller
 @RequestMapping("/${classname}")
 public class ${className}Controller {
-	@Resource
-	private ${className}Service ${classname}Service;
+    @Resource
+    private ${className}Service ${classname}Service;
 
     /**
     *
@@ -46,7 +46,12 @@ public class ${className}Controller {
 	*/
     @RequestMapping("${classname}List")
     @ResponseBody
-    public PagingBean ${classname}List(int pageSize, int pageIndex, String searchVal, HttpSession session) throws  Exception{
+    @ApiOperation(value = "分页获取数据列表", notes = "返回响应对象", response = ${className}.class)
+    public PagingBean ${classname}List(
+            @ApiParam(value = "每页记录数", required = true)int pageSize,
+            @ApiParam(value = "当前页", required = true)int pageIndex,
+            @ApiParam(value = "搜索参数")String searchVal,
+            HttpSession session) throws  Exception{
         UserVo userVo = (UserVo) session.getAttribute("userVo");
         PagingBean pagingBean = new PagingBean();
         pagingBean.setTotal(${classname}Service.count(new PageQuery(searchVal,userVo.getCompanyId())));
@@ -66,7 +71,12 @@ public class ${className}Controller {
         */
     @RequestMapping("find${className}List")
     @ResponseBody
-    public PagingBean find${className}List(int pageSize, int pageIndex,HttpSession session,${className}Vo ${classname}Vo) throws  Exception{
+    @ApiOperation(value = "分页并搜索获取数据列表", notes = "返回响应对象", response = ${className}.class)
+    public PagingBean find${className}List(
+            @ApiParam(value = "每页记录数", required = true)int pageSize,
+            @ApiParam(value = "当前页", required = true)int pageIndex,
+            HttpSession session,
+            @ApiParam(value = "参数对象")${className}Vo ${classname}Vo) throws  Exception{
         try{
             UserVo userVo = (UserVo) session.getAttribute("userVo");
             //分页参数
@@ -95,29 +105,20 @@ public class ${className}Controller {
 	*/
     @RequestMapping("/${classname}AddSave")
     @ResponseBody
-    public Message ${classname}AddSave(${className}Vo ${classname}Vo,HttpSession session) throws  Exception {
+    @ApiOperation(value = "保存数据", notes = "返回响应对象", response = ${className}.class)
+    public Message ${classname}AddSave(
+            @ApiParam(value = "参数对象", required = true)${className}Vo ${classname}Vo,
+            HttpSession session) throws  Exception {
         try{
             UserVo userVo = (UserVo) session.getAttribute("userVo");
-			${classname}Vo.setIsActive(ActiveStatusEnum.ACTIVE.getValue().byteValue());
-			${classname}Vo.setCompanyId(userVo.getCompanyId());
-			${classname}Service.save(${classname}Vo);
+                ${classname}Vo.setIsActive(ActiveStatusEnum.ACTIVE.getValue().byteValue());
+                ${classname}Vo.setCompanyId(userVo.getCompanyId());
+                ${classname}Service.save(${classname}Vo);
             return  Message.success("新增成功!");
         }catch (Exception E){
             return Message.fail("新增失败!");
         }
 
-    }
-
-    /**
-    * 按编号去查找用户
-	* @param id 编号
-	* @return  返回查询结果
-	*/
-    @RequestMapping("/find${className}/{id}")
-    @ResponseBody
-    public ${className}Vo find${className}(@PathVariable("id") long id){
-		${className}Vo ${classname}Vo = ${classname}Service.getById(id);
-        return ${classname}Vo;
     }
 
     /**
@@ -130,7 +131,7 @@ public class ${className}Controller {
     @ResponseBody
     public Message ${classname}UpdateSave(${className}Vo ${classname}Vo) throws  Exception{
         try{
-			${classname}Service.update(${classname}Vo);
+                ${classname}Service.update(${classname}Vo);
             return  Message.success("修改成功!");
         }catch (Exception e){
             return Message.fail("修改失败!");
@@ -150,13 +151,27 @@ public class ${className}Controller {
         try{
             String str[] = manyId.split(",");
             for (String s: str) {
-				${classname}Service.updateStatus(new StatusQuery(Long.parseLong(s),status));
+                    ${classname}Service.updateStatus(new StatusQuery(Long.parseLong(s),status));
             }
             return Message.success("批量修改状态成功!");
         }catch (Exception e){
             e.printStackTrace();
             return  Message.fail("批量修改状态失败!");
         }
+    }
+
+    /**
+    * 按编号去查找用户
+	* @param id 编号
+	* @return  返回查询结果
+	*/
+    @RequestMapping("/find${className}/{id}")
+    @ResponseBody
+    @ApiOperation(value = "根据编号获取对象记录", notes = "返回响应对象", response = ${className}.class)
+    public ${className}Vo find${className}(
+            @ApiParam(value = "编号", required = true)@PathVariable("id") long id){
+            ${className}Vo ${classname}Vo = ${classname}Service.getById(id);
+        return ${classname}Vo;
     }
 
     /**
@@ -167,9 +182,11 @@ public class ${className}Controller {
 	*/
     @RequestMapping("/delete${className}/{id}")
     @ResponseBody
-    public Message delete${className}(@PathVariable("id") long id) throws  Exception{
+    @ApiOperation(value = "根据编号删除对象记录", notes = "返回响应对象", response = ${className}.class)
+    public Message delete${className}(
+            @ApiParam(value = "参数编号", required = true)@PathVariable("id") long id) throws  Exception{
         try{
-			${classname}Service.removeById(id);
+                ${classname}Service.removeById(id);
             return Message.success("删除成功!");
         }catch (Exception e){
             e.printStackTrace();
@@ -196,9 +213,12 @@ public class ${className}Controller {
 	*/
     @RequestMapping("updateStatus/{id}/{status}")
     @ResponseBody
-    public Message updateStatus(@PathVariable("id") long id,@PathVariable("status") int status) throws  Exception{
+    @ApiOperation(value = "根据编号状态修改对象的状态", notes = "返回响应对象", response = ${className}.class)
+    public Message updateStatus(
+            @ApiParam(value = "参数编号", required = true)@PathVariable("id") long id,
+            @ApiParam(value = "对象", required = true)@PathVariable("status") int status) throws  Exception{
         try{
-			${classname}Service.updateStatus(new StatusQuery(id,status));
+                ${classname}Service.updateStatus(new StatusQuery(id,status));
             return Message.success("ok");
         }catch (Exception e){
             return  Message.fail("fail");

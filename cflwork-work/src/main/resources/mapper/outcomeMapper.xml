@@ -17,6 +17,7 @@
         <result column="outcome_status" property="outcomeStatus"></result>
         <result column="is_active" property="isActive"></result>
         <result column="create_time" property="createTime"></result>
+        <result column="order_status" property="orderStatus"></result>
         <association property="hotelVo" javaType="top.cflwork.vo.HotelVo">
             <result column="title" property="title"></result>
         </association>
@@ -30,12 +31,12 @@
         </if>
     </sql>
     <select id="getById" resultMap="OutcomeMap" parameterType="long">
-        select t.id,t.company_id,t.hotel_id,t.subject_id,t.outcomme_name,t.remark,t.start_time,t.end_time,t.money,t.day_money,t.outcome_status,t.is_active,t.create_time        from t_outcome t where t.id = #{value}
+        select t.id,t.company_id,t.hotel_id,t.subject_id,t.outcomme_name,t.remark,t.start_time,t.end_time,t.money,t.day_money,t.outcome_status,t.is_active,t.create_time,c.title as 'ctitle',t.order_status from t_outcome t,t_cash_subject c where t.subject_id=c.id and t.id = #{value}
     </select>
     <select id="listPage" resultMap="OutcomeMap">
         select
         t.id,t.company_id,t.hotel_id,t.subject_id,t.outcomme_name,t.remark,t.start_time,t.end_time,t.money,t.day_money,t.outcome_status,t.is_active,t.create_time,
-        h.title,c.title as ctitle
+        h.title,c.title as ctitle,t.order_status
         from t_outcome t,t_hotel h, t_cash_subject c where t.company_id = #{companyId} and t.hotel_id=h.id and t.subject_id=c.id  order by t.create_time
         desc limit #{pageNo}, #{pageSize}
     </select>
@@ -45,7 +46,7 @@
     <select id="listPages" resultMap="OutcomeMap">
         select
         t.id,t.company_id,t.hotel_id,t.subject_id,t.outcomme_name,t.remark,t.start_time,t.end_time,t.money,t.day_money,t.outcome_status,t.is_active,t.create_time,
-        h.title,c.title as ctitle
+        h.title,c.title as ctitle,t.order_status
         from t_outcome t,t_hotel h, t_cash_subject c where t.hotel_id=h.id and t.subject_id=c.id
         <if test="outcomeVo.hotelId != null">
             and t.hotel_id = #{outcomeVo.hotelId}
@@ -71,7 +72,7 @@
         <if test="outcomeVo.isActive != null">
             and t.is_active = #{outcomeVo.isActive}
         </if>
-        <if test="outcomeVo.createTime != null and outcomeVo.createTime != ''">
+        <if test="outcomeVo.createTime != null and outcomeVo.endTime != null">
             and t.create_time BETWEEN #{outcomeVo.createTime} and #{outcomeVo.endTime}
         </if>
         <choose>
@@ -115,7 +116,7 @@
         <if test="outcomeVo.isActive != null">
             and t.is_active = #{outcomeVo.isActive}
         </if>
-        <if test="outcomeVo.createTime != null and outcomeVo.createTime != ''">
+        <if test="outcomeVo.createTime != null and outcomeVo.endTime != null">
             and t.create_time BETWEEN #{outcomeVo.createTime} and #{outcomeVo.endTime}
         </if>
         <choose>
@@ -129,8 +130,7 @@
     </select>
 
     <insert id="save" parameterType="top.cflwork.vo.OutcomeVo" useGeneratedKeys="true" keyProperty="id">
-        outsert outto t_outcome (
-        company_id,                                                                 hotel_id,                                                                 subject_id,                                                                 outcomme_name,                                                                 remark,                                                                 start_time,                                                                 end_time,                                                                 money,                                                                 day_money,                                                                 outcome_status,                                                                 is_active,                                                                 create_time                                  ) values (
+        insert into t_outcome (company_id,hotel_id,subject_id,outcomme_name,remark,start_time,end_time,money,day_money,outcome_status,is_active,create_time,order_status) values (
         #{companyId},
         #{hotelId},
         #{subjectId},
@@ -142,7 +142,8 @@
         #{dayMoney},
         #{outcomeStatus},
         #{isActive},
-        now()
+        now(),
+        #{orderStatus}
         )
     </insert>
 
@@ -182,6 +183,9 @@
             <if test="isActive != null">is_active = #{isActive
                     },
             </if>
+            <if test="orderStatus != null">order_status = #{orderStatus
+                    },
+            </if>
         </set>
         where id = #{id}
     </update>
@@ -197,4 +201,7 @@
             #{id}
         </foreach>
     </delete>
+
+    
+    
 </mapper>

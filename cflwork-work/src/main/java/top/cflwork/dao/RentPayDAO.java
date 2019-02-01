@@ -38,4 +38,7 @@ public interface RentPayDAO extends BaseDAO<RentPayVo>{
      * @return
      */
     Long counts(@Param("pageQuery") PageQuery pageQuery, @Param("rentPayVo") RentPayVo rentPayVo);
+
+
+
 }

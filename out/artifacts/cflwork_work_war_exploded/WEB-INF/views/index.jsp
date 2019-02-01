@@ -35,7 +35,7 @@
             <ul class="nav" id="side-menu">
                 <li class="nav-header">
                     <div class="dropdown profile-element" style="text-align: center">
-                        <span><img alt="image" id="updateHeadIcon" class="img-circle" src="${userVo.headicon}" style="width: 60px;height: 60px" /></span>
+                        <span ><img alt="image" id="updateHeadIcon" class="img-circle" src="${userVo.headicon}" style="width: 60px;height: 60px" /></span>
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
                                 <span class="clear">
                                <span class="block m-t-xs">${userRole.roleVo.title}</span>
@@ -273,6 +273,9 @@
                             </li>
                             <li>
                                 <a class="J_menuItem" href="<%=path%>/outcome/outcomePage">酒店支出管理</a>
+                            </li>
+                            <li>
+                                <a class="J_menuItem" href="<%=path%>/contracmasterMsg/contracmasterMsgPage">消息中心</a>
                             </li>
                         </ul>
                     </li>
@@ -877,6 +880,7 @@
 </div>
 <jsp:include page="common/js.jsp"></jsp:include>
 <script>
+    refushFaceImg();
     layui.use('upload', function() {
         var $ = layui.jquery
             , upload = layui.upload;
@@ -895,9 +899,8 @@
                 if (res.code > 0) {
                     return layer.msg('上传失败');
                 }else{
-                    localStorage.removeItem("icon");
-                    localStorage.setItem("icon",res.data.src);
-                    document.getElementById("updateHeadIcon").src=res.data.src;
+                    layer.msg("修改成功");
+                    refushFaceImg();
                 }
                 //上传成功
             }
@@ -927,9 +930,8 @@
                 if (res.code > 0) {
                     return layer.msg('上传失败');
                 }else{
-                    localStorage.removeItem("icon");
-                    localStorage.setItem("icon",res.data.src);
-                    document.getElementById("updateHeadIcon").src=res.data.src;
+                    layer.msg("修改成功");
+                    refushFaceImg();
                 }
                 //上传成功
             }
@@ -943,12 +945,14 @@
             }
         });
     });
-    $.post(
-        "/user/findUser/${userVo.id}",
-        function (data) {
-            $("#updateHeadIcon").attr("src",data.headicon);
-        },"json"
-    );
+    function refushFaceImg() {
+        $.post(
+            "/user/findUser/${userVo.id}",
+            function (data) {
+                $("#updateHeadIcon").attr("src",rootPath+data.headicon);
+            },"json"
+        );
+    }
     <%--console.log(JSON.stringify(${permissionList})+'===============');--%>
 </script>
 </body>

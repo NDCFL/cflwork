@@ -2,46 +2,47 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="top.cflwork.dao.OucomeItemDAO">
-    <resultMap id="oucomeItemMap" type="top.cflwork.vo.OucomeItemVo"></resultMap>
+<mapper namespace="top.cflwork.dao.OutComeItemDAO">
+    <resultMap id="outComeItemMap" type="top.cflwork.vo.OutComeItemVo"></resultMap>
     <sql id="search">
         <if test="#{searchVal!=null} and #{searchVal!=''}">
             and (t.id like concat('%${searchVal}%'))
         </if>
     </sql>
-    <select id="getById" resultMap="oucomeItemMap" parameterType="long">
+    <select id="getById" resultMap="outComeItemMap" parameterType="long">
         select  t.id , t.outcome_id , t.subject_name , t.time , t.money from t_out_come_item t where t.id = #{id}
     </select>
-    <select id="listPage" resultMap="oucomeItemMap">
-        select t.id , t.outcome_id , t.subject_name , t.time , t.money from t_out_come_item t where 1=1 <include refid="search"></include> order by t.create_time desc limit #{pageNo}, #{pageSize}
+    <select id="listPage" resultMap="outComeItemMap">
+        select t.id , t.outcome_id , t.subject_name , t.time , t.money from t_out_come_item t where 1=1 <include
+            refid="search"></include> order by t.create_time desc limit #{pageNo}, #{pageSize}
     </select>
     <select id="count" resultType="long">
         select count(t.id) from t_out_come_item t where 1=1  <include refid="search"></include> order
         by t.create_time desc
     </select>
 
-    <select id="listPages" resultMap="oucomeItemMap">
+    <select id="listPages" resultMap="outComeItemMap">
         select t.id , t.outcome_id , t.subject_name , t.time , t.money from t_out_come_item t
         <where>
-            <if test="oucomeItemVo.id != null and oucomeItemVo.id != ''">
-                and t.id = #{oucomeItemVo.id}
+            <if test="outComeItemVo.id != null and outComeItemVo.id != ''">
+                and t.id = #{outComeItemVo.id}
             </if>
-            <if test="oucomeItemVo.outcomeId != null and oucomeItemVo.outcomeId != ''">
-                and t.outcome_id = #{oucomeItemVo.outcomeId}
+            <if test="outComeItemVo.outcomeId != null and outComeItemVo.outcomeId != ''">
+                and t.outcome_id = #{outComeItemVo.outcomeId}
             </if>
-            <if test="oucomeItemVo.subjectName != null and oucomeItemVo.subjectName != ''">
-                and t.subject_name = #{oucomeItemVo.subjectName}
+            <if test="outComeItemVo.subjectName != null and outComeItemVo.subjectName != ''">
+                and t.subject_name = #{outComeItemVo.subjectName}
             </if>
-            <if test="oucomeItemVo.time != null and oucomeItemVo.time != ''">
-                and t.time = #{oucomeItemVo.time}
+            <if test="outComeItemVo.time != null and outComeItemVo.time != ''">
+                and t.time = #{outComeItemVo.time}
             </if>
-            <if test="oucomeItemVo.money != null and oucomeItemVo.money != ''">
-                and t.money = #{oucomeItemVo.money}
+            <if test="outComeItemVo.money != null and outComeItemVo.money != ''">
+                and t.money = #{outComeItemVo.money}
             </if>
         </where>
         <choose>
-            <when test="oucomeItemVo.sort != null and oucomeItemVo.sort.trim() != ''">
-                order by t.${oucomeItemVo.sort} t.${oucomeItemVo.order}
+            <when test="outComeItemVo.sort != null and outComeItemVo.sort.trim() != ''">
+                order by t.${outComeItemVo.sort} t.${outComeItemVo.order}
             </when>
             <otherwise>
                 order by t.id desc
@@ -51,31 +52,31 @@
             limit #{pageQuery.pageNo}, #{pageQuery.pageSize}
         </if>
     </select>
-    <select id="listAll" resultMap="oucomeItemMap">
+    <select id="listAll" resultMap="outComeItemMap">
         select * from t_out_come_item where company_id=#{companyId}
     </select>
     <select id="counts" resultType="long">
         select count(t.id) from t_out_come_item t
         <where>
-            <if test="oucomeItemVo.id != null and oucomeItemVo.id != ''">
-                and t.id = #{oucomeItemVo.id}
+            <if test="outComeItemVo.id != null and outComeItemVo.id != ''">
+                and t.id = #{outComeItemVo.id}
             </if>
-            <if test="oucomeItemVo.outcomeId != null and oucomeItemVo.outcomeId != ''">
-                and t.outcome_id = #{oucomeItemVo.outcomeId}
+            <if test="outComeItemVo.outcomeId != null and outComeItemVo.outcomeId != ''">
+                and t.outcome_id = #{outComeItemVo.outcomeId}
             </if>
-            <if test="oucomeItemVo.subjectName != null and oucomeItemVo.subjectName != ''">
-                and t.subject_name = #{oucomeItemVo.subjectName}
+            <if test="outComeItemVo.subjectName != null and outComeItemVo.subjectName != ''">
+                and t.subject_name = #{outComeItemVo.subjectName}
             </if>
-            <if test="oucomeItemVo.time != null and oucomeItemVo.time != ''">
-                and t.time = #{oucomeItemVo.time}
+            <if test="outComeItemVo.time != null and outComeItemVo.time != ''">
+                and t.time = #{outComeItemVo.time}
             </if>
-            <if test="oucomeItemVo.money != null and oucomeItemVo.money != ''">
-                and t.money = #{oucomeItemVo.money}
+            <if test="outComeItemVo.money != null and outComeItemVo.money != ''">
+                and t.money = #{outComeItemVo.money}
             </if>
         </where>
         <choose>
-            <when test="oucomeItemVo.sort != null and oucomeItemVo.sort.trim() != ''">
-                order by t.${oucomeItemVo.sort} ${oucomeItemVo.order}
+            <when test="outComeItemVo.sort != null and outComeItemVo.sort.trim() != ''">
+                order by t.${outComeItemVo.sort} ${outComeItemVo.order}
             </when>
             <otherwise>
                 order by t.id desc
@@ -83,7 +84,7 @@
         </choose>
     </select>
 
-    <insert id="save" parameterType="top.cflwork.vo.OucomeItemVo" useGeneratedKeys="true" keyProperty="id">
+    <insert id="save" parameterType="top.cflwork.vo.OutComeItemVo" useGeneratedKeys="true" keyProperty="id">
         insert into t_out_come_item (
                                                                              outcome_id ,                                                                  subject_name ,                                                                  time ,                                                                  money                                   ) values (
                                                                             #{outcomeId}, 
@@ -93,7 +94,7 @@
                                     )
     </insert>
 
-    <update id="update" parameterType="top.cflwork.vo.OucomeItemVo">
+    <update id="update" parameterType="top.cflwork.vo.OutComeItemVo">
         update t_out_come_item
         <set>
             <if test="outcomeId != null">outcome_id = #{outcomeId
@@ -123,4 +124,16 @@
             #{id}
         </foreach>
     </delete>
+    <insert id="batchSave" parameterType="top.cflwork.vo.OutComeItemVo" useGeneratedKeys="true" keyProperty="id">
+        insert into t_out_come_item ( outcome_id ,subject_name ,time ,money) values
+        <foreach collection="list" item="outComeItem" separator=",">
+            (#{outComeItem.outcomeId}, #{outComeItem.subjectName}, #{outComeItem.time}, #{outComeItem.money})
+        </foreach>
+    </insert>
+    <delete id="deleteByOutcomeId" parameterType="long">
+        delete from t_out_come_item where outcome_id= #{id}
+    </delete>
+    <select id="findList" resultMap="outComeItemMap" parameterType="top.cflwork.vo.OutComeItemVo">
+        select * from t_out_come_item where outcome_id = #{id}
+    </select>
 </mapper>

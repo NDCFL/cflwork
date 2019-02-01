@@ -6,14 +6,11 @@
        xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <context:component-scan base-package="top.cflwork.controller"/>
+    <context:component-scan base-package="top.cflwork"/>
     <mvc:annotation-driven/>
-
-    <bean class="org.springframework.format.support.FormattingConversionServiceFactoryBean"/>
-
-    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
-
-    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+    <!--<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">-->
+    <!-- 配置文件上传，原先是默认的springmvc的文件上传，这里使用了百度编辑器，由于百度在线编辑器的上传文件和springmvc冲突，所以需要更换 -->
+    <bean id="multipartResolver" class="top.cflwork.aspect.CommonsMultipartResolver">
         <property name="defaultEncoding" value="UTF-8"/>
         <property name="maxUploadSize" value="209715200"/>
         <property name="maxInMemorySize" value="40960"/>
@@ -43,9 +40,12 @@
     </bean>
 
     <mvc:resources location="/static/" mapping="/static/**"/>
+    <mvc:resources location="/ueditor/" mapping="/ueditor/**"/>
     <mvc:resources location="/uploads/" mapping="/uploads/**"/>
     <mvc:resources location="/upload/" mapping="/upload/**"/>
-
+    <mvc:resources mapping="/swagger-resources" location="/swagger-resources/**"></mvc:resources>
+    <mvc:resources location="classpath:/META-INF/resources/" mapping="swagger-ui.html"/>
+    <mvc:resources location="classpath:/META-INF/resources/webjars/" mapping="/webjars/**"/>
     <!--
     <bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
         <property name="defaultErrorView" value="common/error" />
@@ -63,9 +63,26 @@
     <mvc:interceptors>
         <mvc:interceptor>
             <mvc:mapping path="/**"/>
-            <mvc:mapping path="/index"/>
-            <mvc:mapping path="/user/loginPage"/>
-            <bean class="top.cflwork.controller.FilterController"></bean>
+            <mvc:exclude-mapping path="/index"/>
+            <mvc:exclude-mapping path="/user/loginPage"/>
+            <bean class="top.cflwork.controller.FilterController">
+                <property name="exceptUrls">
+                    <list>
+                        <value>/user/getInfo</value>
+                        <value>/static</value>
+                        <value>/ueditor</value>
+                        <value>/captcha</value>
+                        <value>/logins</value>
+                        <value>/house/contract</value>
+                        <value>/contractMaster</value>
+                        <value>/file</value>
+                        <value>/upload</value>
+                        <value>/jsp/controller.jsp</value>
+                        <value>/contracmasterMsg/**</value>
+                        <value>/null/*/*/**</value>
+                    </list>
+                </property>
+            </bean>
         </mvc:interceptor>
     </mvc:interceptors>
     <aop:aspectj-autoproxy proxy-target-class="true"/>

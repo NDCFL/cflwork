@@ -105,7 +105,7 @@
     }
     vaptcha({
         //配置参数
-        vid: '5ba4ae54fc650e8ed0de13e1',
+        vid: '5be781e9fc650fbc101a01f5',
         type: 'click',
         container: '#vaptchaContainer'
     }).then(function (vaptchaObj) {

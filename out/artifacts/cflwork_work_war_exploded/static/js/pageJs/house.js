@@ -100,6 +100,15 @@ $('#mytab').bootstrapTable({
                     return '<span style="color: green">房租模式</span>';
                 }
             }
+        },
+        {
+            title:'房间面积',
+            field:'area',
+            align:'center',
+            formatter: function (value, row, index) {
+                //表示启用状态
+                return '<span>'+value+'/平米</span>';
+            }
         }
         ,
         {
@@ -223,6 +232,7 @@ function deleteMany(){
 function edit(name){
     $.post("/house/findHouse/"+name,
         function (data) {
+            $("#updateform").autofill(data);
             $("#cardTitle_").val(data.cardTitle);
             $("#description").text(data.description);
             var hotel = $("#hotelId").select2();

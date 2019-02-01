@@ -15,7 +15,7 @@ import java.util.Date;
  * @date 2019-01-31 10:29:58
  */
 @Data
-public class OucomeItemVo implements Serializable {
+public class OutComeItemVo implements Serializable {
     private static final long serialVersionUID = 1L;
     //排序字段
     private String sort;
@@ -26,7 +26,7 @@ public class OucomeItemVo implements Serializable {
     private Long id;
     @ApiModelProperty("支出编号")
     private Long outcomeId;
-    @ApiModelProperty("科目编号")
+    @ApiModelProperty("科目名称")
     private String subjectName;
     @ApiModelProperty("时间")
     private Date time;

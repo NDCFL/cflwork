@@ -117,6 +117,7 @@ public class OutcomeController {
             outcomeVo.setEndTime(DateUtil.parse(outcomeVo.getTemp().split(" - ")[1],"yyyy-MM-dd"));
             long betweenDay = DateUtil.between(outcomeVo.getStartTime(), outcomeVo.getEndTime(), DateUnit.DAY);
             outcomeVo.setDayMoney(outcomeVo.getMoney()/betweenDay);
+            outcomeVo.setOrderStatus((byte)0);
 			outcomeService.save(outcomeVo);
             return  Message.success("新增成功!");
         }catch (Exception E){

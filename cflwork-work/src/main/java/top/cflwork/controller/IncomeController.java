@@ -106,6 +106,7 @@ public class IncomeController {
             incomeVo.setStartTime(DateUtil.parse(incomeVo.getTemp().split(" - ")[0],"yyyy-MM-dd"));
             incomeVo.setEndTime(DateUtil.parse(incomeVo.getTemp().split(" - ")[1],"yyyy-MM-dd"));
             long betweenDay = DateUtil.between(incomeVo.getStartTime(), incomeVo.getEndTime(), DateUnit.DAY);
+            incomeVo.setOrderStatus((byte)0);
             incomeVo.setDayMoney(incomeVo.getMoney()/betweenDay);
             incomeService.save(incomeVo);
             return  Message.success("新增成功!");

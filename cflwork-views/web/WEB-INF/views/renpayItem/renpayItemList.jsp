@@ -269,7 +269,7 @@
             </div>
             <form class="form-horizontal" id="updateform" >
                 <div class="modal-body">
-					<input id="id" name="id" th:value="${renpayItem.id}"  type="hidden">
+					<input id="id" name="id" th:value="${rentPayItem.id}"  type="hidden">
 																													<div class="form-group">
 								<label class="col-sm-3 control-label">分成房租编号：</label>
 								<div class="col-sm-8">
@@ -356,6 +356,6 @@
 </div>
 <%--数据的修改结束--%>
 <jsp:include page="../common/bootstraptablejs.jsp"></jsp:include>
-<script src="<%=path%>/static/js/pageJs/renpayItem.js"></script>
+<script src="<%=path%>/static/js/pageJs/rentPayItem.js"></script>
 </body>
 </html>

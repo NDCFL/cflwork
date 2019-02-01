@@ -441,14 +441,6 @@
                                 <option value="1">已结算</option>
                             </select>
                         </div>
-                        <label class="col-sm-2 control-label">房间面积：</label>
-                        <div class="col-sm-4">
-                            <input name="area" min="0" placeholder="房间面积" max="100" type="text" class="form-control"
-                                   required="" aria-required="true">
-                        </div>
-                    </div>
-                    <div class="form-group">
-
                         <label class="col-sm-2 control-label">分成比例</label>
                         <div class="col-sm-4">
                             <input name="payProportion" min="0" placeholder="分成比例" max="1" type="number"
@@ -559,14 +551,6 @@
                                 <option value="1">已结算</option>
                             </select>
                         </div>
-                        <label class="col-sm-2 control-label">房间面积：</label>
-                        <div class="col-sm-4">
-                            <input name="area" min="0" placeholder="房间面积" max="100" type="text" class="form-control"
-                                   required="" aria-required="true">
-                        </div>
-                    </div>
-                    <div class="form-group">
-
                         <label class="col-sm-2 control-label">分成比例</label>
                         <div class="col-sm-4">
                             <input name="payProportion" min="0" placeholder="分成比例" max="1" type="number"
@@ -619,6 +603,27 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
 </div>
+
+<div class="modal fade  bs-example-modal-lg" id="order_item_list" tabindex="-1" role="dialog" aria-labelledby="remark_modal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">
+                    付款明细
+                </h4>
+            </div>
+            <div class="modal-body">
+                <table id="mytab2" name="mytab2" class="table table-hover"></table>
+                <div id="toolbar1" class="btn-group pull-right" style="margin-right: 20px;">
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</div>
+
 <%--网站信息的修改--%>
 <jsp:include page="../common/bootstraptablejs.jsp"></jsp:include>
 <script src="<%=path%>/static/js/pageJs/rentPay.js"></script>
@@ -743,9 +748,9 @@
             function (data) {
                 $("#rentHouseCount").html(data.rentHouseCount);//房源总数
                 $("#rentHouseSumArea").html("￥" + data.rentHouseSumArea);//分成房源总面积
-                $("#money").html("￥" + data.money);//单平收益
+                $("#money").html("￥" + parseFloat(data.money).toFixed(2));//单平收益
                 $("#payMoneyHouse").html("￥" + data.payMoneyHouse);//待结算的房间
-                $("#sumMoney1").html("￥" + data.sumMoney);//总金额
+                $("#sumMoney1").html("￥" + parseFloat(data.sumMoney).toFixed(2));//总金额
             },
             "json"
         );

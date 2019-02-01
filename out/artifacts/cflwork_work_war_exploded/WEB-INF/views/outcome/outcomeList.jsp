@@ -309,6 +309,26 @@
         </div><!-- /.modal -->
     </div>
 </div>
+
+<div class="modal fade  bs-example-modal-lg" id="order_item_list" tabindex="-1" role="dialog" aria-labelledby="remark_modal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">
+                    支出明细
+                </h4>
+            </div>
+            <div class="modal-body">
+                <table id="mytab2" name="mytab2" class="table table-hover"></table>
+                <div id="toolbar1" class="btn-group pull-right" style="margin-right: 20px;">
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</div>
 <%--数据的修改结束--%>
 <jsp:include page="../common/bootstraptablejs.jsp"></jsp:include>
 <script src="<%=path%>/static/js/pageJs/outcome.js"></script>

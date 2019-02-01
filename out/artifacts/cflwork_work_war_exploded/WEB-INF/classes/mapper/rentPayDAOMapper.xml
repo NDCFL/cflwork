@@ -21,6 +21,7 @@
         <result column="pay_money_type" property="payMoneyType"></result>
         <result column="pay_proportion" property="payProportion"></result>
         <result column="area" property="area"></result>
+        <result column="order_status" property="orderStatus"></result>
         <association property="contractMasterVo" javaType="top.cflwork.vo.ContractMasterVo">
             <id column="cid" property="id"></id>
             <result column="bank_name" property="bankName"></result>
@@ -100,23 +101,67 @@
          update t_rent_pay set is_active=#{status} where id=#{id}
     </update>
     <update id="update">
-        update t_rent_pay set master_id=#{masterId},hotel_id=#{hotelId},baodi_pay=#{baodiPay},pay_type=#{payType},house_id=#{houseId},pay_period_start=#{payPeriodStart},pay_period_end=#{payPeriodEnd},
-        is_cash=#{isCash},description=#{description},pay_money_type=#{payMoneyType},pay_proportion=#{payProportion},
-        fact_pay_time_start=#{factPayTimeStart},fact_pay_time_end=#{factPayTimeEnd},area=#{area}
+        update t_rent_pay
+        <set>
+            <if test="masterId != null"> master_id  = #{masterId
+                    }, </if>
+            <if test="hotelId != null"> hotel_id  = #{hotelId
+                    }, </if>
+            <if test="companyId != null"> company_id  = #{companyId
+                    }, </if>
+            <if test="baodiPay != null"> baodi_pay  = #{baodiPay
+                    }, </if>
+            <if test="payTime != null"> pay_time  = #{payTime
+                    }, </if>
+            <if test="payType != null"> pay_type  = #{payType
+                    }, </if>
+            <if test="factPayTimeStart != null"> fact_pay_time_start  = #{factPayTimeStart
+                    }, </if>
+            <if test="factPayTimeEnd != null"> fact_pay_time_end  = #{factPayTimeEnd
+                    }, </if>
+            <if test="payPeriodStart != null"> pay_period_start  = #{payPeriodStart
+                    }, </if>
+            <if test="payPeriodEnd != null"> pay_period_end  = #{payPeriodEnd
+                    }, </if>
+            <if test="isCash != null"> is_cash  = #{isCash
+                    }, </if>
+            <if test="description != null"> description  = #{description
+                    }, </if>
+            <if test="createTime != null"> create_time  = #{createTime
+                    }, </if>
+            <if test="isActive != null"> is_active  = #{isActive
+                    }, </if>
+            <if test="houseId != null"> house_id  = #{houseId
+                    }, </if>
+            <if test="sumPay != null"> sum_pay  = #{sumPay
+                    }, </if>
+            <if test="area != null"> area  = #{area
+                    }, </if>
+            <if test="payMoneyType != null"> pay_money_type  = #{payMoneyType
+                    }, </if>
+            <if test="payProportion != null"> pay_proportion  = #{payProportion
+                    }, </if>
+            <if test="orderStatus != null"> order_status  = #{orderStatus
+                    }</if>
+        </set>
         where id = #{id}
     </update>
     <select id="notHotelId" resultMap="rentMap">
         select
-        (select count(hotel_id) from t_house_rent_pay group by hotel_id) as 'rentHouseCount',
-        (select sum(area) from t_house where house_types=0  group by hotel_id) as 'rentHouseSumArea',
-        ((select sum(money) from t_income group by hotel_id)/((select sum(area) from t_house_rent_pay group by hotel_id)+(select sum(area) from t_rent_pay group by hotel_id))) as 'money'
+        (select count(hotel_id) from t_house_rent_pay) as 'rentHouseCount',
+        (select sum(area) from t_house where house_types=0) as 'rentHouseSumArea',
+        ((select sum(money) from t_income)/((select sum(area) from t_house_rent_pay)+(select sum(area) from t_house where house_types=0))) as 'money',
+        (select sum(id) from t_rent_pay where now()>=pay_period_end and is_cash=0) as 'payMoneyHouse',
+        (select sum(baodi_pay) from t_rent_pay where now()>=pay_period_end) as 'sumMoney'
         from t_house_rent_pay
     </select>
     <select id="haveHotelId" resultMap="rentMap" parameterType="long">
         select
-            (select count(hotel_id) from t_house_rent_pay where hotel_id=#{hotelId} group by hotel_id) as 'rentHouseCount',
-            (select sum(area) from t_house where hotel_id=#{hotelId} and house_types=1 group by hotel_id) as 'rentHouseSumArea',
-            ((select sum(money) from t_income where hotel_id=#{hotelId} group by hotel_id)/((select sum(area) from t_house_rent_pay where hotel_id=#{hotelId} group by hotel_id)+               (select sum(area) from t_rent_pay where hotel_id=#{hotelId} group by hotel_id))) as 'money'
+            (select count(hotel_id) from t_house_rent_pay where hotel_id=#{hotelId}) as 'rentHouseCount',
+            (select sum(area) from t_house where hotel_id=#{hotelId} and house_types=1) as 'rentHouseSumArea',
+            ((select sum(money) from t_income where hotel_id=#{hotelId})/((select sum(area) from t_house where hotel_id=#{hotelId} and house_types=1)+               (select sum(area) from t_rent_pay where hotel_id=#{hotelId} group by hotel_id))) as 'money'
+            (select sum(id) from t_rent_pay where now()>=pay_period_end and is_cash=0 and hotel_id=#{hotelId}) as 'payMoneyHouse',
+            (select sum(baodi_pay) from t_rent_pay where now()>=pay_period_end) as 'sumMoney'
         from t_house_rent_pay where hotel_id=#{hotelId}
     </select>
     <select id="getSubjectMoney" resultMap="rentPayMoneyMap">

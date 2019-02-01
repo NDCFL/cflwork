@@ -28,42 +28,48 @@
                     查询条件
                 </div>
                 <div class="panel-body form-group" style="margin-bottom:0px;">
-                    																								<div class="panel-body form-group" style="margin-bottom:0px;">
-								<label class="col-sm-1 control-label">支出编号</label>
-								<div class="col-sm-2">
-									<input  id="outcomeId__" name="outcomeId"  type="text" class="form-control" required="" aria-required="true">
-								</div>
-							</div>
-																								<div class="panel-body form-group" style="margin-bottom:0px;">
-								<label class="col-sm-1 control-label">科目编号</label>
-								<div class="col-sm-2">
-									<input  id="subjectName__" name="subjectName"  type="text" class="form-control" required="" aria-required="true">
-								</div>
-							</div>
-																								<div class="panel-body form-group" style="margin-bottom:0px;">
-								<label class="col-sm-1 control-label">时间</label>
-								<div class="col-sm-2">
-									<input  id="time__" name="time"  type="text" class="form-control" required="" aria-required="true">
-								</div>
-							</div>
-																								<div class="panel-body form-group" style="margin-bottom:0px;">
-								<label class="col-sm-1 control-label">金额</label>
-								<div class="col-sm-2">
-									<input  id="money__" name="money"  type="text" class="form-control" required="" aria-required="true">
-								</div>
-							</div>
-																<div class="col-sm-1" style="width: 120px;margin-left: 100px" >
+                    <div class="panel-body form-group" style="margin-bottom:0px;">
+                        <label class="col-sm-1 control-label">支出编号</label>
+                        <div class="col-sm-2">
+                            <input id="outcomeId__" name="outcomeId" type="text" class="form-control" required=""
+                                   aria-required="true">
+                        </div>
+                    </div>
+                    <div class="panel-body form-group" style="margin-bottom:0px;">
+                        <label class="col-sm-1 control-label">科目编号</label>
+                        <div class="col-sm-2">
+                            <input id="subjectName__" name="subjectName" type="text" class="form-control" required=""
+                                   aria-required="true">
+                        </div>
+                    </div>
+                    <div class="panel-body form-group" style="margin-bottom:0px;">
+                        <label class="col-sm-1 control-label">时间</label>
+                        <div class="col-sm-2">
+                            <input id="time__" name="time" type="text" class="form-control" required=""
+                                   aria-required="true">
+                        </div>
+                    </div>
+                    <div class="panel-body form-group" style="margin-bottom:0px;">
+                        <label class="col-sm-1 control-label">金额</label>
+                        <div class="col-sm-2">
+                            <input id="money__" name="money" type="text" class="form-control" required=""
+                                   aria-required="true">
+                        </div>
+                    </div>
+                    <div class="col-sm-1" style="width: 120px;margin-left: 100px">
                         <button class="btn btn-primary" id="search_btn" style="width: 100px">查询</button>
                     </div>
                 </div>
                 <div class="panel-body form-group" style="margin-bottom:0px;">
                     <table id="mytab" name="mytab" class="table table-hover"></table>
                     <div id="toolbar" class="btn-group pull-right" style="margin-right: 20px;">
-                        <button id="btn_delete" onclick="deleteMany();" type="button" class="btn btn-default" style="display: block;">
-                            <span class="glyphicon glyphicon-remove" aria-hidden="true" ></span>批量修改状态
+                        <button id="btn_delete" onclick="deleteMany();" type="button" class="btn btn-default"
+                                style="display: block;">
+                            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>批量修改状态
                         </button>
-                        <button id="btn_add" type="button" class="btn btn-default" data-toggle="modal" data-target="#webAdd">
-                            <span class="glyphicon glyphicon-plus" aria-hidden="true" ></span>新增
+                        <button id="btn_add" type="button" class="btn btn-default" data-toggle="modal"
+                                data-target="#webAdd">
+                            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
                         </button>
                     </div>
                 </div>
@@ -86,31 +92,35 @@
             </div>
             <form class="form-horizontal" method="post" id="formadd">
                 <div class="modal-body">
-																													<div class="form-group">
-								<label class="col-sm-3 control-label">支出编号：</label>
-								<div class="col-sm-8">
-									<input  id="outcomeId" name="outcomeId"  type="text" class="form-control" required="" aria-required="true">
-								</div>
-							</div>
-																								<div class="form-group">
-								<label class="col-sm-3 control-label">科目编号：</label>
-								<div class="col-sm-8">
-									<input  id="subjectName" name="subjectName"  type="text" class="form-control" required="" aria-required="true">
-								</div>
-							</div>
-																								<div class="form-group">
-								<label class="col-sm-3 control-label">时间：</label>
-								<div class="col-sm-8">
-									<input  id="time" name="time"  type="text" class="form-control" required="" aria-required="true">
-								</div>
-							</div>
-																								<div class="form-group">
-								<label class="col-sm-3 control-label">金额：</label>
-								<div class="col-sm-8">
-									<input  id="money" name="money"  type="text" class="form-control" required="" aria-required="true">
-								</div>
-							</div>
-											                </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">支出编号：</label>
+                        <div class="col-sm-8">
+                            <input id="outcomeId" name="outcomeId" type="text" class="form-control" required=""
+                                   aria-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">科目编号：</label>
+                        <div class="col-sm-8">
+                            <input id="subjectName" name="subjectName" type="text" class="form-control" required=""
+                                   aria-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">时间：</label>
+                        <div class="col-sm-8">
+                            <input id="time" name="time" type="text" class="form-control" required=""
+                                   aria-required="true">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">金额：</label>
+                        <div class="col-sm-8">
+                            <input id="money" name="money" type="text" class="form-control" required=""
+                                   aria-required="true">
+                        </div>
+                    </div>
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭
                     </button>
@@ -122,7 +132,7 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal -->
 </div>
-<input type="hidden" value=""  id="deleteId"/>
+<input type="hidden" value="" id="deleteId"/>
 <%--新增结束--%>
 <div class="modal fade" id="updateStatus" tabindex="-1" role="dialog" aria-labelledby="webAddLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -131,7 +141,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
                     &times;
                 </button>
-                <h4 class="modal-title" >
+                <h4 class="modal-title">
                     批量修改状态
                 </h4>
             </div>
@@ -140,12 +150,12 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">状态：</label>
                         <div class="col-sm-8">
-                            <select class="form-control"  id="status" required name="status">
+                            <select class="form-control" id="status" required name="status">
                                 <option value="0">启用</option>
                                 <option value="1">停用</option>
                             </select>
                         </div>
-                        <input id="statusId" type="hidden" name="manyId" />
+                        <input id="statusId" type="hidden" name="manyId"/>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -171,34 +181,34 @@
                     修改
                 </h4>
             </div>
-            <form class="form-horizontal" id="updateform" >
+            <form class="form-horizontal" id="updateform">
                 <div class="modal-body">
-					<input id="id" name="id" th:value="${oucomeItem.id}"  type="hidden">
-																													<div class="form-group">
-								<label class="col-sm-3 control-label">支出编号：</label>
-								<div class="col-sm-8">
-									<input id="outcomeId_" name="outcomeId" class="form-control" type="text">
-								</div>
-							</div>
-																								<div class="form-group">
-								<label class="col-sm-3 control-label">科目编号：</label>
-								<div class="col-sm-8">
-									<input id="subjectName_" name="subjectName" class="form-control" type="text">
-								</div>
-							</div>
-																								<div class="form-group">
-								<label class="col-sm-3 control-label">时间：</label>
-								<div class="col-sm-8">
-									<input id="time_" name="time" class="form-control" type="text">
-								</div>
-							</div>
-																								<div class="form-group">
-								<label class="col-sm-3 control-label">金额：</label>
-								<div class="col-sm-8">
-									<input id="money_" name="money" class="form-control" type="text">
-								</div>
-							</div>
-											                </div>
+                    <input id="id" name="id" th:value="${oucomeItem.id}" type="hidden">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">支出编号：</label>
+                        <div class="col-sm-8">
+                            <input id="outcomeId_" name="outcomeId" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">科目编号：</label>
+                        <div class="col-sm-8">
+                            <input id="subjectName_" name="subjectName" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">时间：</label>
+                        <div class="col-sm-8">
+                            <input id="time_" name="time" class="form-control" type="text">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">金额：</label>
+                        <div class="col-sm-8">
+                            <input id="money_" name="money" class="form-control" type="text">
+                        </div>
+                    </div>
+                </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭
                     </button>

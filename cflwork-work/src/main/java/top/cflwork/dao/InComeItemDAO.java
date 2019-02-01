@@ -22,4 +22,5 @@ public interface InComeItemDAO extends BaseDAO<InComeItemVo>{
     long counts(@Param("pageQuery") PageQuery pageQuery, @Param("inComeItemVo") InComeItemVo inComeItemVo);
     void batchSave(List<InComeItemVo> inComeItemVoList);
     void deleteByIncomeId(Long id);
+    List<InComeItemVo> findList(Long id);
 }

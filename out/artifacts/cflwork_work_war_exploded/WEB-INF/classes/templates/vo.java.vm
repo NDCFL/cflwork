@@ -1,5 +1,6 @@
 package ${package}.vo;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -26,7 +27,7 @@ public class ${className}Vo implements Serializable {
     private String order;
 
     #foreach ($column in $columns)
-        //$column.comments
+        @ApiModelProperty("$column.comments")
         private $column.attrType $column.attrname;
     #end
 

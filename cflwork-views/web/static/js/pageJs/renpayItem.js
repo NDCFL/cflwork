@@ -2,7 +2,7 @@
 $('#mytab').bootstrapTable({
     method: 'post',
     contentType: "application/x-www-form-urlencoded",//必须要有！！！！
-    url: "/renpayItem/renpayItemList",//要请求数据的文件路径
+    url: "/rentPayItem/rentPayItemList",//要请求数据的文件路径
     toolbar: '#toolbar',//指定工具栏
     striped: true, //是否显示行间隔色
     dataField: "res",
@@ -117,7 +117,7 @@ $('#mytab').bootstrapTable({
             align: 'center',
             field: '',
             formatter: function (value, row, index) {
-                var e = '<a title="编辑" href="javascript:void(0);" id="renpayItem"  data-toggle="modal" data-id="\'' + row.id + '\'" data-target="#myModal" onclick="return edit(\'' + row.id + '\')"><i class="glyphicon glyphicon-pencil" alt="修改" style="color:green">修改</i></a> ';
+                var e = '<a title="编辑" href="javascript:void(0);" id="rentPayItem"  data-toggle="modal" data-id="\'' + row.id + '\'" data-target="#myModal" onclick="return edit(\'' + row.id + '\')"><i class="glyphicon glyphicon-pencil" alt="修改" style="color:green">修改</i></a> ';
                 var d = '<a title="删除" href="javascript:void(0);" onclick="del(' + row.id + ',' + row.isActive + ')"><i class="glyphicon glyphicon-trash" alt="删除" style="color:red">删除</i></a> ';
                 var f = '';
                 if (row.isActive == 1) {
@@ -188,7 +188,7 @@ $('#search_btn').click(function () {
     $('#mytab').bootstrapTable(
         'refresh',
         {
-            url: '/renpayItem/findRenpayItemList',
+            url: '/rentPayItem/findRenpayItemList',
             query: {
                 id: $("#id__").val(),
                 rentPayId: $("#rentPayId__").val(),
@@ -216,7 +216,7 @@ function del(id, status) {
     layer.confirm('确认要删除吗？', function (index) {
         $.ajax({
             type: 'POST',
-            url: '/renpayItem/deleteRenpayItem/' + id,
+            url: '/rentPayItem/deleteRenpayItem/' + id,
             dataType: 'json',
             success: function (data) {
                 if (data.message == '删除成功!') {
@@ -234,7 +234,7 @@ function del(id, status) {
 }
 
 function edit(name) {
-    $.post("/renpayItem/findRenpayItem/" + name,
+    $.post("/rentPayItem/findRenpayItem/" + name,
         function (data) {
             $("#updateform").autofill(data);
         },
@@ -243,7 +243,7 @@ function edit(name) {
 }
 
 function updatestatus(id, status) {
-    $.post("/renpayItem/updateStatus/" + id + "/" + status,
+    $.post("/rentPayItem/updateStatus/" + id + "/" + status,
         function (data) {
             if (status == 0) {
                 if (data.message == "ok") {
@@ -266,16 +266,16 @@ function updatestatus(id, status) {
 
 //查询按钮事件
 $('#search_btn').click(function () {
-    $('#mytab').bootstrapTable('refresh', {url: '/renpayItem/renpayItemList'});
+    $('#mytab').bootstrapTable('refresh', {url: '/rentPayItem/rentPayItemList'});
 })
 
 function refush() {
-    $('#mytab').bootstrapTable('refresh', {url: '/renpayItem/renpayItemList'});
+    $('#mytab').bootstrapTable('refresh', {url: '/rentPayItem/rentPayItemList'});
 }
 
 $("#update").click(function () {
     $.post(
-        "/renpayItem/renpayItemUpdateSave",
+        "/rentPayItem/rentPayItemUpdateSave",
         $("#updateform").serialize(),
         function (data) {
             if (data.message == "修改成功!") {
@@ -290,7 +290,7 @@ $("#update").click(function () {
 });
 $("#add").click(function () {
     $.post(
-        "/renpayItem/renpayItemAddSave",
+        "/rentPayItem/rentPayItemAddSave",
         $("#formadd").serialize(),
         function (data) {
             if (data.message == "新增成功!") {
@@ -330,7 +330,7 @@ function deleteMany11() {
     $("#deleteId").val(row);
     layer.confirm('确认要执行批量删除网站信息数据吗？', function (index) {
         $.post(
-            "/renpayItem/deleteManyRenpayItem",
+            "/rentPayItem/deleteManyRenpayItem",
             {
                 "manyId": $("#deleteId").val()
             },
@@ -370,7 +370,7 @@ function deleteMany() {
 $("#updateSta").click(function () {
     layer.confirm('确认要执行批量修改收支科目状态吗？', function (index) {
         $.post(
-            "/renpayItem/deleteManyRenpayItem",
+            "/rentPayItem/deleteManyRenpayItem",
             {
                 "manyId": $("#statusId").val(),
                 "status": $("#status").val()

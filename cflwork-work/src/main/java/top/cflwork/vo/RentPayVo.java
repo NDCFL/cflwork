@@ -72,4 +72,6 @@ public class RentPayVo implements Serializable {
 
     private Integer payDay;
 
+    private Byte orderStatus;
+
 }

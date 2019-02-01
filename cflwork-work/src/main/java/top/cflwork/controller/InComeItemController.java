@@ -21,6 +21,7 @@ import top.cflwork.enums.ActiveStatusEnum;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
 import top.cflwork.vo.IncomeVo;
+import top.cflwork.vo.OrderItemsVo;
 import top.cflwork.vo.UserVo;
 
 import javax.servlet.http.HttpSession;
@@ -107,6 +108,22 @@ public class InComeItemController {
             pagingBean.setTotal(inComeItemService.counts(pageQuery, inComeItemVo));
             pagingBean.setrows(inComeItemService.listPages(pageQuery, inComeItemVo));
             return pagingBean;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    /**
+     * @return 返回分页结果
+     * @throws Exception
+     */
+    @RequestMapping("inComeItemLists/{id}")
+    @ResponseBody
+    @ApiOperation(value = "根据订单编号，获取订单详情", notes = "返回响应对象", response = InComeItemVo.class)
+    public List<InComeItemVo> inComeItemLists(@ApiParam(value = "编号") @PathVariable("id")Long id) throws Exception {
+        try {
+            List<InComeItemVo> orderItemsVos = inComeItemService.findList(id);
+            return orderItemsVos;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -298,21 +315,7 @@ public class InComeItemController {
     public Message GenerateOrder(
             @ApiParam(value = "参数编号", required = true) @PathVariable("id") long id) throws Exception {
         try {
-            IncomeVo incomeVo = incomeService.getById(id);
-            incomeVo.setOrderStatus((byte)1);
-            incomeService.update(incomeVo);
-            //计算相差天数
-            int days = (int) DateUtil.between(incomeVo.getStartTime(), incomeVo.getEndTime(), DateUnit.DAY);
-            List<InComeItemVo> inComeItemVos = new ArrayList<>();
-            for (int i = 0; i < days; i++) {
-                InComeItemVo inComeItemVo = new InComeItemVo();
-                inComeItemVo.setIncomeId(incomeVo.getId());
-                inComeItemVo.setSubjectName(incomeVo.getCashSubjectVo().getTitle());
-                inComeItemVo.setMoney(incomeVo.getDayMoney());
-                inComeItemVo.setTime(DateUtil.offsetDay(incomeVo.getStartTime(), i));
-                inComeItemVos.add(inComeItemVo);
-            }
-            inComeItemService.batchSave(inComeItemVos);
+            inComeItemService.generateOrder(id);
             return Message.success("订单生成成功!");
         } catch (Exception e) {
             e.printStackTrace();

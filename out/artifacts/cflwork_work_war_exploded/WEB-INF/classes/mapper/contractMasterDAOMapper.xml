@@ -3,19 +3,25 @@
 <mapper namespace="top.cflwork.dao.ContractMasterDAO">
     <resultMap id="contractMasterMap" type="contractMasterVo"></resultMap>
     <resultMap id="select2Map" type="select2Vo"></resultMap>
+    <resultMap id="todayPayMap" type="top.cflwork.vo.TodayPayVo"></resultMap>
     <sql id="search">
         <if test="#{pageQuery.searchVal!=null} and #{pageQuery.searchVal!=''}">
-            and (bank_name like concat('%${pageQuery.searchVal}%') or bank_account_name like concat ('%${pageQuery.searchVal}%') or bank_account_no like concat ('%${pageQuery.searchVal}%') or is_active like concat ('%${pageQuery.searchVal}%') or company_id like concat ('%${pageQuery.searchVal}%') or create_time like concat ('%${pageQuery.searchVal}%'))
+            and (bank_name like concat('%${pageQuery.searchVal}%') or bank_account_name like concat
+            ('%${pageQuery.searchVal}%') or bank_account_no like concat ('%${pageQuery.searchVal}%') or is_active like
+            concat ('%${pageQuery.searchVal}%') or company_id like concat ('%${pageQuery.searchVal}%') or create_time
+            like concat ('%${pageQuery.searchVal}%'))
         </if>
     </sql>
     <select id="getById" resultMap="contractMasterMap" parameterType="long">
-        select * from t_contract_master where id = #{id}
+        select *,(select count(id) from t_contract_master_msg where t_contract_master_msg.is_active=0 and master_id=#{id}) as 'msg' from t_contract_master where id = #{id}
     </select>
     <delete id="removeById" parameterType="long">
         delete from t_contract_master where id = #{id}
     </delete>
     <select id="listPages" resultMap="contractMasterMap">
-        select * from t_contract_master where company_id=#{companyId} <include refid="search"/> limit #{pageQuery.pageNo},#{pageQuery.pageSize}
+        select * from t_contract_master where company_id=#{companyId}
+        <include refid="search"/>
+        limit #{pageQuery.pageNo},#{pageQuery.pageSize}
     </select>
     <select id="listAll" resultMap="contractMasterMap">
         select * from t_contract_master
@@ -24,30 +30,117 @@
         select id,bank_account_name as text from t_contract_master where company_id=#{companyId}
     </select>
     <select id="counts" resultType="java.lang.Long">
-        select count(*) from t_contract_master where company_id=#{companyId} <include refid="search"/>
+        select count(*) from t_contract_master where company_id=#{companyId}
+        <include refid="search"/>
     </select>
     <insert id="save" parameterType="contractMasterVo">
-        <selectKey keyProperty='id' resultType='long' order='AFTER'  >
+        <selectKey keyProperty='id' resultType='long' order='AFTER'>
             select LAST_INSERT_ID();
         </selectKey>
-        insert into t_contract_master ( bank_name,bank_account_name,bank_account_no,is_active,company_id,phone,password,`identity`,wxopenid,create_time,face_img,nickname) values ( #{bankName},#{bankAccountName},#{bankAccountNo},#{isActive},#{companyId},#{phone},#{password},#{identity},#{wxopenid},now(),#{faceImg},#{nickname})
+        insert into t_contract_master (
+        bank_name,bank_account_name,bank_account_no,is_active,company_id,phone,password,`identity`,wxopenid,create_time,face_img,nickname)
+        values (
+        #{bankName},#{bankAccountName},#{bankAccountNo},#{isActive},#{companyId},#{phone},#{password},#{identity},#{wxopenid},now(),#{faceImg},#{nickname})
     </insert>
     <update id="updateStatus">
         update t_contract_master set is_active=#{status} where id=#{id}
     </update>
     <update id="update">
-        update t_contract_master set phone=#{phone},bank_name=#{bankName},bank_account_name=#{bankAccountName},bank_account_no=#{bankAccountNo},`identity`=#{identity} where id = #{id}
+        update t_contract_master
+        <set>
+            <if test="bankName != null">bank_name = #{bankName
+                    },
+            </if>
+            <if test="bankAccountName != null">bank_account_name = #{bankAccountName
+                    },
+            </if>
+            <if test="bankAccountNo != null">bank_account_no = #{bankAccountNo
+                    },
+            </if>
+            <if test="companyId != null">company_id = #{companyId
+                    },
+            </if>
+            <if test="phone != null">phone = #{phone
+                    },
+            </if>
+            <if test="password != null">password = #{password
+                    },
+            </if>
+            <if test="identity != null">identity = #{identity
+                    },
+            </if>
+            <if test="wxopenid != null">wxopenid = #{wxopenid
+                    },
+            </if>
+            <if test="faceImg != null">face_img = #{faceImg
+                    },
+            </if>
+            <if test="nickname != null">nickname = #{nickname
+                    },
+            </if>
+            <if test="isActive != null">is_active = #{isActive
+                    },
+            </if>
+            <if test="createTime != null">create_time = #{createTime
+                    }
+            </if>
+        </set>
+        where id = #{id}
     </update>
     <select id="checkPhone" resultType="int" parameterType="string">
         select count(id) from t_contract_master where phone=#{phone}
     </select>
-    <select id="getInfo" resultMap="contractMasterMap" parameterType="string">
-        select * from t_contract_master where phone = #{phone}
+
+    <select id="findContractMaster" resultMap="contractMasterMap">
+        select id,bank_name,bank_account_name,bank_account_no,is_active,company_id,phone,`identity`,wxopenid,create_time,face_img,nickname from t_contract_master
+        <where>
+            <if test="wxopenid!=null">and wxopenid=#{wxopenid}</if>
+            <if test="phone!=null">and phone = #{phone}</if>
+            <if test="password!=null">and password=#{password}</if>
+        </where>
     </select>
-    <update id="updatePwd">
-        update t_contract_master set password=#{password} where phone=#{phone}
+    <select id="checkPhones" resultType="long">
+        select id from t_contract_master
+        <where>
+            <if test="wxopenid!=null">and wxopenid=#{wxopenid}</if>
+            <if test="phone!=null">and phone = #{phone}</if>
+        </where>
+    </select>
+    <!--重置密码为6个1-->
+    <update id="resetPwd">
+        update t_contract_master set password = #{password} where id = #{id}
     </update>
-    <select id="findByOpenId" parameterType="string" resultMap="contractMasterMap">
-        select * from t_contract_master where wxopenid=#{openId}
+    <select id="getPayInfo" resultMap="todayPayMap">
+        select
+            (select ifnull(sum(money),0) from t_income where DATE_FORMAT(create_time,'%Y-%m-%d') = DATE_FORMAT(#{time},'%Y-%m-%d')) as 'inMoney',
+            (select ifnull(sum(money),0) from t_outcome where DATE_FORMAT(create_time,'%Y-%m-%d') = DATE_FORMAT(#{time},'%Y-%m-%d')) as 'outMoney',
+            (select ifnull(sum(money),0) from t_income) as 'allInMoney',
+            (select ifnull(sum(money),0) from t_outcome) as 'allOutMoney',
+            (select ifnull(sum(area),0) from t_house) as 'sumArea',
+            (select ifnull(sum(area),0) from t_house where id in(select house_id from t_rent_pay where master_id=#{id})) as 'area',
+            (select ifnull(scale,0) from t_contract_master where id=#{id}) as 'rentPayScale',
+            (select fact_pay_time_start from t_rent_pay where master_id=#{id} limit 1) as 'startTime',
+            (select count(id) from t_rent_pay where master_id=#{id}) as 'cnt',
+            DATE_FORMAT(#{time},'%Y年%m月%d日') as 'nowTime'
+
+        from  t_rent_pay;
+    </select>
+    <select id="getHotelList" resultType="top.cflwork.vo.Select2Vo">
+        select  h.title as text,h.id from  t_rent_pay t left join t_hotel h on h.id=t.hotel_id where t.master_id=#{id}
+    </select>
+    <select id="getHotelInfo" resultType="top.cflwork.vo.ContractHouseListVo">
+        select
+        (select count(house_id) from t_rent_pay where master_id=#{id} <if test="hotelId!=null">and
+        hotel_id=#{hotelId}</if>) as 'houseCount',
+        (select sum(area) from t_rent_pay where master_id=#{id} <if test="hotelId!=null">and hotel_id=#{hotelId}</if>)
+        as 'sumArea'
+        from t_rent_pay where 1=1
+        <if test="hotelId!=null">and hotel_id=#{hotelId}</if>
+    </select>
+    <select id="getHouseList" resultType="top.cflwork.vo.HouseVo">
+        select card_title,area from t_house where id = (select house_id from t_rent_pay where master_id=#{id} and hotel_id=#{hotelId})
+    </select>
+    <select id="getRentPayList" resultType="top.cflwork.vo.RentPayVo">
+        select t.pay_type,t.fact_pay_time_start,t.fact_pay_time_end,h.card_title  as 'houseName',DATE_FORMAT(t.pay_period_start,'%d') as 'payDay' from t_rent_pay t left join t_house h on t.house_id=h.id where t.master_id=#{id}
     </select>
 </mapper>

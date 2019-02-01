@@ -17,4 +17,6 @@ public interface InComeItemService  extends BaseService<InComeItemVo>{
     long counts(PageQuery pageQuery, InComeItemVo inComeItemVo);
     void batchSave(List<InComeItemVo> inComeItemVoList);
     void deleteByIncomeId(Long id);
+    void generateOrder(Long id);
+    List<InComeItemVo> findList(Long id);
 }

@@ -30,7 +30,7 @@
                 <div class="panel-body form-group" style="margin-bottom:0px;">
                     <label class="col-sm-1 control-label" style=" margin-top:5px">创建时间</label>
                     <div class="col-sm-2" >
-                        <input type="text" class="form-control"   name="createTime" id="test__2"/>
+                        <input type="text" class="form-control"  placeholder="请选择时间" name="createTime" id="test__2"/>
                     </div>
                     <label class="col-sm-1 control-label" style=" margin-top:5px">所属酒店</label>
                     <div class="col-sm-2">
@@ -64,7 +64,7 @@
                     </div>
                     <label class="col-sm-1 control-label"  style=" margin-top:5px;">收入备注</label>
                     <div class="col-sm-2" >
-                        <input type="text" class="form-control" style="" name="remark" id="remark__"/>
+                        <input type="text" class="form-control" placeholder="请输入收入备注" style="" name="remark" id="remark__"/>
                     </div>
                     <div class="col-sm-3" style="text-align: center;margin: auto" >
                         <button class="btn btn-primary"  id="search_btn" style="width: 200px" >查询</button>
@@ -80,7 +80,6 @@
                             data-target="#webAdd">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
                     </button>
-                </div>
                 </div>
             </div>
         </div>
@@ -280,6 +279,26 @@
             </div>
             <div class="modal-body" id="remarks">
 
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+</div>
+
+<div class="modal fade  bs-example-modal-lg" id="order_item_list" tabindex="-1" role="dialog" aria-labelledby="remark_modal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title">
+                    收入明细
+                </h4>
+            </div>
+            <div class="modal-body">
+                <table id="mytab2" name="mytab2" class="table table-hover"></table>
+                <div id="toolbar1" class="btn-group pull-right" style="margin-right: 20px;">
+                </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal -->
     </div>
