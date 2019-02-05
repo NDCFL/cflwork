@@ -1,4 +1,6 @@
 package top.cflwork.controller;
+import com.xiaoleilu.hutool.date.DateUnit;
+import com.xiaoleilu.hutool.date.DateUtil;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +16,7 @@ import top.cflwork.common.PagingBean;
 import top.cflwork.enums.ActiveStatusEnum;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
+import top.cflwork.vo.TodayPayVo;
 import top.cflwork.vo.UserVo;
 import javax.servlet.http.HttpSession;
 import javax.annotation.Resource;
@@ -262,6 +265,41 @@ public class RentPayItemController {
             return null;
         }
     }
+    /**
+     * @return 返回分页结果
+     * @throws Exception
+     */
+    @RequestMapping("pay/{id}")
+    @ResponseBody
+    @ApiOperation(value = "开始付款，参数为编号", notes = "返回响应对象", response = RentPayItemVo.class)
+    public Message pay(@ApiParam(value = "编号") @PathVariable("id")Long id) throws Exception {
+        try {
+            //获取本期的基本信息
+            RentPayItemVo rentPayItemVo = rentPayItemService.getById(id);
+            //本期时间范围中的总成本，总支出
+            TodayPayVo todayPayVo = rentPayItemService.getPayInfo(rentPayItemVo);
+            int days = (int) DateUtil.between(rentPayItemVo.getPayTime(), rentPayItemVo.getEndTime(), DateUnit.DAY);
+            if(todayPayVo.getInComeCnt()!=days || todayPayVo.getOutComeCnt()!=days){
+                return Message.fail("付款失败,账单未出账");
+            }else{
+                RentPayItemVo rentPayItemVo1 = new RentPayItemVo();
+                rentPayItemVo1.setId(rentPayItemVo.getId());
+                rentPayItemVo1.setInMoney(todayPayVo.getInMoney());
+                rentPayItemVo1.setOutMoney(todayPayVo.getOutMoney());
+                rentPayItemVo1.setRealityPayTime(DateUtil.date());
+                rentPayItemVo1.setInTime(rentPayItemVo.getPayTime()+"-"+rentPayItemVo1.getEndTime());
+                rentPayItemVo1.setOutTime(rentPayItemVo1.getInTime());
+                //计算本期应付金额，用总收入减去总支出
+                rentPayItemVo1.setPayMoney(rentPayItemVo1.getInMoney()-rentPayItemVo1.getOutMoney());
+                rentPayItemService.update(rentPayItemVo1);
+                return Message.success("付款成功");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Message.fail("付款失败");
+        }
+    }
+
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {

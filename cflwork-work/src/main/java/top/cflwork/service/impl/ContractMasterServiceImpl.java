@@ -88,8 +88,8 @@ public class ContractMasterServiceImpl implements ContractMasterService {
     }
 
     @Override
-    public TodayPayVo getPayInfo(Long id,String time) {
-        return contractMasterDAO.getPayInfo(id,time);
+    public TodayPayVo getPayInfo(Long id,String time,Long hotelId) {
+        return contractMasterDAO.getPayInfo(id,time,hotelId);
     }
 
     @Override

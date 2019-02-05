@@ -32,5 +32,8 @@ public class InComeItemVo implements Serializable {
     private Date time;
     @ApiModelProperty("金额")
     private Double money;
+    @ApiModelProperty("酒店编号")
+    private Long hotelId;
+
 
 }

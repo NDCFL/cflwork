@@ -183,4 +183,7 @@
     <select id="getOtherHotel" resultMap="hotelMap">
         select * from t_hotel where company_id=#{companyId} and id not in (select hotel_id from t_income where company_id=#{companyId} group by hotel_id  UNION ALL  select hotel_id from t_outcome where company_id=#{companyId} group by hotel_id)
     </select>
+    <select id="getHotelId" resultType="long">
+        select hotel_id from t_rent_pay where master_id=#{id}
+    </select>
 </mapper>

@@ -39,6 +39,6 @@ public interface RentPayDAO extends BaseDAO<RentPayVo>{
      */
     Long counts(@Param("pageQuery") PageQuery pageQuery, @Param("rentPayVo") RentPayVo rentPayVo);
 
-
+    Long getHotelId(Long id);
 
 }

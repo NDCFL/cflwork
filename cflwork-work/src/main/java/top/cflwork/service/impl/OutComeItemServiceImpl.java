@@ -108,6 +108,7 @@ public class OutComeItemServiceImpl implements OutComeItemService {
             outComeItemVo.setSubjectName(outcomeVo.getCashSubjectVo().getTitle());
             outComeItemVo.setMoney(outcomeVo.getDayMoney());
             outComeItemVo.setTime(DateUtil.offsetDay(outcomeVo.getStartTime(), i));
+            outComeItemVo.setHotelId(outcomeVo.getHotelId());
             outComeItemVos.add(outComeItemVo);
         }
         outComeItemDAO.batchSave(outComeItemVos);

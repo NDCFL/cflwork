@@ -18,7 +18,7 @@ public interface ContractMasterDAO extends  BaseDAO<ContractMasterVo> {
     List<Select2Vo> listAlls(long companyId);
     int checkPhone(String phone);
     ContractMasterVo findContractMaster(ContractMasterVo contractMasterVo);
-    TodayPayVo getPayInfo(@Param("id") Long id,@Param("time") String time);
+    TodayPayVo getPayInfo(@Param("id") Long id,@Param("time") String time,@Param("hotelId")Long hotelId);
     List<Select2Vo> getHotelList(Long id);
     ContractHouseListVo getHotelInfo(StatusQuery statusQuery);
     List<HouseVo> getHouseList(StatusQuery statusQuery);

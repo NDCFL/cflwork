@@ -2,6 +2,8 @@ package top.cflwork.service;
 
 import top.cflwork.vo.RentPayItemVo;
 import top.cflwork.query.PageQuery;
+import top.cflwork.vo.TodayPayVo;
+
 import java.util.List;
 import java.util.Map;
 
@@ -19,4 +21,5 @@ public interface RentPayItemService  extends BaseService<RentPayItemVo>{
     void deleteByRentPayId(Long id);
     List<RentPayItemVo> findList(Long id);
     void generateOrder(Long id);
+    TodayPayVo getPayInfo(RentPayItemVo rentPayItemVo);
 }

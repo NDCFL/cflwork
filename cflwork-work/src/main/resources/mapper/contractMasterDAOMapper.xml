@@ -112,11 +112,11 @@
     </update>
     <select id="getPayInfo" resultMap="todayPayMap">
         select
-            (select ifnull(sum(money),0) from t_income where DATE_FORMAT(create_time,'%Y-%m-%d') = DATE_FORMAT(#{time},'%Y-%m-%d')) as 'inMoney',
-            (select ifnull(sum(money),0) from t_outcome where DATE_FORMAT(create_time,'%Y-%m-%d') = DATE_FORMAT(#{time},'%Y-%m-%d')) as 'outMoney',
-            (select ifnull(sum(money),0) from t_income) as 'allInMoney',
-            (select ifnull(sum(money),0) from t_outcome) as 'allOutMoney',
-            (select ifnull(sum(area),0) from t_house) as 'sumArea',
+            (select ifnull(sum(money),0) from t_in_come_item where time=#{time} and hotel_id=#{hotelId}) as 'inMoney',
+            (select ifnull(sum(money),0) from t_out_come_item where time=#{time} and hotel_id=#{hotelId}) as 'outMoney',
+            (select ifnull(sum(money),0) from t_income where hotel_id=#{hotelId}) as 'allInMoney',
+            (select ifnull(sum(money),0) from t_outcome where hotel_id=#{hotelId}) as 'allOutMoney',
+            (select ifnull(sum(area),0) from t_house where hotel_id=#{hotelId}) as 'sumArea',
             (select ifnull(sum(area),0) from t_house where id in(select house_id from t_rent_pay where master_id=#{id})) as 'area',
             (select ifnull(scale,0) from t_contract_master where id=#{id}) as 'rentPayScale',
             (select fact_pay_time_start from t_rent_pay where master_id=#{id} limit 1) as 'startTime',

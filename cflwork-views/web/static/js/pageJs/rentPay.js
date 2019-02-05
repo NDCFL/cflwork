@@ -192,7 +192,6 @@ $('#mytab').bootstrapTable({
                 }else{
                     return e + d + f+s
                 }
-                return p+e + d + f+s;
             }
         }
     ],
@@ -449,10 +448,7 @@ function orderItem(id) {
 }
 function pay(id) {
     $.post(
-        "/rentPay/deleteManyCashSubject",
-        {
-            "manyId": $("#deleteId").val()
-        },
+        "/rentPayItem/pay/"+id,
         function (data) {
             if (data.message == "删除成功!") {
                 layer.alert(data.message, {icon: 6});

@@ -34,4 +34,6 @@ public interface RentPayService extends BaseService<RentPayVo>{
      * @return
      */
     Long counts(PageQuery pageQuery,RentPayVo rentPayVo);
+
+    Long getHotelId(Long id);
 }

@@ -20,6 +20,7 @@ import top.cflwork.common.PagingBean;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
 import top.cflwork.service.ContractMasterService;
+import top.cflwork.service.RentPayService;
 import top.cflwork.service.VerifcodeService;
 import top.cflwork.util.HttpClientUtil;
 import top.cflwork.util.MsgInfo;
@@ -47,6 +48,8 @@ public class ContractMasterController {
     private VerifcodeService verifcodeService;
     @Resource
     private MsgInfo msgInfo;
+    @Resource
+    private RentPayService rentPayService;
     @PostMapping("contractMasterList")
     @ResponseBody
     public PagingBean contractMasterList(int pageSize, int pageIndex, HttpSession session,String searchVal) throws  Exception{
@@ -93,9 +96,11 @@ public class ContractMasterController {
         if(time==null || "".equals(time)){
             time = DateUtil.now();
         }
+
+
         Map<Integer,Object> map = new HashMap<>();
         map.put(1,contractMasterService.getById(id));
-        map.put(2,contractMasterService.getPayInfo(id,time));
+        map.put(2,contractMasterService.getPayInfo(id,time,rentPayService.getHotelId(id)));
         return map;
     }
     @PostMapping("/contractMasterUpdateSave")
@@ -137,7 +142,7 @@ public class ContractMasterController {
             return Message.fail("删除失败!");
         }
     }
-    @PostMapping("/contractMasterListPage")
+    @GetMapping("/contractMasterListPage")
     public String table() throws  Exception{
         return "house/contractMasterList";
     }

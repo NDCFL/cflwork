@@ -112,6 +112,7 @@ public class InComeItemServiceImpl implements InComeItemService {
             inComeItemVo.setSubjectName(incomeVo.getCashSubjectVo().getTitle());
             inComeItemVo.setMoney(incomeVo.getDayMoney());
             inComeItemVo.setTime(DateUtil.offsetDay(incomeVo.getStartTime(), i));
+            inComeItemVo.setHotelId(incomeVo.getHotelId());
             inComeItemVos.add(inComeItemVo);
         }
         inComeItemDAO.batchSave(inComeItemVos);

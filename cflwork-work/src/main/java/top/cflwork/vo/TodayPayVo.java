@@ -20,7 +20,7 @@ public class TodayPayVo implements Serializable {
     private Double nowOutMoney;//业主当日成本
     @ApiModelProperty(value = "当前业主总面积--合计面积",dataType = "Integer")
     private Integer area;//当前业主总面积
-    @ApiModelProperty(value = "当前总面积",dataType = "Integer")
+    @ApiModelProperty(value = "当前酒店总面积",dataType = "Integer")
     private Integer sumArea;//当前总面积
     @ApiModelProperty(value = "分成比例",dataType = "Float")
     private Float rentPayScale;//分成比例
@@ -42,6 +42,8 @@ public class TodayPayVo implements Serializable {
     private Integer cnt;//房源套数
     @ApiModelProperty(value = "当前查询的时间",dataType = "String")
     private String nowTime;//当前查询的时间
+    private Integer inComeCnt;//收入总记录
+    private Integer outComeCnt;//支出总记录
     /**
      * <==    Columns: inMoney, outMoney, allInMoney, allOutMoney, area, sumArea, rentPayScale, startTime
      <==        Row: 88322.00, 69644.00, 88322.00, 69644.00, 820, 30, 0.15, 2018-09-27

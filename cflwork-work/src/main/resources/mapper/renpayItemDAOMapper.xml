@@ -4,6 +4,7 @@
 
 <mapper namespace="top.cflwork.dao.RentPayItemDAO">
     <resultMap id="rentPayItemMap" type="top.cflwork.vo.RentPayItemVo"></resultMap>
+    <resultMap id="todayPayMap" type="top.cflwork.vo.TodayPayVo"></resultMap>
     <sql id="search">
         <if test="#{searchVal!=null} and #{searchVal!=''}">
             and (t.id like concat('%${searchVal}%'))
@@ -219,7 +220,7 @@
     </delete>
 
     <insert id="batchSave" parameterType="top.cflwork.vo.RentPayItemVo" useGeneratedKeys="true" keyProperty="id">
-        insert into t_rent_pay_item (rent_pay_id ,pay_time ,reality_pay_time ,is_active ,out_money ,in_money ,pay_money ,out_time ,in_time ,pay_proportion ,description ,create_time ,pay_type,master_id ,hotel_id) values
+        insert into t_rent_pay_item (rent_pay_id ,pay_time ,reality_pay_time ,is_active ,out_money ,in_money ,pay_money ,out_time ,in_time ,pay_proportion ,description ,create_time ,pay_type,master_id ,hotel_id,end_time) values
         <foreach collection="list" item="rentPayItem" separator=",">
             (
             #{rentPayItem.rentPayId},
@@ -236,7 +237,8 @@
             now(),
             #{rentPayItem.payType},
             #{rentPayItem.masterId},
-            #{rentPayItem.hotelId}
+            #{rentPayItem.hotelId},
+            #{rentPayItem.endTime}
             )
         </foreach>
     </insert>
@@ -245,5 +247,21 @@
     </delete>
     <select id="findList" resultMap="rentPayItemMap" parameterType="top.cflwork.vo.RentPayItemVo">
         select * from t_rent_pay_item where rent_pay_id = #{id}
+    </select>
+    <select id="getPayInfo" resultMap="todayPayMap">
+        select
+        (select ifnull(sum(money),0) from t_in_come_item where `time` between #{startTime} and #{endTime} and hotel_id=#{hotelId}) as 'inMoney',
+        (select ifnull(sum(money),0) from t_out_come_item where `time` between #{startTime} and #{endTime} and hotel_id=#{hotelId}) as 'outMoney',
+        (select ifnull(sum(money),0) from t_income where hotel_id=#{hotelId}) as 'allInMoney',
+        (select ifnull(sum(money),0) from t_outcome where hotel_id=#{hotelId}) as 'allOutMoney',
+        (select ifnull(sum(area),0) from t_house where hotel_id=#{hotelId}) as 'sumArea',
+        (select ifnull(sum(area),0) from t_house where id in(select house_id from t_rent_pay where master_id=#{masterId})) as 'area',
+        (select ifnull(scale,0) from t_contract_master where id=#{masterId}) as 'rentPayScale',
+        (select fact_pay_time_start from t_rent_pay where master_id=#{masterId} limit 1) as 'startTime',
+        (select count(id) from t_rent_pay where master_id=#{masterId}) as 'cnt',
+        DATE_FORMAT(#{time},'%Y年%m月%d日') as 'nowTime',
+        (select count(id) from t_in_come_item where `time` between #{startTime} and #{endTime} and hotel_id=#{hotelId} group by `time`) as 'inComeCnt',
+        (select count(id) from t_out_come_item where `time` between #{startTime} and #{endTime} and hotel_id=#{hotelId} group by `time`) as 'outComeCnt'
+        from  t_rent_pay;
     </select>
 </mapper>

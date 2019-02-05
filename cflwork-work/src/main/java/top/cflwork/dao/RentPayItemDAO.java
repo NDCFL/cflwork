@@ -9,6 +9,7 @@ import top.cflwork.query.PageQuery;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 import top.cflwork.dao.BaseDAO;
+import top.cflwork.vo.TodayPayVo;
 
 /**
  * 分成房租，每个合同每期分成明细
@@ -23,4 +24,5 @@ public interface RentPayItemDAO extends BaseDAO<RentPayItemVo>{
     void batchSave(List<RentPayItemVo> rentPayItemVos);
     void deleteByRentPayId(Long id);
     List<RentPayItemVo> findList(Long id);
+    TodayPayVo getPayInfo(RentPayItemVo rentPayItemVo);
 }

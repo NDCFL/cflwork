@@ -113,4 +113,9 @@ public class RentPayServiceImpl implements RentPayService{
     public Long counts(PageQuery pageQuery, RentPayVo rentPayVo) {
         return rentPayDAO.counts(pageQuery, rentPayVo);
     }
+
+    @Override
+    public Long getHotelId(Long id) {
+        return rentPayDAO.getHotelId(id);
+    }
 }

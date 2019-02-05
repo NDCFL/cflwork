@@ -10,18 +10,17 @@
         </if>
     </sql>
     <select id="getById" resultMap="inComeItemMap" parameterType="long">
-        select  t.id , t.income_id , t.subject_name , t.time , t.money         from t_in_come_item t where t.id = #{id}
+        select  t.id , t.income_id , t.subject_name , t.time , t.money , t.hotel_id         from t_in_come_item t where t.id = #{id}
     </select>
     <select id="listPage" resultMap="inComeItemMap">
-        select t.id , t.income_id , t.subject_name , t.time , t.money from t_in_come_item t where 1=1 <include refid="search"></include> order by t.create_time desc limit #{pageNo}, #{pageSize}
+        select  t.id , t.income_id , t.subject_name , t.time , t.money , t.hotel_id  from t_in_come_item t where t.company_id = #{companyId} <include refid="search"></include> order by t.create_time desc limit #{pageNo}, #{pageSize}
     </select>
     <select id="count" resultType="long">
-        select count(t.id) from t_in_come_item t where 1=1  <include refid="search"></include> order
-        by t.create_time desc
+        select count(t.id) from t_in_come_item t where t.company_id = #{companyId}  <include refid="search"></include> order by t.create_time desc
     </select>
 
     <select id="listPages" resultMap="inComeItemMap">
-        select t.id , t.income_id , t.subject_name , t.time , t.money from t_in_come_item t
+        select  t.id , t.income_id , t.subject_name , t.time , t.money , t.hotel_id         from t_in_come_item t
         <where>
             <if test="inComeItemVo.id != null and inComeItemVo.id != ''">
                 and t.id = #{inComeItemVo.id}
@@ -37,6 +36,9 @@
             </if>
             <if test="inComeItemVo.money != null and inComeItemVo.money != ''">
                 and t.money = #{inComeItemVo.money}
+            </if>
+            <if test="inComeItemVo.hotelId != null and inComeItemVo.hotelId != ''">
+                and t.hotel_id = #{inComeItemVo.hotelId}
             </if>
         </where>
         <choose>
@@ -72,6 +74,9 @@
             <if test="inComeItemVo.money != null and inComeItemVo.money != ''">
                 and t.money = #{inComeItemVo.money}
             </if>
+            <if test="inComeItemVo.hotelId != null and inComeItemVo.hotelId != ''">
+                and t.hotel_id = #{inComeItemVo.hotelId}
+            </if>
         </where>
         <choose>
             <when test="inComeItemVo.sort != null and inComeItemVo.sort.trim() != ''">
@@ -84,24 +89,29 @@
     </select>
 
     <insert id="save" parameterType="top.cflwork.vo.InComeItemVo" useGeneratedKeys="true" keyProperty="id">
-        insert into t_in_come_item (income_id ,subject_name ,time ,money) values (#{incomeId}, #{subjectName}, #{time}, #{money})
+        insert into t_in_come_item (
+        income_id ,                                                                  subject_name ,                                                                  time ,                                                                  money ,                                                                  hotel_id                                   ) values (
+        #{incomeId},
+        #{subjectName},
+        #{time},
+        #{money},
+        #{hotelId}
+        )
     </insert>
 
     <update id="update" parameterType="top.cflwork.vo.InComeItemVo">
         update t_in_come_item
         <set>
-            <if test="incomeId != null">income_id = #{incomeId
-                    },
-            </if>
-            <if test="subjectName != null">subject_name = #{subjectName
-                    },
-            </if>
-            <if test="time != null">time = #{time
-                    },
-            </if>
-            <if test="money != null">money = #{money
-                    }
-            </if>
+            <if test="incomeId != null"> income_id  = #{incomeId
+                    }, </if>
+            <if test="subjectName != null"> subject_name  = #{subjectName
+                    }, </if>
+            <if test="time != null"> time  = #{time
+                    }, </if>
+            <if test="money != null"> money  = #{money
+                    }, </if>
+            <if test="hotelId != null"> hotel_id  = #{hotelId
+                    }</if>
         </set>
         where id = #{id}
     </update>
@@ -117,11 +127,10 @@
             #{id}
         </foreach>
     </delete>
-
     <insert id="batchSave" parameterType="top.cflwork.vo.InComeItemVo" useGeneratedKeys="true" keyProperty="id">
-        insert into t_in_come_item ( income_id ,subject_name ,time ,money) values
+        insert into t_in_come_item ( income_id ,subject_name ,time ,money,hotel_id) values
         <foreach collection="list" item="inComeItem" separator=",">
-            (#{inComeItem.incomeId}, #{inComeItem.subjectName}, #{inComeItem.time}, #{inComeItem.money})
+            (#{inComeItem.incomeId}, #{inComeItem.subjectName}, #{inComeItem.time}, #{inComeItem.money}, #{inComeItem.hotelId})
         </foreach>
     </insert>
     <delete id="deleteByIncomeId" parameterType="long">

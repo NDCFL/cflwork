@@ -16,6 +16,7 @@ import top.cflwork.dao.RentPayItemDAO;
 import top.cflwork.vo.RentPayItemVo;
 import top.cflwork.service.RentPayItemService;
 import top.cflwork.vo.RentPayVo;
+import top.cflwork.vo.TodayPayVo;
 
 import javax.annotation.Resource;
 
@@ -118,8 +119,14 @@ public class RentPayItemServiceImpl implements RentPayItemService {
             rentPayItemVo.setPayProportion(rentPayVo.getPayProportion());
             rentPayItemVo.setMasterId(rentPayItemVo.getMasterId());
             rentPayItemVo.setHotelId(rentPayItemVo.getHotelId());
+            rentPayItemVo.setEndTime(DateUtil.offsetMonth(rentPayVo.getFactPayTimeStart(), (i+1)*rentPayVo.getPayTime()));
             rentPayItemVos.add(rentPayItemVo);
         }
         rentPayItemDAO.batchSave(rentPayItemVos);
+    }
+
+    @Override
+    public TodayPayVo getPayInfo(RentPayItemVo rentPayItemVo) {
+        return rentPayItemDAO.getPayInfo(rentPayItemVo);
     }
 }

@@ -5,6 +5,8 @@ import org.springframework.stereotype.Repository;
 import top.cflwork.query.PageQuery;
 import top.cflwork.vo.BusinessVo;
 import top.cflwork.vo.PriceItemVo;
+import top.cflwork.vo.RentPayItemVo;
+import top.cflwork.vo.TodayPayVo;
 
 import java.util.List;
 
@@ -22,4 +24,5 @@ public interface PriceItemDAO extends BaseDAO<PriceItemVo>{
     List<BusinessVo> priceInfo(@Param("times") String times, @Param("id") Long id);
     List<BusinessVo> allPriceInfo(@Param("times") String times, @Param("id") Long id);
     void deletePriceItem(Long id);
+
 }

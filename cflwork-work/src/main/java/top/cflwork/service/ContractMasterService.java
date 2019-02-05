@@ -15,7 +15,7 @@ public interface ContractMasterService extends BaseService<ContractMasterVo> {
     long counts(long companyId, PageQuery pageQuery);
     List<Select2Vo> listAlls(long companyId);
     ContractMasterVo findContractMaster(ContractMasterVo contractMasterVo);
-    TodayPayVo getPayInfo(Long id,String time);
+    TodayPayVo getPayInfo(Long id,String time,Long hotelId);
     int checkPhone(String phone);
     List<Select2Vo> getHotelList(Long id);
     ContractHouseListVo getHotelInfo(StatusQuery statusQuery);
