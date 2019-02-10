@@ -1,8 +1,14 @@
 package top.cflwork.controller;
 
+import com.xiaoleilu.hutool.json.JSONUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import top.cflwork.service.CashSubjectService;
+import top.cflwork.util.Jpush;
+import top.cflwork.util.JpushReceiver;
+import top.cflwork.vo.jpush.Extras;
+import top.cflwork.vo.jpush.JpushApp;
+import top.cflwork.vo.jpush.Push;
 
 import javax.annotation.Resource;
 
@@ -11,6 +17,8 @@ import javax.annotation.Resource;
 public class test1 {
     @Resource
     private CashSubjectService cashSubjectService;
+    @Resource
+    private JpushReceiver jpushReceiver;
     /**
      *   name	            String	null	 列名
          needMerge	        boolean	fasle	 纵向合并单元格
@@ -58,8 +66,14 @@ public class test1 {
     }
 
     @RequestMapping("testUp")
-    public void test(){
-        System.out.println("阿里云上传=================");
+    public void testSend(){
+        Push push = null;
+        push = Push.newBuilder(JpushApp.HOTEL)
+                .setTag("111111")
+                .setMessage(Push.Message.newBuilder().setMsgContent("test").setExtras(Extras.newBuilder().setType(Extras.SCHOOL_BROADCAST).setId("1").build()).build())
+                .build();
+        jpushReceiver.sendPush(JSONUtil.toJsonStr(push));
+        System.out.println("消息推送=================");
     }
 
     //解密ID卡号

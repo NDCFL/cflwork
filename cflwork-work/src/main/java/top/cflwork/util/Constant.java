@@ -13,4 +13,7 @@ public interface Constant {
     interface Upload{
         String ZC_QRCODE="qrcode/qrcode";
     }
+    interface JPUSH{
+        String SOUND_1="sound.caf";
+    }
 }

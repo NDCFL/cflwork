@@ -1,5 +1,6 @@
 package top.cflwork.vo;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -21,40 +22,42 @@ public class RentPayItemVo implements Serializable {
     //排序规则
     private String order;
 
-    //分成房租付款明细
+    @ApiModelProperty("分成房租付款明细")
     private Long id;
-    //分成房租编号
+    @ApiModelProperty("分成房租编号")
     private Long rentPayId;
-    //约定付款时间
+    @ApiModelProperty("约定付款起始时间")
     private Date payTime;
-    //实际付款时间
+    @ApiModelProperty("实际付款时间")
     private Date realityPayTime;
-    //付款状态
+    @ApiModelProperty("付款状态")
     private Byte isActive;
-    //本期成本支出
+    @ApiModelProperty("本期成本支出")
     private Double outMoney;
-    //本期营业收入
+    @ApiModelProperty("本期营业收入")
     private Double inMoney;
-    //支付金额
+    @ApiModelProperty("支付金额")
     private Double payMoney;
-    //本期成本支出时间范围
+    @ApiModelProperty("本期成本支出时间范围")
     private String outTime;
-    //本期营业收入时间范围
+    @ApiModelProperty("本期营业收入时间范围")
     private String inTime;
-    //分成比例
+    @ApiModelProperty("分成比例")
     private Float payProportion;
-    //备注
+    @ApiModelProperty("备注")
     private String description;
-    //创建时间
+    @ApiModelProperty("创建时间")
     private Date createTime;
-    //支付方式，有成本还是无成本
+    @ApiModelProperty("支付方式，有成本还是无成本")
     private Integer payType;
-    //业主编号
+    @ApiModelProperty("业主编号")
     private Long masterId;
-    //酒店编号
+    @ApiModelProperty("酒店编号")
     private Long hotelId;
-    private Date startTime;
+    @ApiModelProperty("约定终止时间")
     private Date endTime;
+    @ApiModelProperty("约定起始时间")
+    private Date startTime;
 
 
 }
