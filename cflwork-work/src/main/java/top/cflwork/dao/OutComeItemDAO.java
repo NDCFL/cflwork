@@ -18,8 +18,8 @@ import top.cflwork.dao.BaseDAO;
  */
 @Repository
 public interface OutComeItemDAO extends BaseDAO<OutComeItemVo>{
-    List<OutComeItemVo> listPages(@Param("pageQuery") PageQuery pageQuery, @Param("oucomeItemVo") OutComeItemVo oucomeItemVo);
-    long counts(@Param("pageQuery") PageQuery pageQuery, @Param("oucomeItemVo") OutComeItemVo oucomeItemVo);
+    List<OutComeItemVo> listPages(@Param("pageQuery") PageQuery pageQuery, @Param("outComeItemVo") OutComeItemVo outComeItemVo);
+    long counts(@Param("pageQuery") PageQuery pageQuery, @Param("outComeItemVo") OutComeItemVo outComeItemVo);
     void batchSave(List<OutComeItemVo> oucomeItemVos);
     void deleteByOutcomeId(Long id);
     List<OutComeItemVo> findList(Long id);

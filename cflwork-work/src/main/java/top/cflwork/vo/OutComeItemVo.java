@@ -34,5 +34,10 @@ public class OutComeItemVo implements Serializable {
     private Double money;
     @ApiModelProperty("酒店编号")
     private Long hotelId;
-
+    @ApiModelProperty(value = "业主编号",required = true)
+    private Long masterId;
+    @ApiModelProperty(value = "分页大小",required = true)
+    private int pageSize;
+    @ApiModelProperty(value = "起始页最小为1",required = true)
+    private int pageIndex;
 }

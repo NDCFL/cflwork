@@ -72,6 +72,54 @@ public class Swagger2Config {
                 regex("/contractMaster/.*")
         );
     }
+
+    @Bean
+    public Docket rentPayItemApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("收益付款账单")
+                .apiInfo(apiInfo())
+                .select()
+                .paths(rentPayItemPaths())
+                .build();
+    }
+
+    private Predicate<String> rentPayItemPaths() {
+        return or(
+                regex("/rentPayItem/.*")
+        );
+    }
+
+    @Bean
+    public Docket inComeItemApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("营业收入明细")
+                .apiInfo(apiInfo())
+                .select()
+                .paths(inComeItemPaths())
+                .build();
+    }
+
+    private Predicate<String> inComeItemPaths() {
+        return or(
+                regex("/inComeItem/.*")
+        );
+    }
+    @Bean
+    public Docket outComeItemApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .groupName("成本支出明细")
+                .apiInfo(apiInfo())
+                .select()
+                .paths(outComeItemPaths())
+                .build();
+    }
+
+    private Predicate<String> outComeItemPaths() {
+        return or(
+                regex("/outComeItem/.*")
+        );
+    }
+
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("瑞蓝酒店后台")

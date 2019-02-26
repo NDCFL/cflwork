@@ -29,10 +29,10 @@
             <if test="rentPayItemVo.rentPayId != null and rentPayItemVo.rentPayId != ''">
                 and t.rent_pay_id = #{rentPayItemVo.rentPayId}
             </if>
-            <if test="rentPayItemVo.payTime != null and rentPayItemVo.payTime != ''">
+            <if test="rentPayItemVo.payTime != null">
                 and t.pay_time = #{rentPayItemVo.payTime}
             </if>
-            <if test="rentPayItemVo.realityPayTime != null and rentPayItemVo.realityPayTime != ''">
+            <if test="rentPayItemVo.realityPayTime != null">
                 and t.reality_pay_time = #{rentPayItemVo.realityPayTime}
             </if>
             <if test="rentPayItemVo.isActive != null and rentPayItemVo.isActive != ''">
@@ -47,10 +47,10 @@
             <if test="rentPayItemVo.payMoney != null and rentPayItemVo.payMoney != ''">
                 and t.pay_money = #{rentPayItemVo.payMoney}
             </if>
-            <if test="rentPayItemVo.outTime != null and rentPayItemVo.outTime != ''">
+            <if test="rentPayItemVo.outTime != null">
                 and t.out_time = #{rentPayItemVo.outTime}
             </if>
-            <if test="rentPayItemVo.inTime != null and rentPayItemVo.inTime != ''">
+            <if test="rentPayItemVo.inTime != null">
                 and t.in_time = #{rentPayItemVo.inTime}
             </if>
             <if test="rentPayItemVo.payProportion != null and rentPayItemVo.payProportion != ''">
@@ -59,7 +59,7 @@
             <if test="rentPayItemVo.description != null and rentPayItemVo.description != ''">
                 and t.description = #{rentPayItemVo.description}
             </if>
-            <if test="rentPayItemVo.createTime != null and rentPayItemVo.createTime != ''">
+            <if test="rentPayItemVo.createTime != null">
                 and t.create_time = #{rentPayItemVo.createTime}
             </if>
             <if test="rentPayItemVo.payType != null and rentPayItemVo.payType != ''">
@@ -96,10 +96,10 @@
             <if test="rentPayItemVo.rentPayId != null and rentPayItemVo.rentPayId != ''">
                 and t.rent_pay_id = #{rentPayItemVo.rentPayId}
             </if>
-            <if test="rentPayItemVo.payTime != null and rentPayItemVo.payTime != ''">
+            <if test="rentPayItemVo.payTime != null">
                 and t.pay_time = #{rentPayItemVo.payTime}
             </if>
-            <if test="rentPayItemVo.realityPayTime != null and rentPayItemVo.realityPayTime != ''">
+            <if test="rentPayItemVo.realityPayTime != null">
                 and t.reality_pay_time = #{rentPayItemVo.realityPayTime}
             </if>
             <if test="rentPayItemVo.isActive != null and rentPayItemVo.isActive != ''">
@@ -114,10 +114,10 @@
             <if test="rentPayItemVo.payMoney != null and rentPayItemVo.payMoney != ''">
                 and t.pay_money = #{rentPayItemVo.payMoney}
             </if>
-            <if test="rentPayItemVo.outTime != null and rentPayItemVo.outTime != ''">
+            <if test="rentPayItemVo.outTime != null">
                 and t.out_time = #{rentPayItemVo.outTime}
             </if>
-            <if test="rentPayItemVo.inTime != null and rentPayItemVo.inTime != ''">
+            <if test="rentPayItemVo.inTime != null">
                 and t.in_time = #{rentPayItemVo.inTime}
             </if>
             <if test="rentPayItemVo.payProportion != null and rentPayItemVo.payProportion != ''">
@@ -126,7 +126,7 @@
             <if test="rentPayItemVo.description != null and rentPayItemVo.description != ''">
                 and t.description = #{rentPayItemVo.description}
             </if>
-            <if test="rentPayItemVo.createTime != null and rentPayItemVo.createTime != ''">
+            <if test="rentPayItemVo.createTime != null">
                 and t.create_time = #{rentPayItemVo.createTime}
             </if>
             <if test="rentPayItemVo.payType != null and rentPayItemVo.payType != ''">
@@ -220,7 +220,7 @@
     </delete>
 
     <insert id="batchSave" parameterType="top.cflwork.vo.RentPayItemVo" useGeneratedKeys="true" keyProperty="id">
-        insert into t_rent_pay_item (rent_pay_id ,pay_time ,reality_pay_time ,is_active ,out_money ,in_money ,pay_money ,out_time ,in_time ,pay_proportion ,description ,create_time ,pay_type,master_id ,hotel_id) values
+        insert into t_rent_pay_item (rent_pay_id ,pay_time ,reality_pay_time ,is_active ,out_money ,in_money ,pay_money ,out_time ,in_time ,pay_proportion ,description ,create_time ,pay_type,master_id ,hotel_id,end_time) values
         <foreach collection="list" item="rentPayItem" separator=",">
             (
             #{rentPayItem.rentPayId},
@@ -237,7 +237,8 @@
             now(),
             #{rentPayItem.payType},
             #{rentPayItem.masterId},
-            #{rentPayItem.hotelId}
+            #{rentPayItem.hotelId},
+            #{rentPayItem.endTime}
             )
         </foreach>
     </insert>

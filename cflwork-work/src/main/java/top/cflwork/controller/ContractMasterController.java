@@ -93,14 +93,17 @@ public class ContractMasterController {
     public Map<Integer,Object> getContractMaster(
             @ApiParam(value = "参数是id，time,time是标准的8位数，例如2018-12-12", required = true)
             long id,String time){
+        Long hotelId = rentPayService.getHotelId(id);
         if(time==null || "".equals(time)){
             time = DateUtil.now();
         }
-
-
         Map<Integer,Object> map = new HashMap<>();
         map.put(1,contractMasterService.getById(id));
-        map.put(2,contractMasterService.getPayInfo(id,time,rentPayService.getHotelId(id)));
+        if(hotelId==null){
+            map.put(2,null);
+        }else{
+            map.put(2,contractMasterService.getPayInfo(id,time,rentPayService.getHotelId(id)));
+        }
         return map;
     }
     @PostMapping("/contractMasterUpdateSave")

@@ -50,7 +50,7 @@ public class RentPayItemVo implements Serializable {
     private Date createTime;
     @ApiModelProperty("支付方式，有成本还是无成本")
     private Integer payType;
-    @ApiModelProperty("业主编号")
+    @ApiModelProperty(value = "业主编号",required = true)
     private Long masterId;
     @ApiModelProperty("酒店编号")
     private Long hotelId;
@@ -58,6 +58,10 @@ public class RentPayItemVo implements Serializable {
     private Date endTime;
     @ApiModelProperty("约定起始时间")
     private Date startTime;
-
-
+    @ApiModelProperty(value = "分页大小",required = true)
+    private int pageSize;
+    @ApiModelProperty(value = "起始页最小为1",required = true)
+    private int pageIndex;
+    @ApiModelProperty(value = "订单明细生成状态")
+    private Byte orderStatus;
 }

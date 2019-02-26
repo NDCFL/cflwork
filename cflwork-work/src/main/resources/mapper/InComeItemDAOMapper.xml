@@ -31,7 +31,7 @@
             <if test="inComeItemVo.subjectName != null and inComeItemVo.subjectName != ''">
                 and t.subject_name = #{inComeItemVo.subjectName}
             </if>
-            <if test="inComeItemVo.time != null and inComeItemVo.time != ''">
+            <if test="inComeItemVo.time != null">
                 and t.time = #{inComeItemVo.time}
             </if>
             <if test="inComeItemVo.money != null and inComeItemVo.money != ''">

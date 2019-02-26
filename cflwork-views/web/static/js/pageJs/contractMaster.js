@@ -269,7 +269,7 @@ function del(contractMasterid, status) {
     });
 }
 function edit(name) {
-    $.post("/contractMaster/findContractMaster/" + name,
+    $.get("/contractMaster/findContractMaster/" + name,
         function (data) {
             $("#updateform").autofill(data);
         },

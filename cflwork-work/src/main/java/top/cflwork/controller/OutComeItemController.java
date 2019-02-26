@@ -6,16 +6,15 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import top.cflwork.common.Message;
 import top.cflwork.common.PagingBean;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
 import top.cflwork.service.OutComeItemService;
+import top.cflwork.service.RentPayService;
 import top.cflwork.vo.OutComeItemVo;
+import top.cflwork.vo.RentPayVo;
 import top.cflwork.vo.UserVo;
 
 import javax.annotation.Resource;
@@ -38,7 +37,8 @@ import java.util.List;
 public class OutComeItemController {
 	@Resource
 	private OutComeItemService outComeItemService;
-
+    @Resource
+    private RentPayService rentPayService;
     /**
     *
 	* @param pageSize 分页大小
@@ -48,7 +48,7 @@ public class OutComeItemController {
 	* @return  返回分页结果
 	* @throws Exception
 	*/
-    @RequestMapping("outComeItemList")
+    @PostMapping("outComeItemList")
     @ResponseBody
     @ApiOperation(value = "分页获取数据列表", notes = "返回响应对象", response = OutComeItemVo.class)
     public PagingBean outComeItemList(
@@ -66,27 +66,28 @@ public class OutComeItemController {
     }
     /**
         *
-        * @param pageSize 分页大小
-        * @param pageIndex 当前页
         * param  搜索条件
         * @param session 当前的登录用户对象
         * @return  返回分页结果
         * @throws Exception
         */
-    @RequestMapping("findOutComeItemList")
+    @PostMapping("findOutComeItemList")
     @ResponseBody
-    @ApiOperation(value = "分页并搜索获取数据列表", notes = "返回响应对象", response = OutComeItemVo.class)
+    @ApiOperation(value = "分页并搜索获取数据列表，只需要传入业主编号就行", notes = "返回响应对象", response = OutComeItemVo.class)
     public PagingBean findOutComeItemList(
-            @ApiParam(value = "每页记录数", required = true)int pageSize,
-            @ApiParam(value = "当前页", required = true)int pageIndex,
             HttpSession session,
-            @ApiParam(value = "参数对象")OutComeItemVo outComeItemVo) throws  Exception{
+            @ApiParam(value = "参数对象，只要传入master_id ，以及必传的分页参数，其他参数不传")OutComeItemVo outComeItemVo) throws  Exception{
         try{
+            if(outComeItemVo.getMasterId()==null){
+                return  null;
+            }
+            Long hotelId = rentPayService.getHotelId(outComeItemVo.getMasterId());
+            outComeItemVo.setHotelId(hotelId);
             UserVo userVo = (UserVo) session.getAttribute("userVo");
             //分页参数
             PagingBean pagingBean = new PagingBean();
-            pagingBean.setPageSize(pageSize);
-            pagingBean.setCurrentPage(pageIndex);
+            pagingBean.setPageSize(outComeItemVo.getPageSize());
+            pagingBean.setCurrentPage(outComeItemVo.getPageIndex());
             //赋值给pagequery对象
             PageQuery pageQuery = new PageQuery();
             pageQuery.setCompanyId(userVo.getCompanyId());
@@ -107,7 +108,7 @@ public class OutComeItemController {
 	* @return  返回操作结果
 	* @throws Exception
 	*/
-    @RequestMapping("/outComeItemAddSave")
+    @PostMapping("/outComeItemAddSave")
     @ResponseBody
     @ApiOperation(value = "保存数据", notes = "返回响应对象", response = OutComeItemVo.class)
     public Message outComeItemAddSave(
@@ -129,7 +130,7 @@ public class OutComeItemController {
 	* @return  返回更新结果集
 	* @throws Exception
 	*/
-    @RequestMapping("/outComeItemUpdateSave")
+    @PostMapping("/outComeItemUpdateSave")
     @ResponseBody
     public Message outComeItemUpdateSave(OutComeItemVo outComeItemVo) throws  Exception{
         try{
@@ -147,7 +148,7 @@ public class OutComeItemController {
 	* @return  返回删除的结果集
 	* @throws Exception
 	*/
-    @RequestMapping("/deleteManyOutComeItem")
+    @PostMapping("/deleteManyOutComeItem")
     @ResponseBody
     public Message deleteManyOutComeItem(@Param("manyId") String manyId,Integer status) throws  Exception{
         try{
@@ -167,7 +168,7 @@ public class OutComeItemController {
 	* @param id 编号
 	* @return  返回查询结果
 	*/
-    @RequestMapping("/findOutComeItem/{id}")
+    @PostMapping("/findOutComeItem/{id}")
     @ResponseBody
     @ApiOperation(value = "根据编号获取对象记录", notes = "返回响应对象", response = OutComeItemVo.class)
     public OutComeItemVo findOutComeItem(
@@ -182,7 +183,7 @@ public class OutComeItemController {
 	* @return 返回删除的结果集
 	* @throws Exception
 	*/
-    @RequestMapping("/deleteOutComeItem/{id}")
+    @PostMapping("/deleteOutComeItem/{id}")
     @ResponseBody
     @ApiOperation(value = "根据编号删除对象记录", notes = "返回响应对象", response = OutComeItemVo.class)
     public Message deleteOutComeItem(
@@ -201,7 +202,7 @@ public class OutComeItemController {
 	* @return 文件地址
 	* @throws Exception
 	*/
-    @RequestMapping("/outComeItemPage")
+    @GetMapping("/outComeItemPage")
     public String table() throws  Exception{
         return "outComeItem/outComeItemList";
     }
@@ -213,7 +214,7 @@ public class OutComeItemController {
 	* @return 返回结果
 	* @throws Exception
 	*/
-    @RequestMapping("updateStatus/{id}/{status}")
+    @PostMapping("updateStatus/{id}/{status}")
     @ResponseBody
     @ApiOperation(value = "根据编号状态修改对象的状态", notes = "返回响应对象", response = OutComeItemVo.class)
     public Message updateStatus(
@@ -234,7 +235,7 @@ public class OutComeItemController {
      * @return 返回删除的结果集
      * @throws Exception
      */
-    @RequestMapping("/generateOrder/{id}")
+    @PostMapping("/generateOrder/{id}")
     @ResponseBody
     @ApiOperation(value = "根据订单编号生成订单明细记录", notes = "返回响应对象", response = OutComeItemVo.class)
     public Message GenerateOrder(
@@ -251,7 +252,7 @@ public class OutComeItemController {
      * @return 返回分页结果
      * @throws Exception
      */
-    @RequestMapping("outComeItemLists/{id}")
+    @PostMapping("outComeItemLists/{id}")
     @ResponseBody
     @ApiOperation(value = "根据订单编号，获取订单详情", notes = "返回响应对象", response = OutComeItemVo.class)
     public List<OutComeItemVo> inComeItemLists(@ApiParam(value = "编号") @PathVariable("id")Long id) throws Exception {

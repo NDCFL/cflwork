@@ -117,8 +117,8 @@ public class RentPayItemServiceImpl implements RentPayItemService {
             rentPayItemVo.setPayType(rentPayVo.getPayMoneyType());
             rentPayItemVo.setIsActive((byte)0);
             rentPayItemVo.setPayProportion(rentPayVo.getPayProportion());
-            rentPayItemVo.setMasterId(rentPayItemVo.getMasterId());
-            rentPayItemVo.setHotelId(rentPayItemVo.getHotelId());
+            rentPayItemVo.setMasterId(rentPayVo.getMasterId());
+            rentPayItemVo.setHotelId(rentPayVo.getHotelId());
             rentPayItemVo.setEndTime(DateUtil.offsetMonth(rentPayVo.getFactPayTimeStart(), (i+1)*rentPayVo.getPayTime()));
             rentPayItemVos.add(rentPayItemVo);
         }

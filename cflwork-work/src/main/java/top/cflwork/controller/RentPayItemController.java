@@ -1,10 +1,9 @@
 package top.cflwork.controller;
 import com.xiaoleilu.hutool.date.DateUnit;
 import com.xiaoleilu.hutool.date.DateUtil;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -24,7 +23,6 @@ import org.apache.ibatis.annotations.Param;
 import java.util.Date;
 import java.util.List;
 
-import org.springframework.web.bind.annotation.InitBinder;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 /**
@@ -50,7 +48,7 @@ public class RentPayItemController {
 	* @return  返回分页结果
 	* @throws Exception
 	*/
-    @RequestMapping("rentPayItemList")
+    @PostMapping("rentPayItemList")
     @ResponseBody
     @ApiOperation(value = "分页获取数据列表", notes = "返回响应对象", response = RentPayItemVo.class)
     public PagingBean rentPayItemList(
@@ -68,27 +66,23 @@ public class RentPayItemController {
     }
     /**
         *
-        * @param pageSize 分页大小
-        * @param pageIndex 当前页
         * param  搜索条件
         * @param session 当前的登录用户对象
         * @return  返回分页结果
         * @throws Exception
         */
-    @RequestMapping("findRentPayItemList")
+    @PostMapping("findRentPayItemList")
     @ResponseBody
-    @ApiOperation(value = "分页并搜索获取数据列表", notes = "返回响应对象", response = RentPayItemVo.class)
+    @ApiOperation(value = "分页并搜索获取数据列表，只需要传入业主编号就行", notes = "返回响应对象", response = RentPayItemVo.class)
     public PagingBean findRentPayItemList(
-            @ApiParam(value = "每页记录数", required = true)int pageSize,
-            @ApiParam(value = "当前页", required = true)int pageIndex,
             HttpSession session,
             @ApiParam(value = "参数对象")RentPayItemVo rentPayItemVo) throws  Exception{
         try{
             UserVo userVo = (UserVo) session.getAttribute("userVo");
             //分页参数
             PagingBean pagingBean = new PagingBean();
-            pagingBean.setPageSize(pageSize);
-            pagingBean.setCurrentPage(pageIndex);
+            pagingBean.setPageSize(rentPayItemVo.getPageSize());
+            pagingBean.setCurrentPage(rentPayItemVo.getPageIndex());
             //赋值给pagequery对象
             PageQuery pageQuery = new PageQuery();
             pageQuery.setCompanyId(userVo.getCompanyId());
@@ -109,7 +103,7 @@ public class RentPayItemController {
 	* @return  返回操作结果
 	* @throws Exception
 	*/
-    @RequestMapping("/rentPayItemAddSave")
+    @PostMapping("/rentPayItemAddSave")
     @ResponseBody
     @ApiOperation(value = "保存数据", notes = "返回响应对象", response = RentPayItemVo.class)
     public Message rentPayItemAddSave(
@@ -118,6 +112,7 @@ public class RentPayItemController {
         try{
             UserVo userVo = (UserVo) session.getAttribute("userVo");
 			rentPayItemVo.setIsActive(ActiveStatusEnum.ACTIVE.getValue().byteValue());
+			rentPayItemVo.setOrderStatus((byte)0);
 			rentPayItemService.save(rentPayItemVo);
             return  Message.success("新增成功!");
         }catch (Exception E){
@@ -132,7 +127,7 @@ public class RentPayItemController {
 	* @return  返回更新结果集
 	* @throws Exception
 	*/
-    @RequestMapping("/rentPayItemUpdateSave")
+    @PostMapping("/rentPayItemUpdateSave")
     @ResponseBody
     public Message rentPayItemUpdateSave(RentPayItemVo rentPayItemVo) throws  Exception{
         try{
@@ -150,7 +145,7 @@ public class RentPayItemController {
 	* @return  返回删除的结果集
 	* @throws Exception
 	*/
-    @RequestMapping("/deleteManyRentPayItem")
+    @PostMapping("/deleteManyRentPayItem")
     @ResponseBody
     public Message deleteManyRentPayItem(@Param("manyId") String manyId,Integer status) throws  Exception{
         try{
@@ -170,7 +165,7 @@ public class RentPayItemController {
 	* @param id 编号
 	* @return  返回查询结果
 	*/
-    @RequestMapping("/findRentPayItem/{id}")
+    @PostMapping("/findRentPayItem/{id}")
     @ResponseBody
     @ApiOperation(value = "根据编号获取对象记录", notes = "返回响应对象", response = RentPayItemVo.class)
     public RentPayItemVo findRentPayItem(
@@ -185,7 +180,7 @@ public class RentPayItemController {
 	* @return 返回删除的结果集
 	* @throws Exception
 	*/
-    @RequestMapping("/deleteRentPayItem/{id}")
+    @PostMapping("/deleteRentPayItem/{id}")
     @ResponseBody
     @ApiOperation(value = "根据编号删除对象记录", notes = "返回响应对象", response = RentPayItemVo.class)
     public Message deleteRentPayItem(
@@ -204,7 +199,7 @@ public class RentPayItemController {
 	* @return 文件地址
 	* @throws Exception
 	*/
-    @RequestMapping("/rentPayItemPage")
+    @GetMapping("/rentPayItemPage")
     public String table() throws  Exception{
         return "rentPayItem/rentPayItemList";
     }
@@ -216,7 +211,7 @@ public class RentPayItemController {
 	* @return 返回结果
 	* @throws Exception
 	*/
-    @RequestMapping("updateStatus/{id}/{status}")
+    @PostMapping("updateStatus/{id}/{status}")
     @ResponseBody
     @ApiOperation(value = "根据编号状态修改对象的状态", notes = "返回响应对象", response = RentPayItemVo.class)
     public Message updateStatus(
@@ -236,7 +231,7 @@ public class RentPayItemController {
      * @return 返回删除的结果集
      * @throws Exception
      */
-    @RequestMapping("/generateOrder/{id}")
+    @PostMapping("/generateOrder/{id}")
     @ResponseBody
     @ApiOperation(value = "根据订单编号生成订单明细记录", notes = "返回响应对象", response = RentPayItemVo.class)
     public Message GenerateOrder(
@@ -253,7 +248,7 @@ public class RentPayItemController {
      * @return 返回分页结果
      * @throws Exception
      */
-    @RequestMapping("rentPayItemLists/{id}")
+    @PostMapping("rentPayItemLists/{id}")
     @ResponseBody
     @ApiOperation(value = "根据订单编号，获取订单详情", notes = "返回响应对象", response = RentPayItemVo.class)
     public List<RentPayItemVo> inComeItemLists(@ApiParam(value = "编号") @PathVariable("id")Long id) throws Exception {
@@ -269,7 +264,7 @@ public class RentPayItemController {
      * @return 返回分页结果
      * @throws Exception
      */
-    @RequestMapping("pay/{id}")
+    @PostMapping("pay/{id}")
     @ResponseBody
     @ApiOperation(value = "开始付款，参数为编号", notes = "返回响应对象", response = RentPayItemVo.class)
     public Message pay(@ApiParam(value = "编号") @PathVariable("id")Long id) throws Exception {
