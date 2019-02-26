@@ -53,6 +53,7 @@ public class FilterController implements HandlerInterceptor {
             }
         }
         UserVo userVo = (UserVo)request.getSession().getAttribute("userVo");
+
         //如果没有登录
         if (null == userVo) {
             System.out.println("尚未登录，调到登录页面");

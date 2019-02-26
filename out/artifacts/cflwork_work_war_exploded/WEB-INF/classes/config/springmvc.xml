@@ -80,6 +80,9 @@
                         <value>/jsp/controller.jsp</value>
                         <value>/contracmasterMsg/**</value>
                         <value>/null/*/*/**</value>
+                        <value>/rentPayItem/**</value>
+                        <value>/outComeItem/**</value>
+                        <value>/inComeItem/**</value>
                     </list>
                 </property>
             </bean>

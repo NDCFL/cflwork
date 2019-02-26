@@ -260,7 +260,7 @@ public class ContractMasterController {
     @PostMapping( "wxlogin")
     @ResponseBody
     @ApiOperation(value = "业主端的微信登录，只需要传入一个code即可，如果登录成功，则在消息体内有整个对象", notes = "返回响应对象")
-    public Message wxlogin(String code) throws  Exception {
+    public Message wxlogin(String code,HttpSession session) throws  Exception {
         ContractMasterVo contractMasterVo = new ContractMasterVo();
         if(code==null || "".equals(code)){
             return Message.fail("授权失败");

@@ -11,8 +11,10 @@ import top.cflwork.common.Message;
 import top.cflwork.common.PagingBean;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
+import top.cflwork.service.ContractMasterService;
 import top.cflwork.service.OutComeItemService;
 import top.cflwork.service.RentPayService;
+import top.cflwork.vo.ContractMasterVo;
 import top.cflwork.vo.OutComeItemVo;
 import top.cflwork.vo.RentPayVo;
 import top.cflwork.vo.UserVo;
@@ -39,6 +41,8 @@ public class OutComeItemController {
 	private OutComeItemService outComeItemService;
     @Resource
     private RentPayService rentPayService;
+    @Resource
+    private ContractMasterService contractMasterService;
     /**
     *
 	* @param pageSize 分页大小
@@ -83,14 +87,14 @@ public class OutComeItemController {
             }
             Long hotelId = rentPayService.getHotelId(outComeItemVo.getMasterId());
             outComeItemVo.setHotelId(hotelId);
-            UserVo userVo = (UserVo) session.getAttribute("userVo");
+            ContractMasterVo contractMasterVo = contractMasterService.getById(outComeItemVo.getMasterId());
             //分页参数
             PagingBean pagingBean = new PagingBean();
             pagingBean.setPageSize(outComeItemVo.getPageSize());
             pagingBean.setCurrentPage(outComeItemVo.getPageIndex());
             //赋值给pagequery对象
             PageQuery pageQuery = new PageQuery();
-            pageQuery.setCompanyId(userVo.getCompanyId());
+            pageQuery.setCompanyId(contractMasterVo.getCompanyId());
             pageQuery.setPageSize(pagingBean.getPageSize());
             pageQuery.setPageNo(pagingBean.getStartIndex());
             pagingBean.setTotal(outComeItemService.counts(pageQuery,outComeItemVo));

@@ -8,6 +8,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.web.bind.WebDataBinder;
+import top.cflwork.service.ContractMasterService;
+import top.cflwork.vo.ContractMasterVo;
 import top.cflwork.vo.RentPayItemVo;
 import top.cflwork.service.RentPayItemService;
 import top.cflwork.common.Message;
@@ -38,7 +40,8 @@ import io.swagger.annotations.ApiParam;
 public class RentPayItemController {
 	@Resource
 	private RentPayItemService rentPayItemService;
-
+    @Resource
+    private ContractMasterService contractMasterService;
     /**
     *
 	* @param pageSize 分页大小
@@ -78,14 +81,14 @@ public class RentPayItemController {
             HttpSession session,
             @ApiParam(value = "参数对象")RentPayItemVo rentPayItemVo) throws  Exception{
         try{
-            UserVo userVo = (UserVo) session.getAttribute("userVo");
+            ContractMasterVo contractMasterVo = contractMasterService.getById(rentPayItemVo.getMasterId());
             //分页参数
             PagingBean pagingBean = new PagingBean();
             pagingBean.setPageSize(rentPayItemVo.getPageSize());
             pagingBean.setCurrentPage(rentPayItemVo.getPageIndex());
             //赋值给pagequery对象
             PageQuery pageQuery = new PageQuery();
-            pageQuery.setCompanyId(userVo.getCompanyId());
+            pageQuery.setCompanyId(contractMasterVo.getCompanyId());
             pageQuery.setPageSize(pagingBean.getPageSize());
             pageQuery.setPageNo(pagingBean.getStartIndex());
             pagingBean.setTotal(rentPayItemService.counts(pageQuery,rentPayItemVo));

@@ -10,18 +10,16 @@ import java.text.SimpleDateFormat;
 
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.web.bind.WebDataBinder;
+import top.cflwork.service.ContractMasterService;
 import top.cflwork.service.IncomeService;
 import top.cflwork.service.RentPayService;
-import top.cflwork.vo.InComeItemVo;
+import top.cflwork.vo.*;
 import top.cflwork.service.InComeItemService;
 import top.cflwork.common.Message;
 import top.cflwork.common.PagingBean;
 import top.cflwork.enums.ActiveStatusEnum;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
-import top.cflwork.vo.IncomeVo;
-import top.cflwork.vo.OrderItemsVo;
-import top.cflwork.vo.UserVo;
 
 import javax.servlet.http.HttpSession;
 import javax.annotation.Resource;
@@ -50,6 +48,8 @@ public class InComeItemController {
     private InComeItemService inComeItemService;
     @Resource
     private RentPayService rentPayService;
+    @Resource
+    private ContractMasterService contractMasterService;
     /**
      * @param pageSize  分页大小
      * @param pageIndex 当前页
@@ -93,14 +93,14 @@ public class InComeItemController {
             }
             Long hotelId = rentPayService.getHotelId(inComeItemVo.getMasterId());
             inComeItemVo.setHotelId(hotelId);
-            UserVo userVo = (UserVo) session.getAttribute("userVo");
+            ContractMasterVo contractMasterVo = contractMasterService.getById(inComeItemVo.getMasterId());
             //分页参数
             PagingBean pagingBean = new PagingBean();
             pagingBean.setPageSize(inComeItemVo.getPageSize());
             pagingBean.setCurrentPage(inComeItemVo.getPageIndex());
             //赋值给pagequery对象
             PageQuery pageQuery = new PageQuery();
-            pageQuery.setCompanyId(userVo.getCompanyId());
+            pageQuery.setCompanyId(contractMasterVo.getCompanyId());
             pageQuery.setPageSize(pagingBean.getPageSize());
             pageQuery.setPageNo(pagingBean.getStartIndex());
             pagingBean.setTotal(inComeItemService.counts(pageQuery, inComeItemVo));
