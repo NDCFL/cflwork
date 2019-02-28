@@ -16,4 +16,6 @@ import java.util.List;
 public interface OutcomeService  extends BaseService<OutcomeVo>{
     List<OutcomeVo> listPages(@Param("pageQuery") PageQuery pageQuery, @Param("outcomeVo") OutcomeVo outcomeVo);
     long counts(@Param("pageQuery") PageQuery pageQuery, @Param("outcomeVo") OutcomeVo outcomeVo);
+    List<OutcomeVo> getList(Long hotelId);
+    List<OutcomeVo> getListBySubjectId(OutcomeVo outcomeVo);
 }

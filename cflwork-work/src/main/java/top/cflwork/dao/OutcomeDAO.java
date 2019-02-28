@@ -18,4 +18,6 @@ import java.util.List;
 public interface OutcomeDAO extends BaseDAO<OutcomeVo>{
     List<OutcomeVo> listPages(@Param("pageQuery") PageQuery pageQuery, @Param("outcomeVo") OutcomeVo outcomeVo);
     long counts(@Param("pageQuery") PageQuery pageQuery, @Param("outcomeVo") OutcomeVo outcomeVo);
+    List<OutcomeVo> getList(Long hotelId);
+    List<OutcomeVo> getListBySubjectId(OutcomeVo outcomeVo);
 }

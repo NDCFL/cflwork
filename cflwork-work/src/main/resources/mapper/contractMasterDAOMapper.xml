@@ -123,7 +123,7 @@
             (select count(id) from t_rent_pay where master_id=#{id}) as 'cnt',
             DATE_FORMAT(#{time},'%Y年%m月%d日') as 'nowTime'
 
-        from  t_rent_pay;
+        from  t_rent_pay  where master_id = #{id};
     </select>
     <select id="getHotelList" resultType="top.cflwork.vo.Select2Vo">
         select  h.title as text,h.id from  t_rent_pay t left join t_hotel h on h.id=t.hotel_id where t.master_id=#{id}

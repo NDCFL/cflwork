@@ -1,6 +1,7 @@
 package top.cflwork.vo;
 
 import cn.afterturn.easypoi.excel.annotation.Excel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -34,6 +35,7 @@ public class OutcomeVo implements Serializable {
     @Excel(name = "酒店编号", orderNum = "2")
     private Long hotelId;
     //支出科目编号
+    @ApiModelProperty("科目编号")
     private Long subjectId;
     //支出名称
     @NotNull
@@ -63,6 +65,10 @@ public class OutcomeVo implements Serializable {
     @NotNull
     private String temp;
     private Byte orderStatus;
+    @ApiModelProperty("总支出")
+    private String sumMoney;
+    @ApiModelProperty("科目名称")
+    private String subjectName;
 
 
 }

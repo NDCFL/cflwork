@@ -13,11 +13,9 @@ import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
 import top.cflwork.service.ContractMasterService;
 import top.cflwork.service.OutComeItemService;
+import top.cflwork.service.OutcomeService;
 import top.cflwork.service.RentPayService;
-import top.cflwork.vo.ContractMasterVo;
-import top.cflwork.vo.OutComeItemVo;
-import top.cflwork.vo.RentPayVo;
-import top.cflwork.vo.UserVo;
+import top.cflwork.vo.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
@@ -43,6 +41,8 @@ public class OutComeItemController {
     private RentPayService rentPayService;
     @Resource
     private ContractMasterService contractMasterService;
+    @Resource
+    private OutcomeService outcomeService;
     /**
     *
 	* @param pageSize 分页大小
@@ -263,6 +263,45 @@ public class OutComeItemController {
         try {
             List<OutComeItemVo> orderItemsVos = outComeItemService.findList(id);
             return orderItemsVos;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
+     * @return 返回分页结果
+     * @throws Exception
+     */
+    @PostMapping("getOutComeItemList")
+    @ResponseBody
+    @ApiOperation(value = "根据业主编号获取支出的详细信息", notes = "返回响应对象", response = OutcomeVo.class)
+    public List<OutcomeVo> getOutComeItemList(@ApiParam(value = "编号") Long id) throws Exception {
+        try {
+            Long hotelId = rentPayService.getHotelId(id);
+            List<OutcomeVo> outcomeVos = outcomeService.getList(hotelId);
+            return outcomeVos;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    /**
+     * @return 返回分页结果
+     * @throws Exception
+     */
+    @PostMapping("getListBySubjectId")
+    @ResponseBody
+    @ApiOperation(value = "根据业主编号获取支出的详细信息", notes = "返回响应对象", response = OutcomeVo.class)
+    public List<OutcomeVo> getListBySubjectId(@ApiParam(value = "科目编号") @RequestParam("subjectId") Long subjectId,@ApiParam(value = "酒店编号")@RequestParam("hotelId") Long hotelId) throws Exception {
+        try {
+            OutcomeVo outcomeVo = new OutcomeVo();
+            outcomeVo.setSubjectId(subjectId);
+            outcomeVo.setHotelId(hotelId);
+            List<OutcomeVo> outcomeVos = outcomeService.getListBySubjectId(outcomeVo);
+            return outcomeVos;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

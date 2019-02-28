@@ -75,4 +75,14 @@ public class OutcomeServiceImpl implements OutcomeService {
     public long counts(PageQuery pageQuery, OutcomeVo outcomeVo) {
         return  outcomeDAO.counts(pageQuery, outcomeVo);
     }
+
+    @Override
+    public List<OutcomeVo> getList(Long hotelId) {
+        return outcomeDAO.getList(hotelId);
+    }
+
+    @Override
+    public List<OutcomeVo> getListBySubjectId(OutcomeVo outcomeVo) {
+        return outcomeDAO.getListBySubjectId(outcomeVo);
+    }
 }

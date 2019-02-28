@@ -201,7 +201,11 @@
             #{id}
         </foreach>
     </delete>
-
-    
+    <select id="getList" resultType="outcomeVo">
+        select c.title as 'subjectName',sum(t.money) as 'sumMoney',t.subject_id,t.hotel_id from t_outcome t,t_cash_subject c where t.subject_id=c.id and t.hotel_id=#{hotelId} group by t.subject_id
+    </select>
+    <select id="getListBySubjectId" resultType="outcomeVo">
+        select * from t_outcome where subject_id=#{subjectId} and hotel_id = #{hotelId}
+    </select>
     
 </mapper>
