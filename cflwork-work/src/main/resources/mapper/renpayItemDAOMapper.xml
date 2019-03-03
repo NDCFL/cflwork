@@ -4,14 +4,14 @@
 
 <mapper namespace="top.cflwork.dao.RentPayItemDAO">
     <resultMap id="rentPayItemMap" type="top.cflwork.vo.RentPayItemVo"></resultMap>
-    <resultMap id="todayPayMap" type="top.cflwork.vo.TodayPayVo"></resultMap>
+    <resultMap id="rentPayItemInfoMap" type="top.cflwork.vo.RentPayItemInfoVo"></resultMap>
     <sql id="search">
         <if test="#{searchVal!=null} and #{searchVal!=''}">
             and (t.id like concat('%${searchVal}%'))
         </if>
     </sql>
     <select id="getById" resultMap="rentPayItemMap" parameterType="long">
-        select  t.id , t.rent_pay_id , t.pay_time , t.reality_pay_time , t.is_active , t.out_money , t.in_money , t.pay_money , t.out_time , t.in_time , t.pay_proportion , t.description , t.create_time , t.pay_type , t.master_id , t.hotel_id         from t_rent_pay_item t where t.id = #{id}
+        select  t.id , t.rent_pay_id , t.pay_time , t.reality_pay_time , t.is_active , t.out_money , t.in_money , t.pay_money , t.out_time , t.in_time , t.pay_proportion , t.description , t.create_time , t.pay_type , t.master_id , t.hotel_id,t.end_time  from t_rent_pay_item t where t.id = #{id}
     </select>
     <select id="listPage" resultMap="rentPayItemMap">
         select  t.id , t.rent_pay_id , t.pay_time , t.reality_pay_time , t.is_active , t.out_money , t.in_money , t.pay_money , t.out_time , t.in_time , t.pay_proportion , t.description , t.create_time , t.pay_type , t.master_id , t.hotel_id  from t_rent_pay_item t where t.company_id = #{companyId} <include refid="search"></include> order by t.create_time desc limit #{pageNo}, #{pageSize}
@@ -248,20 +248,26 @@
     <select id="findList" resultMap="rentPayItemMap" parameterType="top.cflwork.vo.RentPayItemVo">
         select * from t_rent_pay_item where rent_pay_id = #{id}
     </select>
-    <select id="getPayInfo" resultMap="todayPayMap">
+    <select id="getPayInfo" resultMap="rentPayItemInfoMap">
         select
-        (select ifnull(sum(money),0) from t_in_come_item where `time` between #{startTime} and #{endTime} and hotel_id=#{hotelId}) as 'inMoney',
-        (select ifnull(sum(money),0) from t_out_come_item where `time` between #{startTime} and #{endTime} and hotel_id=#{hotelId}) as 'outMoney',
-        (select ifnull(sum(money),0) from t_income where hotel_id=#{hotelId}) as 'allInMoney',
-        (select ifnull(sum(money),0) from t_outcome where hotel_id=#{hotelId}) as 'allOutMoney',
-        (select ifnull(sum(area),0) from t_house where hotel_id=#{hotelId}) as 'sumArea',
-        (select ifnull(sum(area),0) from t_house where id in(select house_id from t_rent_pay where master_id=#{masterId})) as 'area',
-        (select ifnull(scale,0) from t_contract_master where id=#{masterId}) as 'rentPayScale',
-        (select fact_pay_time_start from t_rent_pay where master_id=#{masterId} limit 1) as 'startTime',
-        (select count(id) from t_rent_pay where master_id=#{masterId}) as 'cnt',
-        DATE_FORMAT(#{time},'%Y年%m月%d日') as 'nowTime',
-        (select count(id) from t_in_come_item where `time` between #{startTime} and #{endTime} and hotel_id=#{hotelId} group by `time`) as 'inComeCnt',
-        (select count(id) from t_out_come_item where `time` between #{startTime} and #{endTime} and hotel_id=#{hotelId} group by `time`) as 'outComeCnt'
-        from  t_rent_pay;
+        (select ifnull(sum(money),0) from t_in_come_item where `time` between date_format(#{payTime},"%Y-%m-%d") and date_format(#{endTime},"%Y-%m-%d") and hotel_id=#{hotelId}) as 'hotelInSumMoney',
+        (select ifnull(sum(money),0) from t_out_come_item where `time` between date_format(#{payTime},"%Y-%m-%d") and date_format(#{endTime},"%Y-%m-%d") and hotel_id=#{hotelId}) as 'hotelOutSumMoney',
+        (select ifnull(sum(area),0) from t_house where hotel_id=#{hotelId}) as 'hotelSumArea',
+        (select ifnull(sum(area),0) from t_house where id in(select house_id from t_rent_pay where master_id=#{masterId})) as 'masterSumArea',
+        (select ifnull(scale,0) from t_contract_master where id=#{masterId}) as 'rentPayScale'
+        from  t_rent_pay where hotel_id=#{hotelId} and master_id=#{masterId};
+    </select>
+
+    <select id="checkInSubject" resultType="int">
+        select datediff(end_time,start_time) as 'dateDiffCnt' from t_income where start_time>=#{payTime} and #{endTime}>=end_time and order_status =1
+    </select>
+    <select id="checkOutSubject" resultType="int">
+        select datediff(end_time,start_time) as 'dateDiffCnt' from t_outcome where start_time>=#{payTime} and #{endTime}>=end_time and order_status =1
+    </select>
+    <select id="checkOutCnt" resultType="int">
+        select count(id) from t_outcome where start_time>=#{payTime} and #{endTime}>=end_time and order_status =0
+    </select>
+    <select id="checkInCnt" resultType="int">
+        select count(id) from t_income where start_time>=#{payTime} and #{endTime}>=end_time and order_status =0
     </select>
 </mapper>

@@ -69,6 +69,7 @@ public class OutcomeVo implements Serializable {
     private String sumMoney;
     @ApiModelProperty("科目名称")
     private String subjectName;
-
+    //日期相隔天数
+    private int dateDiffCnt;
 
 }

@@ -1,24 +1,29 @@
 package top.cflwork.controller;
 import com.xiaoleilu.hutool.date.DateUnit;
 import com.xiaoleilu.hutool.date.DateUtil;
+import io.swagger.models.auth.In;
+import org.apache.commons.io.IOUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.servlet.ModelAndView;
 import top.cflwork.service.ContractMasterService;
-import top.cflwork.vo.ContractMasterVo;
-import top.cflwork.vo.RentPayItemVo;
+import top.cflwork.service.RentPayService;
+import top.cflwork.vo.*;
 import top.cflwork.service.RentPayItemService;
 import top.cflwork.common.Message;
 import top.cflwork.common.PagingBean;
 import top.cflwork.enums.ActiveStatusEnum;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
-import top.cflwork.vo.TodayPayVo;
-import top.cflwork.vo.UserVo;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.annotation.Resource;
 import org.apache.ibatis.annotations.Param;
@@ -42,6 +47,8 @@ public class RentPayItemController {
 	private RentPayItemService rentPayItemService;
     @Resource
     private ContractMasterService contractMasterService;
+    @Resource
+    private RentPayService rentPayService;
     /**
     *
 	* @param pageSize 分页大小
@@ -272,33 +279,99 @@ public class RentPayItemController {
     @ApiOperation(value = "开始付款，参数为编号", notes = "返回响应对象", response = RentPayItemVo.class)
     public Message pay(@ApiParam(value = "编号") @PathVariable("id")Long id) throws Exception {
         try {
-            //获取本期的基本信息
+            //获取当前周期的时间
             RentPayItemVo rentPayItemVo = rentPayItemService.getById(id);
-            //本期时间范围中的总成本，总支出
-            TodayPayVo todayPayVo = rentPayItemService.getPayInfo(rentPayItemVo);
-            int days = (int) DateUtil.between(rentPayItemVo.getPayTime(), rentPayItemVo.getEndTime(), DateUnit.DAY);
-            if(todayPayVo.getInComeCnt()!=days || todayPayVo.getOutComeCnt()!=days){
-                return Message.fail("付款失败,账单未出账");
-            }else{
-                RentPayItemVo rentPayItemVo1 = new RentPayItemVo();
-                rentPayItemVo1.setId(rentPayItemVo.getId());
-                rentPayItemVo1.setInMoney(todayPayVo.getInMoney());
-                rentPayItemVo1.setOutMoney(todayPayVo.getOutMoney());
-                rentPayItemVo1.setRealityPayTime(DateUtil.date());
-                rentPayItemVo1.setInTime(rentPayItemVo.getPayTime()+"-"+rentPayItemVo1.getEndTime());
-                rentPayItemVo1.setOutTime(rentPayItemVo1.getInTime());
-                //计算本期应付金额，用总收入减去总支出
-                rentPayItemVo1.setPayMoney(rentPayItemVo1.getInMoney()-rentPayItemVo1.getOutMoney());
-                rentPayItemService.update(rentPayItemVo1);
-                return Message.success("付款成功");
+            //获取本期还没有生成明细的支出账单
+            int checkOutCnt = rentPayItemService.checkOutCnt(rentPayItemVo);
+            //获取本期还没有生成明细的收入账单
+            int checkInCnt = rentPayItemService.checkInCnt(rentPayItemVo);
+            if(checkInCnt>0 || checkOutCnt>0){
+                return Message.fail("系统检测你还有收入或支出的明细未生成，请先生成");
             }
+            //获取本期的时间
+            int days = (int) DateUtil.between(rentPayItemVo.getPayTime(), rentPayItemVo.getEndTime(), DateUnit.DAY);
+            System.out.println(days+"================");
+            //获取本期所有的收入科目是否都已经出账
+            List<Integer> checkInSubject = rentPayItemService.checkInSubject(rentPayItemVo);
+            //获取本期所有的支出科目是否都已经出账
+            List<Integer> checkOutSubject = rentPayItemService.checkInSubject(rentPayItemVo);
+            for (int cnt:checkInSubject) {
+                if(cnt<days){
+                    return Message.fail("付款失败,收入账单未出账");
+                }
+            }
+            for (int cnt1:checkOutSubject) {
+                if(cnt1<days){
+                    return Message.fail("付款失败,支出账单未出账");
+                }
+            }
+            //本期时间范围中的总成本，总支出
+            RentPayItemInfoVo rentPayItemInfoVo= rentPayItemService.getPayInfo(rentPayItemVo);
+            RentPayItemVo rentPayItemVo1 = new RentPayItemVo();
+            rentPayItemVo1.setId(rentPayItemVo.getId());
+            rentPayItemVo1.setInMoney(rentPayItemInfoVo.getHotelInSumMoney());
+            rentPayItemVo1.setOutMoney(rentPayItemInfoVo.getHotelOutSumMoney());
+            rentPayItemVo1.setRealityPayTime(DateUtil.date());
+            rentPayItemVo1.setInTime(DateUtil.format(rentPayItemVo.getPayTime(),"yyyy-MM-dd")+"-"+DateUtil.format(rentPayItemVo.getEndTime(),"yyyy-MM-dd"));
+            rentPayItemVo1.setOutTime(rentPayItemVo1.getInTime());
+            //计算本期应付金额，用总收入减去总支出
+            if(rentPayItemVo.getPayType()==0){
+                rentPayItemVo1.setPayMoney(haveOutPayType(rentPayItemInfoVo));
+            }else{
+                rentPayItemVo1.setPayMoney(noHaveOutPayType(rentPayItemInfoVo));
+            }
+            rentPayItemVo1.setIsActive((byte)1);
+            rentPayItemService.update(rentPayItemVo1);
+            return Message.success("付款成功");
         } catch (Exception e) {
             e.printStackTrace();
             return Message.fail("付款失败");
         }
     }
 
+    /**
+     * 有成本支付方式
+     * 本期总营业额/总面积*业主面积-本期总成本/总面积*业主面积
+     * （本期总营业额-本期总成本）/总面积*业主面积*分成比例
+     * @param rentPayItemInfoVo
+     * @return
+     */
+    public Double haveOutPayType(RentPayItemInfoVo rentPayItemInfoVo) {
+        Double sumMoney = (rentPayItemInfoVo.getHotelInSumMoney()-rentPayItemInfoVo.getHotelOutSumMoney())/rentPayItemInfoVo.getHotelSumArea()*rentPayItemInfoVo.getMasterSumArea()*rentPayItemInfoVo.getRentPayScale();
+        return sumMoney;
+    }
+    /**
+     * 无成本支付方式
+     * 本期总营业额/总面积*业主面积*分成比例
+     * @param rentPayItemInfoVo
+     * @return
+     */
+    public Double noHaveOutPayType(RentPayItemInfoVo rentPayItemInfoVo) {
+        Double sumMoney = rentPayItemInfoVo.getHotelInSumMoney()/rentPayItemInfoVo.getHotelSumArea()*rentPayItemInfoVo.getMasterSumArea()*rentPayItemInfoVo.getRentPayScale();
+        return sumMoney;
+    }
 
+    @RequestMapping("/down/{id}")
+    public void code(HttpServletRequest request, HttpServletResponse response,
+                     @PathVariable("id") Long id) throws IOException {
+        byte[] data = rentPayItemService.down(id);
+        response.reset();
+        response.setHeader("Content-Disposition", "attachment; filename=\"bootdo.zip\"");
+        response.addHeader("Content-Length", "" + data.length);
+        response.setContentType("application/octet-stream; charset=UTF-8");
+
+        IOUtils.write(data, response.getOutputStream());
+    }
+    @RequestMapping("/look/{id}")
+    public ModelAndView look(@PathVariable("id") Long id){
+        RentPayItemVo rentPayItemVo = rentPayItemService.getById(id);
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("/house/invoice");
+        modelAndView.addObject("id",id);
+        modelAndView.addObject("rentPayItemVo",rentPayItemVo);
+        modelAndView.addObject("masterVo",contractMasterService.getById(rentPayItemVo.getMasterId()));
+        return modelAndView;
+    }
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

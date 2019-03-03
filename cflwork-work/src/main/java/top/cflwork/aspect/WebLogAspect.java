@@ -36,7 +36,11 @@ public class WebLogAspect {
         //logger.info("IP : " + IPAddressUtil.getClientIpAddress(request));
         logger.info("CLASS_METHOD : " + joinPoint.getSignature().getDeclaringTypeName() + "."
                 + joinPoint.getSignature().getName());
-        logger.info("参数 : " + Arrays.toString(joinPoint.getArgs()));
+
+        for (int i = 0; i < joinPoint.getArgs().length; i++) {
+            logger.info("参数 : " +joinPoint.getArgs()[i]);
+        }
+//        logger.info("参数 : " + Arrays.toString(joinPoint.getArgs()));
 //        loggger.info("参数 : " + joinPoint.getArgs());
 
     }

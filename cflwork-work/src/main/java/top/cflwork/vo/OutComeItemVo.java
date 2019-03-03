@@ -1,5 +1,6 @@
 package top.cflwork.vo;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -27,10 +28,13 @@ public class OutComeItemVo implements Serializable {
     @ApiModelProperty("支出编号")
     private Long outcomeId;
     @ApiModelProperty("科目名称")
+    @Excel(name = "科目名称")
     private String subjectName;
     @ApiModelProperty("时间")
+    @Excel(name = "时间")
     private Date time;
     @ApiModelProperty("金额")
+    @Excel(name = "金额")
     private Double money;
     @ApiModelProperty("酒店编号")
     private Long hotelId;

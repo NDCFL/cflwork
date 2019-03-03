@@ -428,33 +428,39 @@ function  formattimes(value) {
     return y + '-' + (m<10?"0"+m:m) + '-' + (d<10?"0"+d:d) ;
 
 }
+
+var idvalue = '';
+function orderItem(id) {
+    orders(id);
+    idvalue = id;
+
+}
+function refushItem(id) {
+    orders(id);
+}
 function generateOrder(id) {
     $.post("/rentPayItem/generateOrder/" + id,
         function (data) {
             if (data.result == 'success') {
                 layer.alert(data.message, {icon: 1});
-                refush();
+                refushItem(idvalue);
             } else {
-                refush();
+                refushItem(idvalue);
                 layer.alert(data.message, {icon: 2});
             }
         },
         "json"
     );
 }
-function orderItem(id) {
-    orders(id);
-
-}
 function pay(id) {
     $.post(
         "/rentPayItem/pay/"+id,
         function (data) {
-            if (data.message == "删除成功!") {
+            if (data.result == "success") {
                 layer.alert(data.message, {icon: 6});
                 refush();
             } else {
-                layer.alert(data.message, {icon: 6});
+                layer.alert(data.message, {icon: 5});
                 refush();
             }
         }, "json"
@@ -566,14 +572,7 @@ function orders(id) {
                 field: 'payMoney',
                 title: '支付金额',
                 align: 'center',
-                sortable: true,
-                formatter: function (value, row, index) {
-                    if(!value){
-                        return '未出账';
-                    }else{
-                        return value;
-                    }
-                }
+                sortable: true
             },
             {
                 field: 'outTime',
@@ -624,8 +623,13 @@ function orders(id) {
                 align: 'center',
                 field: '',
                 formatter: function (value, row, index) {
-                    var e = '<a title="付款" href="javascript:void(0);" id="rentPayItem" onclick="pay(\'' + row.id + '\')">付款</a> ';
-                    return e;
+                    var e = '<a title="付款" href="javascript:void(0);" id="rentPayItem" style="color: green" onclick="pay(\'' + row.id + '\')">付款</a> ';
+                    var p = '<a title="查看账单"  id="rentPayItem" style="color: #0f9ae0" target="_blank" href="/rentPayItem/look/'+row.id+'">查看账单</a> ';
+                    if (row.isActive == 0) {
+                        return e;
+                    } else {
+                        return p;
+                    }
                 }
             }
         ],

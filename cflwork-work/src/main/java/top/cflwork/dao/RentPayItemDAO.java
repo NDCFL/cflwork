@@ -1,5 +1,6 @@
 package top.cflwork.dao;
 
+import top.cflwork.vo.RentPayItemInfoVo;
 import top.cflwork.vo.RentPayItemVo;
 
 import java.util.List;
@@ -24,5 +25,9 @@ public interface RentPayItemDAO extends BaseDAO<RentPayItemVo>{
     void batchSave(List<RentPayItemVo> rentPayItemVos);
     void deleteByRentPayId(Long id);
     List<RentPayItemVo> findList(Long id);
-    TodayPayVo getPayInfo(RentPayItemVo rentPayItemVo);
+    RentPayItemInfoVo getPayInfo(RentPayItemVo rentPayItemVo);
+    List<Integer> checkInSubject(RentPayItemVo rentPayItemVo);
+    List<Integer> checkOutSubject(RentPayItemVo rentPayItemVo);
+    int checkOutCnt(RentPayItemVo rentPayItemVo);
+    int checkInCnt(RentPayItemVo rentPayItemVo);
 }

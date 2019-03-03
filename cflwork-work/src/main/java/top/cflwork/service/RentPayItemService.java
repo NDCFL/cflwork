@@ -1,5 +1,6 @@
 package top.cflwork.service;
 
+import top.cflwork.vo.RentPayItemInfoVo;
 import top.cflwork.vo.RentPayItemVo;
 import top.cflwork.query.PageQuery;
 import top.cflwork.vo.TodayPayVo;
@@ -21,5 +22,10 @@ public interface RentPayItemService  extends BaseService<RentPayItemVo>{
     void deleteByRentPayId(Long id);
     List<RentPayItemVo> findList(Long id);
     void generateOrder(Long id);
-    TodayPayVo getPayInfo(RentPayItemVo rentPayItemVo);
+    RentPayItemInfoVo getPayInfo(RentPayItemVo rentPayItemVo);
+    List<Integer> checkInSubject(RentPayItemVo rentPayItemVo);
+    List<Integer> checkOutSubject(RentPayItemVo rentPayItemVo);
+    int checkOutCnt(RentPayItemVo rentPayItemVo);
+    int checkInCnt(RentPayItemVo rentPayItemVo);
+    byte[] down(Long id);
 }

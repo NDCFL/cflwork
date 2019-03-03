@@ -42,8 +42,8 @@ public class TodayPayVo implements Serializable {
     private Integer cnt;//房源套数
     @ApiModelProperty(value = "当前查询的时间",dataType = "String")
     private String nowTime;//当前查询的时间
-    private Integer inComeCnt;//收入总记录
-    private Integer outComeCnt;//支出总记录
+    private int inComeCnt;//收入总记录
+    private int outComeCnt;//支出总记录
     /**
      * <==    Columns: inMoney, outMoney, allInMoney, allOutMoney, area, sumArea, rentPayScale, startTime
      <==        Row: 88322.00, 69644.00, 88322.00, 69644.00, 820, 30, 0.15, 2018-09-27

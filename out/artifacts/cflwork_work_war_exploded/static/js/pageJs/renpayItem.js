@@ -234,7 +234,7 @@ function del(id, status) {
 }
 
 function edit(name) {
-    $.post("/rentPayItem/findRenpayItem/" + name,
+    $.post("/rentPayItem/findRentPayItem/" + name,
         function (data) {
             $("#updateform").autofill(data);
         },

@@ -58,5 +58,7 @@ public class IncomeVo implements Serializable {
     @NotNull
     private String temp;
     private  Byte orderStatus;
+    //日期相隔天数
+    private int dateDiffCnt;
 
 }

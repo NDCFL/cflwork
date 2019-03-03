@@ -47,16 +47,12 @@ public class IndexController {
         ModelAndView modelAndView = new ModelAndView();
         try{
             UserVo user = (UserVo) session.getAttribute("userVo");
-            Subject subject = SecurityUtils.getSubject();
-            UserVo userVo = userService.getByAccountPassword(new UserAccountPasswordQuery(user.getPhone(), user.getPassword()));
-            subject.login(new UsernamePasswordToken(user.getPhone(), user.getPassword()));
             UserRoleVo userRoleVo = userRoleService.getRole(user.getId());
             if(userRoleVo.getRoleVo().getTitle().equals("店长")){
                 HotelVo hotelVo = hotelService.findHotel(user.getId());
                 session.setAttribute("hotelVo",hotelVo);
             }
             session.setAttribute("userRole",userRoleVo);
-//            modelAndView.addObject("permissionList",permissionService.listPermissionTree(user.getId()));
             modelAndView.setViewName("index");
             return modelAndView;
         }catch (Exception e){

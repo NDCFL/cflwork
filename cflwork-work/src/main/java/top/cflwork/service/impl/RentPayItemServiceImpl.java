@@ -2,17 +2,23 @@ package top.cflwork.service.impl;
 
 import com.xiaoleilu.hutool.date.DateUnit;
 import com.xiaoleilu.hutool.date.DateUtil;
+import org.apache.commons.io.IOUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipOutputStream;
 
 import org.springframework.transaction.annotation.Transactional;
 import top.cflwork.dao.RentPayDAO;
 import top.cflwork.query.PageQuery;
 import top.cflwork.query.StatusQuery;
 import top.cflwork.dao.RentPayItemDAO;
+import top.cflwork.util.GenUtils;
+import top.cflwork.util.RentPayUtils;
+import top.cflwork.vo.RentPayItemInfoVo;
 import top.cflwork.vo.RentPayItemVo;
 import top.cflwork.service.RentPayItemService;
 import top.cflwork.vo.RentPayVo;
@@ -126,7 +132,38 @@ public class RentPayItemServiceImpl implements RentPayItemService {
     }
 
     @Override
-    public TodayPayVo getPayInfo(RentPayItemVo rentPayItemVo) {
+    public RentPayItemInfoVo getPayInfo(RentPayItemVo rentPayItemVo) {
         return rentPayItemDAO.getPayInfo(rentPayItemVo);
+    }
+
+    @Override
+    public List<Integer> checkInSubject(RentPayItemVo rentPayItemVo) {
+        return rentPayItemDAO.checkInSubject(rentPayItemVo);
+    }
+
+    @Override
+    public List<Integer> checkOutSubject(RentPayItemVo rentPayItemVo) {
+        return rentPayItemDAO.checkOutSubject(rentPayItemVo);
+    }
+
+    @Override
+    public int checkOutCnt(RentPayItemVo rentPayItemVo) {
+        return rentPayItemDAO.checkOutCnt(rentPayItemVo);
+    }
+
+    @Override
+    public int checkInCnt(RentPayItemVo rentPayItemVo) {
+        return rentPayItemDAO.checkInCnt(rentPayItemVo);
+    }
+
+    @Override
+    public byte[] down(Long id){
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ZipOutputStream zip = new ZipOutputStream(outputStream);
+        RentPayItemVo rentPayItemVo = rentPayItemDAO.getById(id);
+        //生成代码
+        RentPayUtils.generatorCode(rentPayItemVo, zip);
+        IOUtils.closeQuietly(zip);
+        return outputStream.toByteArray();
     }
 }
