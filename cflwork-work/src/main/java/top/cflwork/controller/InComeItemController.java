@@ -321,10 +321,35 @@ public class InComeItemController {
         }
     }
 
+
+    /**
+     * 生成订单
+     *
+     * @return 返回删除的结果集
+     * @throws Exception
+     */
+    @PostMapping("/getListByDay")
+    @ResponseBody
+    @ApiOperation(value = "根据时间，业主编号统计指定月份的收入,id:时间，text:金额", notes = "返回响应对象", response = InComeItemVo.class)
+    public List<Select2Vo> getListByDay(
+            @ApiParam(value = "当前时间:2018-09", required = true)@RequestParam("time") String time,@ApiParam(value = "业主编号", required = true)@RequestParam("masterId")Long masterId) throws Exception {
+        try {
+            Long hotelId = rentPayService.getHotelId(masterId);
+            List<Select2Vo> select2VoList = inComeItemService.inComeItemPayList(hotelId,time);
+            return select2VoList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         dateFormat.setLenient(false);
         binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
     }
+
 }

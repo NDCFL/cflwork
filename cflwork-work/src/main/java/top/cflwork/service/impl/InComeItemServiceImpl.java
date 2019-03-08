@@ -2,6 +2,7 @@ package top.cflwork.service.impl;
 
 import com.xiaoleilu.hutool.date.DateUnit;
 import com.xiaoleilu.hutool.date.DateUtil;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import top.cflwork.dao.InComeItemDAO;
 import top.cflwork.vo.InComeItemVo;
 import top.cflwork.service.InComeItemService;
 import top.cflwork.vo.IncomeVo;
+import top.cflwork.vo.Select2Vo;
 
 import javax.annotation.Resource;
 
@@ -121,5 +123,10 @@ public class InComeItemServiceImpl implements InComeItemService {
     @Override
     public List<InComeItemVo> findList(Long id) {
         return inComeItemDAO.findList(id);
+    }
+
+    @Override
+    public List<Select2Vo> inComeItemPayList(long hotelId,String time) {
+        return inComeItemDAO.inComeItemPayList(hotelId, time);
     }
 }

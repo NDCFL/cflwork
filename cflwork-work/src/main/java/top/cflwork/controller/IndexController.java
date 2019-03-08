@@ -52,7 +52,7 @@ public class IndexController {
                 HotelVo hotelVo = hotelService.findHotel(user.getId());
                 session.setAttribute("hotelVo",hotelVo);
             }
-            session.setAttribute("userRole",userRoleVo);
+            session.setAttribute("userRole", userRoleVo);
             modelAndView.setViewName("index");
             return modelAndView;
         }catch (Exception e){

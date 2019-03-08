@@ -3,6 +3,7 @@ package top.cflwork.vo;
 import cn.afterturn.easypoi.excel.annotation.Excel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -32,6 +33,7 @@ public class InComeItemVo implements Serializable {
     private String subjectName;
     @ApiModelProperty("时间")
     @Excel(name = "时间")
+    @DateTimeFormat(pattern="yyyy-MM-dd")
     private Date time;
     @ApiModelProperty("金额")
     @Excel(name = "金额")

@@ -139,4 +139,8 @@
     <select id="findList" resultMap="inComeItemMap" parameterType="top.cflwork.vo.InComeItemVo">
         select * from t_in_come_item where income_id = #{id}
     </select>
+
+    <select id="inComeItemPayList" resultType="top.cflwork.vo.Select2Vo">
+        select day(time) as 'id',sum(money) as 'text' from t_in_come_item where hotel_id=#{hotelId} and DATE_FORMAT(time,'%Y-%m')=#{time} group by time
+    </select>
 </mapper>

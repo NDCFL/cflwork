@@ -3,12 +3,11 @@ package top.cflwork.dao;
 import top.cflwork.vo.InComeItemVo;
 
 import java.util.List;
-import java.util.Map;
+
 import org.apache.ibatis.annotations.Param;
 import top.cflwork.query.PageQuery;
-import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
-import top.cflwork.dao.BaseDAO;
+import top.cflwork.vo.Select2Vo;
 
 /**
  * 收入明细
@@ -23,4 +22,5 @@ public interface InComeItemDAO extends BaseDAO<InComeItemVo>{
     void batchSave(List<InComeItemVo> inComeItemVoList);
     void deleteByIncomeId(Long id);
     List<InComeItemVo> findList(Long id);
+    List<Select2Vo> inComeItemPayList(@Param("hotelId") long hotelId,@Param("time") String time);
 }
